@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { onMounted } from 'vue'
-
 const props = defineProps({
   selectedFeed: Object
 })
