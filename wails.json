@@ -9,5 +9,14 @@
   "author": {
     "name": "ch3nyang",
     "email": "dtchenyang@gmail.com"
+  },
+  "assets": {
+    "dir": "data",
+    "glob": "*.json"
+  },
+  "info": {
+    "productName": "MrRSS",
+    "productVersion": "0.0.1",
+    "copyright": "MIT License"
   }
 }
