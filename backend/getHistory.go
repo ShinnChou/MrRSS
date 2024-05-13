@@ -1,52 +1,108 @@
 package backend
 
 import (
-	"encoding/json"
+	"database/sql"
 	"log"
-	"os"
-	"path/filepath"
+	"sort"
+
+	_ "github.com/glebarez/go-sqlite"
 )
 
-type HistoryInfo map[string]FeedContentFilterInfo
+func GetHistory() []FeedContentsInfo {
+	result := []FeedContentsInfo{}
 
-func readHistoryFromFile(filename string) (HistoryInfo, error) {
-	// Check if file exists
-	_, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return HistoryInfo{}, nil
+	if dbFilePath == "" {
+		log.Fatal("Database file path is not set")
 	}
 
-	file, err := os.ReadFile(filename)
+	db, err := sql.Open("sqlite", dbFilePath)
 	if err != nil {
-		log.Fatalf("Unable to read file: %v", err)
+		log.Fatal(err)
 	}
+	defer db.Close()
 
-	var history HistoryInfo
-	err = json.Unmarshal(file, &history)
+	// Get the items in the History table
+	rows, err := db.Query("SELECT [FeedTitle], [FeedImage], [Title], [Link], [TimeSince], [Time], [Image], [Content], [Readed] FROM [History]")
 	if err != nil {
-		var emptyArray []interface{}
-		err2 := json.Unmarshal(file, &emptyArray)
-		if err2 == nil && len(emptyArray) == 0 {
-			return HistoryInfo{}, nil
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var feedTitle string
+		var feedImage string
+		var title string
+		var link string
+		var timeSince string
+		var time string
+		var image string
+		var content string
+		var readed bool
+		err = rows.Scan(&feedTitle, &feedImage, &title, &link, &timeSince, &time, &image, &content, &readed)
+		if err != nil {
+			log.Fatal(err)
 		}
-
-		log.Fatalf("Unable to parse JSON: %v", err)
+		result = append(result, FeedContentsInfo{FeedTitle: feedTitle, FeedImage: feedImage, Title: title, Link: link, TimeSince: timeSince, Time: time, Image: image, Content: content, Readed: readed})
+	}
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	return history, nil
+	// Sort the result by time
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].Time > result[j].Time
+	})
+
+	return result
 }
 
-func GetHistory() HistoryInfo {
-	var historyFilePath string
-	if os.Getenv("DEV_MODE") == "true" {
-		historyFilePath = "data/history.json"
-	} else {
-		configDir, _ := os.UserConfigDir()
-		historyFilePath = filepath.Join(configDir, "MrRSS", "data", "history.json")
+func CheckInHistory(feed FeedContentsInfo) bool {
+	if dbFilePath == "" {
+		log.Fatal("Database file path is not set")
 	}
-	historyList, err := readHistoryFromFile(historyFilePath)
+
+	db, err := sql.Open("sqlite", dbFilePath)
 	if err != nil {
-		log.Fatalf("Unable to read history: %v", err)
+		log.Fatal(err)
 	}
-	return historyList
+	defer db.Close()
+
+	// Check if the item is in the History table
+	rows, err := db.Query("SELECT [Link] FROM [History] WHERE [Link] = ?", feed.Link)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	return rows.Next()
+}
+
+func GetHistoryReaded(feed FeedContentsInfo) bool {
+	if dbFilePath == "" {
+		log.Fatal("Database file path is not set")
+	}
+
+	db, err := sql.Open("sqlite", dbFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	// Get the Readed field in the History table
+	rows, err := db.Query("SELECT [Readed] FROM [History] WHERE [Link] = ?", feed.Link)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var readed bool
+	if rows.Next() {
+		err = rows.Scan(&readed)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	return readed
 }

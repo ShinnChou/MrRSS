@@ -12,7 +12,7 @@
   },
   "assets": {
     "dir": "data",
-    "glob": "*.json"
+    "glob": "*.db"
   },
   "info": {
     "productName": "MrRSS",

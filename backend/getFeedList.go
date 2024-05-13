@@ -1,40 +1,45 @@
 package backend
 
 import (
-	"encoding/json"
+	"database/sql"
 	"log"
-	"os"
-	"path/filepath"
+
+	_ "github.com/glebarez/go-sqlite"
 )
 
-type FeedInfo struct {
-	Title string
-	Link  string
-}
+func GetFeedList() []FeedsInfo {
+	result := []FeedsInfo{}
 
-func readFeedFromFile(filename string) []FeedInfo {
-	file, err := os.ReadFile(filename)
+	if dbFilePath == "" {
+		log.Fatal("Database file path is not set")
+	}
+
+	db, err := sql.Open("sqlite", dbFilePath)
 	if err != nil {
-		log.Fatalf("Unable to read file: %v", err)
+		log.Fatal(err)
 	}
+	defer db.Close()
 
-	var feeds []FeedInfo
-	err = json.Unmarshal(file, &feeds)
+	// Print the feeds in the Feeds table
+	rows, err := db.Query("SELECT [Link], [Category] FROM [Feeds]")
 	if err != nil {
-		log.Fatalf("Unable to parse JSON: %v", err)
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var link string
+		var category string
+		err = rows.Scan(&link, &category)
+		if err != nil {
+			log.Fatal(err)
+		}
+		result = append(result, FeedsInfo{Link: link, Category: category})
+	}
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	return feeds
-}
-
-func GetFeedList() []FeedInfo {
-	var feedFilePath string
-	if os.Getenv("DEV_MODE") == "true" {
-		feedFilePath = "data/feeds.json"
-	} else {
-		configDir, _ := os.UserConfigDir()
-		feedFilePath = filepath.Join(configDir, "MrRSS", "data", "feeds.json")
-	}
-	feedList := readFeedFromFile(feedFilePath)
-	return feedList
+	return result
 }

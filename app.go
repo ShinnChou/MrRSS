@@ -22,18 +22,37 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-func (a *App) GetFeedList() []backend.FeedInfo {
+func (a *App) InitDatabase() {
+	backend.InitDatabase()
+	feeds := []backend.FeedsInfo{
+		{Link: "https://www.kawabangga.com/feed", Category: "blog"},
+		{Link: "https://jvns.ca/atom.xml", Category: "wensite"},
+		{Link: "https://www.ruanyifeng.com/blog/atom.xml", Category: "blog"},
+		{Link: "https://www.appinn.com/feed/", Category: "website"},
+	}
+	backend.SetFeedList(feeds)
+}
+
+func (a *App) GetFeedList() []backend.FeedsInfo {
 	return backend.GetFeedList()
 }
 
-func (a *App) GetFeedContent() []backend.FeedContentFilterInfo {
-	return backend.FilterFeedContent()
+func (a *App) GetFeedContent() []backend.FeedContentsInfo {
+	return backend.GetFeedContent()
 }
 
-func (a *App) GetHistoryContent() []backend.FeedContentFilterInfo {
-	return backend.GetHistoryContent()
+func (a *App) GetHistory() []backend.FeedContentsInfo {
+	return backend.GetHistory()
 }
 
-func (a *App) WriteHistory(history []backend.FeedContentFilterInfo) error {
-	return backend.WriteHistory(history)
+func (a *App) SetHistory(history []backend.FeedContentsInfo) {
+	backend.SetHistory(history)
+}
+
+func (a *App) SetHistoryReaded(feed backend.FeedContentsInfo) {
+	backend.SetHistoryReaded(feed)
+}
+
+func (a *App) ClearHistory() {
+	backend.ClearHistory()
 }

@@ -97,7 +97,7 @@ Section
     !insertmacro wails.writeUninstaller
 
     SetOutPath "$AppData\${INFO_PRODUCTNAME}\data"
-    File /r "resources\*.json"
+    File /r "resources\*.db"
 SectionEnd
 
 Section "uninstall"

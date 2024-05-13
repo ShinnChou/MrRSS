@@ -5,7 +5,7 @@ import RssList from './components/RssList.vue'
 import RssListButton from './components/RssListButton.vue'
 import RssContent from './components/RssContent.vue'
 import RssContentButton from './components/RssContentButton.vue'
-import { GetFeedContent, GetHistoryContent, WriteHistory } from '../wailsjs/go/main/App'
+import { InitDatabase, GetFeedContent, GetHistory, SetHistory, SetHistoryReaded, ClearHistory } from '../wailsjs/go/main/App'
 
 type FeedContent = {
   FeedTitle: string
@@ -32,18 +32,18 @@ async function fetchFeedContent() {
 }
 
 async function fetchHistoryContent() {
-  const result: FeedContent[] = await GetHistoryContent()
+  const result: FeedContent[] = await GetHistory()
   feedContent.feedList = result
   return feedContent
 }
 
 async function setHistoryContent() {
-  await WriteHistory(feedContent.feedList)
+  await SetHistory(feedContent.feedList)
 }
 
 async function deleteHistoryContent() {
   feedContent.feedList = []
-  await setHistoryContent()
+  await ClearHistory()
   await handleClickRefresh()
 }
 
@@ -52,8 +52,11 @@ const isRefreshing = ref(false)
 async function handleClickRefresh() {
   isRefreshing.value = true
   await fetchHistoryContent()
+  console.log('History fetched')
   await fetchFeedContent()
+  console.log('Feed fetched')
   await setHistoryContent()
+  console.log('History set')
   isRefreshing.value = false
 }
 
@@ -63,11 +66,11 @@ async function handleFeedClicked(feed: FeedContent) {
 }
 
 async function modifyFeedContentReaded(feed: FeedContent, readed: boolean) {
-  const index = feedContent.feedList.findIndex((f) => f.Title === feed.Title && f.Content === feed.Content)
+  const index = feedContent.feedList.findIndex((f) => f.Link === feed.Link)
   if (index !== -1) {
     if (feedContent.feedList[index].Readed !== readed) {
       feedContent.feedList[index].Readed = readed
-      await setHistoryContent()
+      await SetHistoryReaded(feedContent.feedList[index])
     }
   }
 }
@@ -78,6 +81,7 @@ defineComponent({
   },
   setup(_, { emit }) {
     return {
+      InitDatabase,
       RssContentButton,
       isRefreshing,
       handleClickRefresh,
@@ -87,8 +91,9 @@ defineComponent({
   }
 })
 
-onMounted(() => {
-  handleClickRefresh()
+onMounted(async () => {
+  await InitDatabase()
+  await handleClickRefresh()
 })
 </script>
 
