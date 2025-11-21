@@ -1,0 +1,28 @@
+name: Deploy Website
+
+on:
+  push:
+    branches:
+      - main
+      - feature/download-homepage
+    paths:
+      - 'website/**'
+      - '.github/workflows/deploy-site.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./website
+          cname: mrrss.ch3nyang.top
