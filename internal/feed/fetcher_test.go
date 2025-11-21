@@ -27,6 +27,9 @@ func TestAddSubscription(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create db: %v", err)
 	}
+	if err := db.Init(); err != nil {
+		t.Fatalf("Failed to init db: %v", err)
+	}
 
 	mockFeed := &gofeed.Feed{
 		Title:       "Test Feed",
@@ -59,6 +62,9 @@ func TestFetchFeed(t *testing.T) {
 	db, err := database.NewDB(":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create db: %v", err)
+	}
+	if err := db.Init(); err != nil {
+		t.Fatalf("Failed to init db: %v", err)
 	}
 
 	// Add a feed first
