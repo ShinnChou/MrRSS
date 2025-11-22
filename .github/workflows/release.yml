@@ -216,15 +216,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             libgtk-3-dev \
-            libwebkit2gtk-4.0-dev \
+            libwebkit2gtk-4.1-dev \
             gcc \
             pkg-config \
             wget \
             file
           
-          # Verify webkit2gtk-4.0 is properly installed
-          pkg-config --modversion webkit2gtk-4.0 || exit 1
-          echo "webkit2gtk-4.0 installed successfully"
+          # Verify webkit2gtk-4.1 is properly installed
+          pkg-config --modversion webkit2gtk-4.1 || exit 1
+          echo "webkit2gtk-4.1 installed successfully"
+          
+          # Create symlink for Wails v2 compatibility (looks for 4.0)
+          sudo ln -sf /usr/lib/x86_64-linux-gnu/pkgconfig/webkit2gtk-4.1.pc /usr/lib/x86_64-linux-gnu/pkgconfig/webkit2gtk-4.0.pc
+          echo "Created webkit2gtk-4.0 symlink for Wails compatibility"
       
       - name: Install Linux dependencies (ARM64)
         if: steps.check_artifacts.outputs.skip_build == 'false' && matrix.platform == 'linux' && matrix.arch == 'arm64'
@@ -232,15 +236,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             libgtk-3-dev \
-            libwebkit2gtk-4.0-dev \
+            libwebkit2gtk-4.1-dev \
             gcc \
             pkg-config \
             wget \
             file
           
-          # Verify webkit2gtk-4.0 is properly installed
-          pkg-config --modversion webkit2gtk-4.0 || exit 1
-          echo "webkit2gtk-4.0 installed successfully for ARM64"
+          # Verify webkit2gtk-4.1 is properly installed
+          pkg-config --modversion webkit2gtk-4.1 || exit 1
+          echo "webkit2gtk-4.1 installed successfully for ARM64"
+          
+          # Create symlink for Wails v2 compatibility (looks for 4.0)
+          sudo ln -sf /usr/lib/aarch64-linux-gnu/pkgconfig/webkit2gtk-4.1.pc /usr/lib/aarch64-linux-gnu/pkgconfig/webkit2gtk-4.0.pc
+          echo "Created webkit2gtk-4.0 symlink for Wails compatibility"
       
       - name: Install Windows dependencies (AMD64)
         if: steps.check_artifacts.outputs.skip_build == 'false' && matrix.platform == 'windows' && matrix.arch == 'amd64'
