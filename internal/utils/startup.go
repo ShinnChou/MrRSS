@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"strings"
 )
 
 // EnableStartup enables the application to start on system boot
@@ -71,10 +70,13 @@ func disableStartupWindows() error {
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		// If the key doesn't exist, it's not an error for our purposes
-		if !strings.Contains(string(output), "unable to find") {
-			return fmt.Errorf("failed to remove registry entry: %v, output: %s", err, output)
+		// Check if the error is because the key doesn't exist (exit code 1)
+		// If so, we can ignore it since our goal is to have the key not present
+		if exitErr, ok := err.(*exec.ExitError); ok && exitErr.ExitCode() == 1 {
+			log.Println("Startup registry key was not present (already disabled)")
+			return nil
 		}
+		return fmt.Errorf("failed to remove registry entry: %v, output: %s", err, output)
 	}
 
 	log.Println("Startup disabled for Windows")

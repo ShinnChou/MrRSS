@@ -1,3 +1,5 @@
+// Package handlers contains the HTTP handlers for the application.
+// It defines the Handler struct which holds dependencies like the database and fetcher.
 package handlers
 
 import (
@@ -915,9 +917,10 @@ func (h *Handler) HandleInstallUpdate(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid file type for Windows", http.StatusBadRequest)
 			return
 		}
-		// Use start command with proper quoting to handle paths with spaces
-		// The first empty quotes are for the window title
-		cmd = exec.Command("cmd.exe", "/C", "start", "/B", "", cleanPath)
+		// Use start command with /B flag to launch in background
+		// Format: start /B <executable_path>
+		// The /B flag prevents creating a new window
+		cmd = exec.Command("cmd.exe", "/C", "start", "/B", cleanPath)
 		scheduleCleanup(cleanPath, 10*time.Second)
 	case "linux":
 		// Make AppImage executable and run it - validate file extension
