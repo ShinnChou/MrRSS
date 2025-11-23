@@ -244,3 +244,8 @@ func (f *Fetcher) ImportSubscription(title, url, category string) error {
 	}
 	return f.db.AddFeed(feed)
 }
+
+// ParseFeed parses an RSS feed from a URL and returns the parsed feed
+func (f *Fetcher) ParseFeed(ctx context.Context, url string) (*gofeed.Feed, error) {
+	return f.fp.ParseURLWithContext(url, ctx)
+}

@@ -5,10 +5,13 @@ import { BrowserOpenURL } from '../wailsjs/wailsjs/runtime/runtime.js';
 
 const article = computed(() => store.articles.find(a => a.id === store.currentArticleId));
 const showContent = ref(false); // Toggle between original webpage and RSS content
+const articleContent = ref(''); // Dynamically fetched content
+const isLoadingContent = ref(false); // Loading state
 
 function close() {
     store.currentArticleId = null;
     showContent.value = false;
+    articleContent.value = '';
 }
 
 function toggleRead() {
@@ -29,12 +32,42 @@ function openOriginal() {
     if (article.value) BrowserOpenURL(article.value.url);
 }
 
-function toggleContentView() {
+async function toggleContentView() {
+    if (!showContent.value) {
+        // Switching to content view - fetch content if not already loaded
+        if (!articleContent.value && article.value) {
+            await fetchArticleContent();
+        }
+    }
     showContent.value = !showContent.value;
 }
 
+async function fetchArticleContent() {
+    if (!article.value) return;
+    
+    isLoadingContent.value = true;
+    try {
+        const res = await fetch(`/api/articles/content?id=${article.value.id}`);
+        if (res.ok) {
+            const data = await res.json();
+            articleContent.value = data.content || '';
+        } else {
+            console.error('Failed to fetch article content');
+            articleContent.value = '';
+        }
+    } catch (e) {
+        console.error('Error fetching article content:', e);
+        articleContent.value = '';
+    } finally {
+        isLoadingContent.value = false;
+    }
+}
+
 // Listen for render content event from context menu
-function handleRenderContent() {
+async function handleRenderContent() {
+    if (!articleContent.value && article.value) {
+        await fetchArticleContent();
+    }
     showContent.value = true;
 }
 
@@ -89,7 +122,17 @@ onBeforeUnmount(() => {
                         <span>•</span>
                         <span>{{ new Date(article.published_at).toLocaleDateString() }}</span>
                     </div>
-                    <div v-if="article.content" class="prose prose-lg max-w-none text-text-primary" v-html="article.content"></div>
+                    
+                    <!-- Loading state -->
+                    <div v-if="isLoadingContent" class="text-center text-text-secondary py-8">
+                        <i class="ph ph-spinner ph-spin text-5xl mb-3"></i>
+                        <p>{{ store.i18n.locale.value === 'zh' ? '加载内容中...' : 'Loading content...' }}</p>
+                    </div>
+                    
+                    <!-- Content display -->
+                    <div v-else-if="articleContent" class="prose prose-lg max-w-none text-text-primary" v-html="articleContent"></div>
+                    
+                    <!-- No content available -->
                     <div v-else class="text-center text-text-secondary py-8">
                         <i class="ph ph-article text-5xl mb-3 opacity-50"></i>
                         <p>{{ store.i18n.t('noContent') }}</p>

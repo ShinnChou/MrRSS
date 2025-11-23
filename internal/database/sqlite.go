@@ -127,13 +127,22 @@ func initSchema(db *sql.DB) error {
 	CREATE INDEX IF NOT EXISTS idx_articles_fav_published ON articles(is_favorite, published_at DESC);
 	`
 	_, err := db.Exec(query)
+	if err != nil {
+		return err
+	}
 	
-	// Add new columns if they don't exist (for existing databases)
+	// Run migrations for existing databases
+	return runMigrations(db)
+}
+
+// runMigrations applies database migrations for existing databases
+func runMigrations(db *sql.DB) error {
+	// Migration: Add content and is_hidden columns if they don't exist
 	// SQLite doesn't support IF NOT EXISTS for ALTER TABLE, so we ignore errors if columns already exist
 	_, _ = db.Exec(`ALTER TABLE articles ADD COLUMN content TEXT DEFAULT ''`)
 	_, _ = db.Exec(`ALTER TABLE articles ADD COLUMN is_hidden BOOLEAN DEFAULT 0`)
 	
-	return err
+	return nil
 }
 
 func (db *DB) AddFeed(feed *models.Feed) error {

@@ -168,7 +168,7 @@ function formatLastUpdate(timestamp) {
                         <div class="text-xs text-text-secondary">{{ store.i18n.t('lastArticleUpdateDesc') }}</div>
                     </div>
                 </div>
-                <div class="text-sm text-text-secondary">{{ formatLastUpdate(settings.last_article_update) }}</div>
+                <div class="text-sm font-medium text-accent">{{ formatLastUpdate(settings.last_article_update) }}</div>
             </div>
         </div>
 
@@ -189,11 +189,11 @@ function formatLastUpdate(timestamp) {
             </div>
             
             <div v-if="settings.auto_cleanup_enabled" class="ml-4 mt-3 space-y-3 border-l-2 border-border pl-4">
-                <div class="setting-item">
+                <div class="sub-setting-item">
                     <div class="flex-1 flex items-start gap-3">
-                        <i class="ph ph-hard-drive text-xl text-text-secondary mt-0.5"></i>
+                        <i class="ph ph-hard-drive text-lg text-text-secondary mt-0.5"></i>
                         <div class="flex-1">
-                            <div class="font-medium mb-1">{{ store.i18n.t('maxCacheSize') }}</div>
+                            <div class="text-sm font-medium mb-1">{{ store.i18n.t('maxCacheSize') }}</div>
                             <div class="text-xs text-text-secondary">{{ store.i18n.t('maxCacheSizeDesc') }}</div>
                         </div>
                     </div>
@@ -203,11 +203,11 @@ function formatLastUpdate(timestamp) {
                     </div>
                 </div>
                 
-                <div class="setting-item">
+                <div class="sub-setting-item">
                     <div class="flex-1 flex items-start gap-3">
-                        <i class="ph ph-calendar-x text-xl text-text-secondary mt-0.5"></i>
+                        <i class="ph ph-calendar-x text-lg text-text-secondary mt-0.5"></i>
                         <div class="flex-1">
-                            <div class="font-medium mb-1">{{ store.i18n.t('maxArticleAge') }}</div>
+                            <div class="text-sm font-medium mb-1">{{ store.i18n.t('maxArticleAge') }}</div>
                             <div class="text-xs text-text-secondary">{{ store.i18n.t('maxArticleAgeDesc') }}</div>
                         </div>
                     </div>
@@ -247,19 +247,19 @@ function formatLastUpdate(timestamp) {
             </div>
             
             <div v-if="settings.translation_enabled" class="ml-4 space-y-3 border-l-2 border-border pl-4">
-                <div>
-                    <label class="block text-sm font-medium mb-1">{{ store.i18n.t('translationProvider') }}</label>
+                <div class="sub-setting-item">
+                    <label class="text-sm font-medium mb-1 block">{{ store.i18n.t('translationProvider') }}</label>
                     <select v-model="settings.translation_provider" class="input-field w-full">
                         <option value="google">Google Translate (Free)</option>
                         <option value="deepl">DeepL API</option>
                     </select>
                 </div>
-                <div v-if="settings.translation_provider === 'deepl'">
-                    <label class="block text-sm font-medium mb-1">{{ store.i18n.t('deeplApiKey') }}</label>
+                <div v-if="settings.translation_provider === 'deepl'" class="sub-setting-item">
+                    <label class="text-sm font-medium mb-1 block">{{ store.i18n.t('deeplApiKey') }}</label>
                     <input type="password" v-model="settings.deepl_api_key" :placeholder="store.i18n.t('deeplApiKeyPlaceholder')" class="input-field w-full">
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-1">{{ store.i18n.t('targetLanguage') }}</label>
+                <div class="sub-setting-item">
+                    <label class="text-sm font-medium mb-1 block">{{ store.i18n.t('targetLanguage') }}</label>
                     <select v-model="settings.target_language" class="input-field w-full">
                         <option value="en">{{ store.i18n.t('english') }}</option>
                         <option value="es">{{ store.i18n.t('spanish') }}</option>
@@ -290,5 +290,8 @@ function formatLastUpdate(timestamp) {
 }
 .setting-item {
     @apply flex items-start justify-between gap-4 p-3 rounded-lg bg-bg-secondary border border-border;
+}
+.sub-setting-item {
+    @apply p-2.5 rounded-md bg-bg-tertiary/50;
 }
 </style>
