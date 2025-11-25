@@ -467,9 +467,13 @@ func evaluateSingleCondition(article models.Article, condition FilterCondition, 
 				log.Printf("Invalid date format for published_before filter: %s", condition.Value)
 				result = true
 			} else {
-				// Add one day to include the selected date
-				beforeDate = beforeDate.Add(24 * time.Hour)
-				result = article.PublishedAt.Before(beforeDate)
+				// For "before Dec 24 (inclusive)", we want articles published on Dec 24 or earlier
+				// We compare dates only (not times) - any article from Dec 24 should be included
+				// Truncate to remove time component, preserving date in local timezone context
+				articleDateOnly := article.PublishedAt.UTC().Truncate(24 * time.Hour)
+				beforeDateOnly := beforeDate.Truncate(24 * time.Hour)
+				// Include articles on the selected date or before
+				result = !articleDateOnly.After(beforeDateOnly)
 			}
 		}
 

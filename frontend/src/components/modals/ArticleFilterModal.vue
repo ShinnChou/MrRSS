@@ -149,9 +149,18 @@ function getMultiSelectDisplayText(condition, labelKey) {
         return condition.values[0];
     }
     
-    // Show first item and count of remaining
+    // Show first item and total count
+    // For Chinese: "xxx等N个" means "xxx and N items in total"
+    // For English: "xxx and N more" means N additional items
     const firstItem = condition.values[0];
-    const remaining = condition.values.length - 1;
+    const totalCount = condition.values.length;
+    const remaining = totalCount - 1;
+    
+    // Use different count based on locale
+    const locale = store.i18n.locale.value;
+    if (locale === 'zh') {
+        return `${firstItem} ${store.i18n.t('andNMore', { count: totalCount })}`;
+    }
     return `${firstItem} ${store.i18n.t('andNMore', { count: remaining })}`;
 }
 
@@ -421,8 +430,8 @@ function close() {
     @apply text-text-secondary text-xs ml-2;
 }
 .dropdown-menu {
-    @apply absolute top-full left-0 right-0 mt-1 border border-border rounded-md bg-bg-primary;
-    @apply max-h-40 overflow-y-auto z-10 shadow-lg;
+    @apply absolute bottom-full left-0 right-0 mb-1 border border-border rounded-md bg-bg-primary;
+    @apply max-h-40 overflow-y-auto z-50 shadow-lg;
 }
 .dropdown-option {
     @apply flex items-center gap-2 px-3 py-2 cursor-pointer text-sm text-text-primary hover:bg-bg-tertiary;
