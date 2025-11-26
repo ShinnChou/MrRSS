@@ -48,7 +48,7 @@ export const useAppStore = defineStore('app', () => {
   const feeds = ref<Feed[]>([]);
   const unreadCounts = ref<UnreadCounts>({
     total: 0,
-    feedCounts: {}
+    feedCounts: {},
   });
   const currentFilter = ref<Filter>('all');
   const currentFeedId = ref<number | null>(null);
@@ -58,9 +58,11 @@ export const useAppStore = defineStore('app', () => {
   const page = ref<number>(1);
   const hasMore = ref<boolean>(true);
   const searchQuery = ref<string>('');
-  const themePreference = ref<ThemePreference>((localStorage.getItem('themePreference') as ThemePreference) || 'auto');
+  const themePreference = ref<ThemePreference>(
+    (localStorage.getItem('themePreference') as ThemePreference) || 'auto'
+  );
   const theme = ref<Theme>('light');
-  
+
   // Refresh progress
   const refreshProgress = ref<RefreshProgress>({ current: 0, total: 0, isRunning: false });
   let refreshInterval: ReturnType<typeof setInterval> | null = null;
@@ -75,7 +77,7 @@ export const useAppStore = defineStore('app', () => {
     hasMore.value = true;
     fetchArticles();
   }
-  
+
   function setFeed(feedId: number): void {
     currentFilter.value = '';
     currentFeedId.value = feedId;
@@ -85,7 +87,7 @@ export const useAppStore = defineStore('app', () => {
     hasMore.value = true;
     fetchArticles();
   }
-  
+
   function setCategory(category: string): void {
     currentFilter.value = '';
     currentFeedId.value = null;
@@ -99,23 +101,23 @@ export const useAppStore = defineStore('app', () => {
   async function fetchArticles(append: boolean = false): Promise<void> {
     if (isLoading.value) return;
     if (!append && !hasMore.value) hasMore.value = true;
-    
+
     isLoading.value = true;
     const limit = 50;
-    
+
     let url = `/api/articles?page=${page.value}&limit=${limit}`;
     if (currentFilter.value) url += `&filter=${currentFilter.value}`;
     if (currentFeedId.value) url += `&feed_id=${currentFeedId.value}`;
     if (currentCategory.value) url += `&category=${encodeURIComponent(currentCategory.value)}`;
-    
+
     try {
       const res = await fetch(url);
-      const data: Article[] = await res.json() || [];
-      
+      const data: Article[] = (await res.json()) || [];
+
       if (data.length < limit) {
         hasMore.value = false;
       }
-      
+
       if (append) {
         articles.value = [...articles.value, ...data];
       } else {
@@ -138,7 +140,7 @@ export const useAppStore = defineStore('app', () => {
   async function fetchFeeds(): Promise<void> {
     try {
       const res = await fetch('/api/feeds');
-      const data: Feed[] = await res.json() || [];
+      const data: Feed[] = (await res.json()) || [];
       feeds.value = data;
       // Fetch unread counts after fetching feeds
       await fetchUnreadCounts();
@@ -154,7 +156,7 @@ export const useAppStore = defineStore('app', () => {
       const data = await res.json();
       unreadCounts.value = {
         total: data.total || 0,
-        feedCounts: data.feed_counts || {}
+        feedCounts: data.feed_counts || {},
       };
     } catch (e) {
       console.error(e);
@@ -164,7 +166,7 @@ export const useAppStore = defineStore('app', () => {
 
   async function markAllAsRead(feedId?: number): Promise<void> {
     try {
-      const url = feedId 
+      const url = feedId
         ? `/api/articles/mark-all-read?feed_id=${feedId}`
         : '/api/articles/mark-all-read';
       await fetch(url, { method: 'POST' });
@@ -198,14 +200,14 @@ export const useAppStore = defineStore('app', () => {
 
   function applyTheme(): void {
     let actualTheme: Theme = themePreference.value as Theme;
-    
+
     // If auto, detect system preference
     if (themePreference.value === 'auto') {
       actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-    
+
     theme.value = actualTheme;
-    
+
     if (actualTheme === 'dark') {
       document.body.classList.add('dark-mode');
     } else {
@@ -221,7 +223,7 @@ export const useAppStore = defineStore('app', () => {
         applyTheme();
       }
     });
-    
+
     // Apply initial theme
     applyTheme();
   }
@@ -247,7 +249,7 @@ export const useAppStore = defineStore('app', () => {
         refreshProgress.value = {
           current: data.current,
           total: data.total,
-          isRunning: data.is_running
+          isRunning: data.is_running,
         };
 
         // Progressive refresh: update articles and unread counts whenever progress advances
@@ -262,7 +264,7 @@ export const useAppStore = defineStore('app', () => {
           fetchFeeds();
           fetchArticles();
           fetchUnreadCounts();
-          
+
           // Check for app updates after initial refresh completes
           checkForAppUpdates();
         }
@@ -278,18 +280,12 @@ export const useAppStore = defineStore('app', () => {
       const res = await fetch('/api/check-updates');
       if (res.ok) {
         const data = await res.json();
-        
+
         // Only proceed if there's an update available and a download URL
         if (data.has_update && data.download_url) {
-          console.log(`Update available: ${data.latest_version}`);
-          
           // Show notification to user
           if (window.showToast) {
-            window.showToast(
-              `Update available: v${data.latest_version}`,
-              'info',
-              5000
-            );
+            window.showToast(`Update available: v${data.latest_version}`, 'info', 5000);
           }
         }
       }
@@ -302,9 +298,12 @@ export const useAppStore = defineStore('app', () => {
   function startAutoRefresh(minutes: number): void {
     if (refreshInterval) clearInterval(refreshInterval);
     if (minutes > 0) {
-      refreshInterval = setInterval(() => {
-        refreshFeeds();
-      }, minutes * 60 * 1000);
+      refreshInterval = setInterval(
+        () => {
+          refreshFeeds();
+        },
+        minutes * 60 * 1000
+      );
     }
   }
 
@@ -324,7 +323,7 @@ export const useAppStore = defineStore('app', () => {
     themePreference,
     theme,
     refreshProgress,
-    
+
     // Actions
     setFilter,
     setFeed,
@@ -341,6 +340,6 @@ export const useAppStore = defineStore('app', () => {
     refreshFeeds,
     pollProgress,
     checkForAppUpdates,
-    startAutoRefresh
+    startAutoRefresh,
   };
 });

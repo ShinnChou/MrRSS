@@ -34,7 +34,7 @@ export function useNotifications() {
         onCancel: () => {
           confirmDialog.value = null;
           resolve(false);
-        }
+        },
       };
     });
   }
@@ -50,7 +50,7 @@ export function useNotifications() {
         onCancel: () => {
           inputDialog.value = null;
           resolve(null);
-        }
+        },
       };
     });
   }
@@ -61,7 +61,7 @@ export function useNotifications() {
   }
 
   function removeToast(id: number): void {
-    toasts.value = toasts.value.filter(t => t.id !== id);
+    toasts.value = toasts.value.filter((t) => t.id !== id);
   }
 
   // Make these available globally
@@ -79,6 +79,6 @@ export function useNotifications() {
     showInput,
     showToast,
     removeToast,
-    installGlobalHandlers
+    installGlobalHandlers,
   };
 }

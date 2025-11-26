@@ -12,8 +12,8 @@ export interface ContextMenuState {
   x: number;
   y: number;
   items: ContextMenuItem[];
-  data: any;
-  callback?: (action: string, data: any) => void;
+  data: unknown;
+  callback?: (action: string, data: unknown) => void;
 }
 
 export function useContextMenu() {
@@ -22,7 +22,7 @@ export function useContextMenu() {
     x: 0,
     y: 0,
     items: [],
-    data: null
+    data: null,
   });
 
   function openContextMenu(event: CustomEvent): void {
@@ -32,7 +32,7 @@ export function useContextMenu() {
       y: event.detail.y,
       items: event.detail.items,
       data: event.detail.data,
-      callback: event.detail.callback
+      callback: event.detail.callback,
     };
   }
 
@@ -50,6 +50,6 @@ export function useContextMenu() {
     contextMenu,
     openContextMenu,
     closeContextMenu,
-    handleContextMenuAction
+    handleContextMenuAction,
   };
 }

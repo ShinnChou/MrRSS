@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import { useAppStore } from './stores/app';
 import { useI18n } from 'vue-i18n';
-import Sidebar from './components/Sidebar.vue';
-import ArticleList from './components/ArticleList.vue';
-import ArticleDetail from './components/ArticleDetail.vue';
-import AddFeedModal from './components/modals/AddFeedModal.vue';
-import EditFeedModal from './components/modals/EditFeedModal.vue';
+import Sidebar from './components/sidebar/Sidebar.vue';
+import ArticleList from './components/article/ArticleList.vue';
+import ArticleDetail from './components/article/ArticleDetail.vue';
+import AddFeedModal from './components/modals/feed/AddFeedModal.vue';
+import EditFeedModal from './components/modals/feed/EditFeedModal.vue';
 import SettingsModal from './components/modals/SettingsModal.vue';
-import DiscoverFeedsModal from './components/modals/DiscoverFeedsModal.vue';
-import ContextMenu from './components/ContextMenu.vue';
-import ConfirmDialog from './components/modals/ConfirmDialog.vue';
-import InputDialog from './components/modals/InputDialog.vue';
-import Toast from './components/Toast.vue';
-import { onMounted, ref, computed } from 'vue';
-import { useNotifications } from './composables/useNotifications';
-import { useKeyboardShortcuts } from './composables/useKeyboardShortcuts';
-import { useContextMenu } from './composables/useContextMenu';
-import { useResizablePanels } from './composables/useResizablePanels';
+import DiscoverFeedsModal from './components/modals/discovery/DiscoverFeedsModal.vue';
+import ContextMenu from './components/common/ContextMenu.vue';
+import ConfirmDialog from './components/modals/common/ConfirmDialog.vue';
+import InputDialog from './components/modals/common/InputDialog.vue';
+import Toast from './components/common/Toast.vue';
+import { onMounted, ref } from 'vue';
+import { useNotifications } from './composables/ui/useNotifications';
+import { useKeyboardShortcuts } from './composables/ui/useKeyboardShortcuts';
+import { useContextMenu } from './composables/ui/useContextMenu';
+import { useResizablePanels } from './composables/ui/useResizablePanels';
 import type { Feed } from './types/models';
 
 const store = useAppStore();
@@ -31,220 +31,224 @@ const feedToDiscover = ref<Feed | null>(null);
 const isSidebarOpen = ref(false);
 
 // Use composables
-const {
-  confirmDialog,
-  inputDialog,
-  toasts,
-  showConfirm,
-  showInput,
-  showToast,
-  removeToast,
-  installGlobalHandlers
-} = useNotifications();
+const { confirmDialog, inputDialog, toasts, removeToast, installGlobalHandlers } =
+  useNotifications();
 
-const { contextMenu, openContextMenu, closeContextMenu, handleContextMenuAction } = useContextMenu();
+const { contextMenu, openContextMenu, handleContextMenuAction } = useContextMenu();
 
-const { sidebarWidth, articleListWidth, startResizeSidebar, startResizeArticleList } = useResizablePanels();
-
-// Computed property to check if any modal is open (for keyboard shortcut handling)
-const isAnyModalOpen = computed(() => {
-    return showSettings.value || showAddFeed.value || showEditFeed.value || 
-           showDiscoverBlogs.value || confirmDialog.value !== null || inputDialog.value !== null;
-});
+const { sidebarWidth, articleListWidth, startResizeSidebar, startResizeArticleList } =
+  useResizablePanels();
 
 // Initialize keyboard shortcuts
 const { shortcuts } = useKeyboardShortcuts({
-  onOpenSettings: () => { showSettings.value = true; },
-  onAddFeed: () => { showAddFeed.value = true; },
+  onOpenSettings: () => {
+    showSettings.value = true;
+  },
+  onAddFeed: () => {
+    showAddFeed.value = true;
+  },
   onMarkAllRead: async () => {
     await store.markAllAsRead();
     window.showToast(t('markedAllAsRead'), 'success');
-  }
+  },
 });
 
 onMounted(async () => {
-    // Install global notification handlers
-    installGlobalHandlers();
-    
-    // Initialize theme system immediately (lightweight)
-    store.initTheme();
-    
-    // Defer heavy operations to allow UI to render first
+  // Install global notification handlers
+  installGlobalHandlers();
+
+  // Initialize theme system immediately (lightweight)
+  store.initTheme();
+
+  // Defer heavy operations to allow UI to render first
+  setTimeout(() => {
+    // Load feeds and articles in background
+    store.fetchFeeds();
+    store.fetchArticles();
+
+    // Trigger feed refresh after initial load
     setTimeout(() => {
-        // Load feeds and articles in background
-        store.fetchFeeds();
-        store.fetchArticles();
-        
-        // Trigger feed refresh after initial load
-        setTimeout(() => {
-            store.refreshFeeds();
-        }, 1000);
-    }, 100);
-    
-    // Initialize settings asynchronously
-    setTimeout(async () => {
+      store.refreshFeeds();
+    }, 1000);
+  }, 100);
+
+  // Initialize settings asynchronously
+  setTimeout(async () => {
+    try {
+      const res = await fetch('/api/settings');
+      const data = await res.json();
+      if (data.update_interval) {
+        store.startAutoRefresh(parseInt(data.update_interval));
+      }
+      // Apply saved theme preference
+      if (data.theme) {
+        store.setTheme(data.theme);
+      }
+      // Load saved shortcuts
+      if (data.shortcuts) {
         try {
-            const res = await fetch('/api/settings');
-            const data = await res.json();
-            if (data.update_interval) {
-                store.startAutoRefresh(parseInt(data.update_interval));
-            }
-            // Apply saved theme preference
-            if (data.theme) {
-                store.setTheme(data.theme);
-            }
-            // Load saved shortcuts
-            if (data.shortcuts) {
-                try {
-                    const parsed = JSON.parse(data.shortcuts);
-                    shortcuts.value = { ...shortcuts.value, ...parsed };
-                } catch (e) {
-                    console.error('Error parsing shortcuts:', e);
-                }
-            }
+          const parsed = JSON.parse(data.shortcuts);
+          shortcuts.value = { ...shortcuts.value, ...parsed };
         } catch (e) {
-            console.error(e);
+          console.error('Error parsing shortcuts:', e);
         }
-    }, 200);
-    
-    // Listen for events from Sidebar
-    window.addEventListener('show-add-feed', () => showAddFeed.value = true);
-    window.addEventListener('show-edit-feed', (e: Event) => {
-        const customEvent = e as CustomEvent;
-        feedToEdit.value = customEvent.detail;
-        showEditFeed.value = true;
-    });
-    window.addEventListener('show-settings', () => showSettings.value = true);
-    window.addEventListener('show-discover-blogs', (e: Event) => {
-        const customEvent = e as CustomEvent;
-        feedToDiscover.value = customEvent.detail;
-        showDiscoverBlogs.value = true;
-    });
-    
-    // Global Context Menu Event Listener
-    window.addEventListener('open-context-menu', (e: Event) => {
-        openContextMenu(e as CustomEvent);
-    });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, 200);
+
+  // Listen for events from Sidebar
+  window.addEventListener('show-add-feed', () => (showAddFeed.value = true));
+  window.addEventListener('show-edit-feed', (e: Event) => {
+    const customEvent = e as CustomEvent;
+    feedToEdit.value = customEvent.detail;
+    showEditFeed.value = true;
+  });
+  window.addEventListener('show-settings', () => (showSettings.value = true));
+  window.addEventListener('show-discover-blogs', (e: Event) => {
+    const customEvent = e as CustomEvent;
+    feedToDiscover.value = customEvent.detail;
+    showDiscoverBlogs.value = true;
+  });
+
+  // Global Context Menu Event Listener
+  window.addEventListener('open-context-menu', (e: Event) => {
+    openContextMenu(e as CustomEvent);
+  });
 });
 
 function toggleSidebar(): void {
-    isSidebarOpen.value = !isSidebarOpen.value;
+  isSidebarOpen.value = !isSidebarOpen.value;
 }
 
 function onFeedAdded(): void {
-    store.fetchFeeds();
-    store.fetchArticles(); // Refresh articles too
+  store.fetchFeeds();
+  store.fetchArticles(); // Refresh articles too
 }
 
 function onFeedUpdated(): void {
-    store.fetchFeeds();
+  store.fetchFeeds();
 }
 </script>
 
 <template>
-    <div class="app-container flex h-screen w-full bg-bg-primary text-text-primary overflow-hidden"
-         :style="{ '--sidebar-width': sidebarWidth + 'px', '--article-list-width': articleListWidth + 'px' }">
-        <Sidebar :isOpen="isSidebarOpen" @toggle="toggleSidebar" />
-        
-        <div class="resizer hidden md:block" @mousedown="startResizeSidebar"></div>
-        
-        <ArticleList :isSidebarOpen="isSidebarOpen" @toggleSidebar="toggleSidebar" />
-        
-        <div class="resizer hidden md:block" @mousedown="startResizeArticleList"></div>
-        
-        <ArticleDetail />
-        
-        <AddFeedModal v-if="showAddFeed" @close="showAddFeed = false" @added="onFeedAdded" />
-        <EditFeedModal v-if="showEditFeed" :feed="feedToEdit" @close="showEditFeed = false" @updated="onFeedUpdated" />
-        <SettingsModal v-if="showSettings" @close="showSettings = false" />
-        <DiscoverFeedsModal v-if="showDiscoverBlogs && feedToDiscover" 
-                            :feed="feedToDiscover" 
-                            :show="showDiscoverBlogs"
-                            @close="showDiscoverBlogs = false" />
-        
-        <ContextMenu 
-            v-if="contextMenu.show" 
-            :x="contextMenu.x" 
-            :y="contextMenu.y" 
-            :items="contextMenu.items" 
-            @close="contextMenu.show = false"
-            @action="handleContextMenuAction"
-        />
-        
-        <!-- Global Notification System -->
-        <ConfirmDialog 
-            v-if="confirmDialog"
-            :title="confirmDialog.title"
-            :message="confirmDialog.message"
-            :confirmText="confirmDialog.confirmText"
-            :cancelText="confirmDialog.cancelText"
-            :isDanger="confirmDialog.isDanger"
-            @confirm="confirmDialog.onConfirm"
-            @cancel="confirmDialog.onCancel"
-            @close="confirmDialog = null"
-        />
-        
-        <InputDialog 
-            v-if="inputDialog"
-            :title="inputDialog.title"
-            :message="inputDialog.message"
-            :placeholder="inputDialog.placeholder"
-            :defaultValue="inputDialog.defaultValue"
-            :confirmText="inputDialog.confirmText"
-            :cancelText="inputDialog.cancelText"
-            @confirm="inputDialog.onConfirm"
-            @cancel="inputDialog.onCancel"
-            @close="inputDialog = null"
-        />
-        
-        <div class="toast-container">
-            <Toast 
-                v-for="toast in toasts"
-                :key="toast.id"
-                :message="toast.message"
-                :type="toast.type"
-                :duration="toast.duration"
-                @close="removeToast(toast.id)"
-            />
-        </div>
+  <div
+    class="app-container flex h-screen w-full bg-bg-primary text-text-primary overflow-hidden"
+    :style="{
+      '--sidebar-width': sidebarWidth + 'px',
+      '--article-list-width': articleListWidth + 'px',
+    }"
+  >
+    <Sidebar :isOpen="isSidebarOpen" @toggle="toggleSidebar" />
+
+    <div class="resizer hidden md:block" @mousedown="startResizeSidebar"></div>
+
+    <ArticleList :isSidebarOpen="isSidebarOpen" @toggleSidebar="toggleSidebar" />
+
+    <div class="resizer hidden md:block" @mousedown="startResizeArticleList"></div>
+
+    <ArticleDetail />
+
+    <AddFeedModal v-if="showAddFeed" @close="showAddFeed = false" @added="onFeedAdded" />
+    <EditFeedModal
+      v-if="showEditFeed && feedToEdit"
+      :feed="feedToEdit"
+      @close="showEditFeed = false"
+      @updated="onFeedUpdated"
+    />
+    <SettingsModal v-if="showSettings" @close="showSettings = false" />
+    <DiscoverFeedsModal
+      v-if="showDiscoverBlogs && feedToDiscover"
+      :feed="feedToDiscover"
+      :show="showDiscoverBlogs"
+      @close="showDiscoverBlogs = false"
+    />
+
+    <ContextMenu
+      v-if="contextMenu.show"
+      :x="contextMenu.x"
+      :y="contextMenu.y"
+      :items="contextMenu.items"
+      @close="contextMenu.show = false"
+      @action="handleContextMenuAction"
+    />
+
+    <!-- Global Notification System -->
+    <ConfirmDialog
+      v-if="confirmDialog"
+      :title="confirmDialog.title"
+      :message="confirmDialog.message"
+      :confirmText="confirmDialog.confirmText"
+      :cancelText="confirmDialog.cancelText"
+      :isDanger="confirmDialog.isDanger"
+      @confirm="confirmDialog.onConfirm"
+      @cancel="confirmDialog.onCancel"
+      @close="confirmDialog = null"
+    />
+
+    <InputDialog
+      v-if="inputDialog"
+      :title="inputDialog.title"
+      :message="inputDialog.message"
+      :placeholder="inputDialog.placeholder"
+      :defaultValue="inputDialog.defaultValue"
+      :confirmText="inputDialog.confirmText"
+      :cancelText="inputDialog.cancelText"
+      @confirm="inputDialog.onConfirm"
+      @cancel="inputDialog.onCancel"
+      @close="inputDialog = null"
+    />
+
+    <div class="toast-container">
+      <Toast
+        v-for="toast in toasts"
+        :key="toast.id"
+        :message="toast.message"
+        :type="toast.type"
+        :duration="toast.duration"
+        @close="removeToast(toast.id)"
+      />
     </div>
+  </div>
 </template>
 
 <style>
 .toast-container {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    left: 10px;
-    z-index: 60;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    pointer-events: none;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  left: 10px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
 }
 .toast-container > * {
-    pointer-events: auto;
+  pointer-events: auto;
 }
 @media (min-width: 640px) {
-    .toast-container {
-        top: 20px;
-        right: 20px;
-        left: auto;
-        gap: 10px;
-    }
+  .toast-container {
+    top: 20px;
+    right: 20px;
+    left: auto;
+    gap: 10px;
+  }
 }
 .resizer {
-    width: 4px;
-    cursor: col-resize;
-    background-color: transparent;
-    flex-shrink: 0;
-    transition: background-color 0.2s;
-    z-index: 10;
-    margin-left: -2px;
-    margin-right: -2px;
+  width: 4px;
+  cursor: col-resize;
+  background-color: transparent;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+  z-index: 10;
+  margin-left: -2px;
+  margin-right: -2px;
 }
-.resizer:hover, .resizer:active {
-    background-color: var(--color-accent, #3b82f6);
+.resizer:hover,
+.resizer:active {
+  background-color: var(--color-accent, #3b82f6);
 }
 /* Global styles if needed */
 </style>

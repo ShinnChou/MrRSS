@@ -11,60 +11,60 @@ export function useArticleActions(
   function showArticleContextMenu(e: MouseEvent, article: Article): void {
     e.preventDefault();
     e.stopPropagation();
-    
+
     // Determine context menu text based on default view mode
-    const contentActionLabel = defaultViewMode.value === 'rendered' 
-      ? t('showOriginal')
-      : t('renderContent');
-    const contentActionIcon = defaultViewMode.value === 'rendered' 
-      ? 'ph-globe'
-      : 'ph-article';
-    
-    window.dispatchEvent(new CustomEvent('open-context-menu', {
-      detail: {
-        x: e.clientX,
-        y: e.clientY,
-        items: [
-          { 
-            label: article.is_read ? t('markAsUnread') : t('markAsRead'), 
-            action: 'toggleRead', 
-            icon: article.is_read ? 'ph-envelope' : 'ph-envelope-open' 
-          },
-          { 
-            label: article.is_favorite ? t('removeFromFavorites') : t('addToFavorites'), 
-            action: 'toggleFavorite', 
-            icon: 'ph-star', 
-            iconWeight: article.is_favorite ? 'fill' : 'regular', 
-            iconColor: article.is_favorite ? 'text-yellow-500' : '' 
-          },
-          { separator: true },
-          { 
-            label: contentActionLabel, 
-            action: 'renderContent', 
-            icon: contentActionIcon 
-          },
-          { 
-            label: article.is_hidden ? t('unhideArticle') : t('hideArticle'), 
-            action: 'toggleHide', 
-            icon: article.is_hidden ? 'ph-eye' : 'ph-eye-slash', 
-            danger: !article.is_hidden 
-          },
-          { separator: true },
-          { 
-            label: t('openInBrowser'), 
-            action: 'openBrowser', 
-            icon: 'ph-arrow-square-out' 
-          }
-        ],
-        data: article,
-        callback: (action: string, article: Article) => handleArticleAction(action, article, onReadStatusChange)
-      }
-    }));
+    const contentActionLabel =
+      defaultViewMode.value === 'rendered' ? t('showOriginal') : t('renderContent');
+    const contentActionIcon = defaultViewMode.value === 'rendered' ? 'ph-globe' : 'ph-article';
+
+    window.dispatchEvent(
+      new CustomEvent('open-context-menu', {
+        detail: {
+          x: e.clientX,
+          y: e.clientY,
+          items: [
+            {
+              label: article.is_read ? t('markAsUnread') : t('markAsRead'),
+              action: 'toggleRead',
+              icon: article.is_read ? 'ph-envelope' : 'ph-envelope-open',
+            },
+            {
+              label: article.is_favorite ? t('removeFromFavorites') : t('addToFavorites'),
+              action: 'toggleFavorite',
+              icon: 'ph-star',
+              iconWeight: article.is_favorite ? 'fill' : 'regular',
+              iconColor: article.is_favorite ? 'text-yellow-500' : '',
+            },
+            { separator: true },
+            {
+              label: contentActionLabel,
+              action: 'renderContent',
+              icon: contentActionIcon,
+            },
+            {
+              label: article.is_hidden ? t('unhideArticle') : t('hideArticle'),
+              action: 'toggleHide',
+              icon: article.is_hidden ? 'ph-eye' : 'ph-eye-slash',
+              danger: !article.is_hidden,
+            },
+            { separator: true },
+            {
+              label: t('openInBrowser'),
+              action: 'openBrowser',
+              icon: 'ph-arrow-square-out',
+            },
+          ],
+          data: article,
+          callback: (action: string, article: Article) =>
+            handleArticleAction(action, article, onReadStatusChange),
+        },
+      })
+    );
   }
 
   // Handle article actions
   async function handleArticleAction(
-    action: string, 
+    action: string,
     article: Article,
     onReadStatusChange?: () => void
   ): Promise<void> {
@@ -106,17 +106,21 @@ export function useArticleActions(
     } else if (action === 'renderContent') {
       // Determine the action based on default view mode
       const renderAction = defaultViewMode.value === 'rendered' ? 'showOriginal' : 'showContent';
-      
+
       // Dispatch explicit action event
-      window.dispatchEvent(new CustomEvent('explicit-render-action', {
-        detail: { action: renderAction }
-      }));
-      
+      window.dispatchEvent(
+        new CustomEvent('explicit-render-action', {
+          detail: { action: renderAction },
+        })
+      );
+
       // Dispatch event to select article
-      window.dispatchEvent(new CustomEvent('select-article-for-render', {
-        detail: { articleId: article.id }
-      }));
-      
+      window.dispatchEvent(
+        new CustomEvent('select-article-for-render', {
+          detail: { articleId: article.id },
+        })
+      );
+
       // Mark as read
       if (!article.is_read) {
         article.is_read = true;
@@ -129,11 +133,13 @@ export function useArticleActions(
           console.error('Error marking as read:', e);
         }
       }
-      
+
       // Trigger the render action
-      window.dispatchEvent(new CustomEvent('render-article-content', {
-        detail: { action: renderAction }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('render-article-content', {
+          detail: { action: renderAction },
+        })
+      );
     } else if (action === 'openBrowser') {
       BrowserOpenURL(article.url);
     }
@@ -141,6 +147,6 @@ export function useArticleActions(
 
   return {
     showArticleContextMenu,
-    handleArticleAction
+    handleArticleAction,
   };
 }

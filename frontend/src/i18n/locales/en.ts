@@ -3,7 +3,7 @@ import type { TranslationMessages } from '../types';
 const en: TranslationMessages = {
   // App
   appName: 'MrRSS',
-  
+
   // Sidebar
   allArticles: 'All Articles',
   unread: 'Unread',
@@ -11,14 +11,14 @@ const en: TranslationMessages = {
   uncategorized: 'Uncategorized',
   addFeed: 'Add Feed',
   settings: 'Settings',
-  
+
   // Article List
   articles: 'Articles',
   refresh: 'Refresh',
   markAllRead: 'Mark All as Read',
   search: 'Search...',
   noArticles: 'No articles found.',
-  
+
   // Article Detail
   back: 'Back',
   markAsUnread: 'Mark as Unread',
@@ -34,7 +34,7 @@ const en: TranslationMessages = {
   zoomIn: 'Zoom In',
   zoomOut: 'Zoom Out',
   imageViewerHelp: 'Use mouse wheel or +/- keys to zoom • Drag to move • ESC to close',
-  
+
   // Context Menu
   unsubscribe: 'Unsubscribe',
   editSubscription: 'Edit Subscription',
@@ -48,7 +48,7 @@ const en: TranslationMessages = {
   showOriginal: 'Show Original Webpage',
   openWebsite: 'Open Website',
   discoverFeeds: 'Discover Feeds',
-  
+
   // Feed Discovery
   fromFeed: 'From Feed',
   discovering: 'Discovering feeds...',
@@ -73,7 +73,8 @@ const en: TranslationMessages = {
   searchingFriendLinks: 'Searching for friend links',
   checkingFeeds: 'Checking RSS feeds',
   pleaseWait: 'Please wait, this may take a few minutes',
-  discoverAllFeedsDesc: 'Automatically discover new feeds from all your subscriptions that haven\'t been scanned yet',
+  discoverAllFeedsDesc:
+    "Automatically discover new feeds from all your subscriptions that haven't been scanned yet",
   subscribing: 'Subscribing',
   fetchingHomepage: 'Fetching homepage',
   analyzingLinks: 'Analyzing discovered links',
@@ -88,13 +89,13 @@ const en: TranslationMessages = {
   fetchingFriendPage: 'Fetching friend links page',
   checkingSite: 'Checking site',
   foundSoFar: 'Found {count} feeds so far',
-  
+
   // Settings Modal
   settingsTitle: 'Settings',
   general: 'General',
   feeds: 'Feeds',
   about: 'About',
-  
+
   // General Settings
   appearance: 'Appearance',
   theme: 'Theme',
@@ -143,7 +144,7 @@ const en: TranslationMessages = {
   targetLanguageDesc: 'Language to translate article titles to',
   language: 'Language',
   languageDesc: 'Select interface language',
-  
+
   // Languages
   english: 'English',
   spanish: 'Spanish',
@@ -151,20 +152,21 @@ const en: TranslationMessages = {
   german: 'German',
   chinese: 'Chinese',
   japanese: 'Japanese',
-  
+
   // Feeds Settings
   dataManagement: 'Data Management',
   importOPML: 'Import OPML',
   exportOPML: 'Export OPML',
   cleanDatabase: 'Clean Database',
-  cleanDatabaseDesc: 'Removes all articles except read and favorited ones. Old articles are also automatically cleaned if "Auto Cleanup" is enabled in General settings.',
+  cleanDatabaseDesc:
+    'Removes all articles except read and favorited ones. Old articles are also automatically cleaned if "Auto Cleanup" is enabled in General settings.',
   manageFeeds: 'Manage Feeds',
   deleteSelected: 'Delete Selected',
   moveSelected: 'Move Selected',
   selectAll: 'Select All',
   edit: 'Edit',
   delete: 'Delete',
-  
+
   // About
   aboutApp: 'A simple, modern RSS reader.',
   version: 'Version',
@@ -184,7 +186,7 @@ const en: TranslationMessages = {
   installFailed: 'Installation failed',
   releaseNotes: 'Release Notes',
   errorCheckingUpdates: 'Error checking for updates',
-  
+
   // Modals
   addNewFeed: 'Add New Feed',
   editFeed: 'Edit Feed',
@@ -201,7 +203,7 @@ const en: TranslationMessages = {
   adding: 'Adding...',
   saving: 'Saving...',
   saveSettings: 'Save Settings',
-  
+
   // Confirm Dialogs
   confirm: 'Confirm',
   cancel: 'Cancel',
@@ -214,7 +216,7 @@ const en: TranslationMessages = {
   cleanDatabaseTitle: 'Clean Database',
   cleanDatabaseMessage: 'This will delete all articles except read and favorited ones. Continue?',
   clean: 'Clean',
-  
+
   // Toast Messages
   feedAddedSuccess: 'Feed added successfully',
   feedUpdatedSuccess: 'Feed updated successfully',
@@ -230,16 +232,16 @@ const en: TranslationMessages = {
   errorUpdatingFeed: 'Error updating feed',
   errorCleaningDatabase: 'Error cleaning up database',
   importFailed: 'Import failed: {error}',
-  
+
   // Loading Messages
   loadingContent: 'Loading content',
   fetchingArticleContent: 'Fetching article content from RSS feed...',
-  
+
   // Prompts
   enterCategoryName: 'Enter new category name:',
   moveFeeds: 'Move Feeds',
   move: 'Move',
-  
+
   // Article Filter
   filter: 'Filter',
   filterArticles: 'Filter Articles',
@@ -270,7 +272,7 @@ const en: TranslationMessages = {
   removeCondition: 'Remove',
   filtersActive: '{count} filter(s) active',
   andNMore: 'and {count} more',
-  
+
   // Keyboard Shortcuts
   shortcuts: 'Shortcuts',
   shortcutsDesc: 'Customize keyboard shortcuts for common actions',
@@ -299,7 +301,7 @@ const en: TranslationMessages = {
   shortcutCleared: 'Shortcut cleared',
   shortcutUpdated: 'Shortcut updated',
   escToClear: 'Press Escape to clear',
-  
+
   // Rules
   rules: 'Rules',
   rulesDesc: 'Create automation rules to automatically perform actions on articles',

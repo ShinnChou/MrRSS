@@ -1,7 +1,7 @@
 export interface TranslationMessages {
   // App
   appName: string;
-  
+
   // Sidebar
   allArticles: string;
   unread: string;
@@ -9,14 +9,14 @@ export interface TranslationMessages {
   uncategorized: string;
   addFeed: string;
   settings: string;
-  
+
   // Article List
   articles: string;
   refresh: string;
   markAllRead: string;
   search: string;
   noArticles: string;
-  
+
   // Article Detail
   back: string;
   markAsUnread: string;
@@ -32,7 +32,7 @@ export interface TranslationMessages {
   zoomIn: string;
   zoomOut: string;
   imageViewerHelp: string;
-  
+
   // Context Menu
   unsubscribe: string;
   editSubscription: string;
@@ -46,7 +46,7 @@ export interface TranslationMessages {
   showOriginal: string;
   openWebsite: string;
   discoverFeeds: string;
-  
+
   // Feed Discovery
   fromFeed: string;
   discovering: string;
@@ -86,13 +86,13 @@ export interface TranslationMessages {
   fetchingFriendPage: string;
   checkingSite: string;
   foundSoFar: string;
-  
+
   // Settings Modal
   settingsTitle: string;
   general: string;
   feeds: string;
   about: string;
-  
+
   // General Settings
   appearance: string;
   theme: string;
@@ -141,7 +141,7 @@ export interface TranslationMessages {
   targetLanguageDesc: string;
   language: string;
   languageDesc: string;
-  
+
   // Languages
   english: string;
   spanish: string;
@@ -149,7 +149,7 @@ export interface TranslationMessages {
   german: string;
   chinese: string;
   japanese: string;
-  
+
   // Feeds Settings
   dataManagement: string;
   importOPML: string;
@@ -162,7 +162,7 @@ export interface TranslationMessages {
   selectAll: string;
   edit: string;
   delete: string;
-  
+
   // About
   aboutApp: string;
   version: string;
@@ -182,7 +182,7 @@ export interface TranslationMessages {
   installFailed: string;
   releaseNotes: string;
   errorCheckingUpdates: string;
-  
+
   // Modals
   addNewFeed: string;
   editFeed: string;
@@ -199,7 +199,7 @@ export interface TranslationMessages {
   adding: string;
   saving: string;
   saveSettings: string;
-  
+
   // Confirm Dialogs
   confirm: string;
   cancel: string;
@@ -212,7 +212,7 @@ export interface TranslationMessages {
   cleanDatabaseTitle: string;
   cleanDatabaseMessage: string;
   clean: string;
-  
+
   // Toast Messages
   feedAddedSuccess: string;
   feedUpdatedSuccess: string;
@@ -228,16 +228,16 @@ export interface TranslationMessages {
   errorUpdatingFeed: string;
   errorCleaningDatabase: string;
   importFailed: string;
-  
+
   // Loading Messages
   loadingContent: string;
   fetchingArticleContent: string;
-  
+
   // Prompts
   enterCategoryName: string;
   moveFeeds: string;
   move: string;
-  
+
   // Article Filter
   filter: string;
   filterArticles: string;
@@ -268,7 +268,7 @@ export interface TranslationMessages {
   removeCondition: string;
   filtersActive: string;
   andNMore: string;
-  
+
   // Keyboard Shortcuts
   shortcuts: string;
   shortcutsDesc: string;
@@ -297,7 +297,7 @@ export interface TranslationMessages {
   shortcutCleared: string;
   shortcutUpdated: string;
   escToClear: string;
-  
+
   // Rules
   rules: string;
   rulesDesc: string;

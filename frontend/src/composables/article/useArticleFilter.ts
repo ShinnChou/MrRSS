@@ -1,5 +1,6 @@
 import { ref, type Ref } from 'vue';
-import type { Article, FilterCondition } from '@/types/models';
+import type { Article } from '@/types/models';
+import type { FilterCondition } from '@/types/filter';
 
 export function useArticleFilter() {
   const activeFilters: Ref<FilterCondition[]> = ref([]);
@@ -23,31 +24,31 @@ export function useArticleFilter() {
       resetFilterState();
       return;
     }
-    
+
     isFilterLoading.value = true;
     try {
       const page = append ? filterPage.value : 1;
       const res = await fetch('/api/articles/filter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           conditions: filters,
           page: page,
-          limit: 50
-        })
+          limit: 50,
+        }),
       });
-      
+
       if (res.ok) {
         const data = await res.json();
         const articles = data.articles || [];
-        
+
         if (append) {
           filteredArticlesFromServer.value = [...filteredArticlesFromServer.value, ...articles];
         } else {
           filteredArticlesFromServer.value = articles;
           filterPage.value = 1;
         }
-        
+
         filterHasMore.value = data.has_more;
         filterTotal.value = data.total;
       } else {
@@ -69,7 +70,7 @@ export function useArticleFilter() {
   // Load more filtered articles
   async function loadMoreFilteredArticles(): Promise<void> {
     if (isFilterLoading.value || !filterHasMore.value) return;
-    
+
     filterPage.value++;
     await fetchFilteredArticles(activeFilters.value, true);
   }
@@ -90,6 +91,6 @@ export function useArticleFilter() {
     resetFilterState,
     fetchFilteredArticles,
     loadMoreFilteredArticles,
-    clearAllFilters
+    clearAllFilters,
   };
 }

@@ -3,7 +3,7 @@ import type { TranslationMessages } from '../types';
 const zh: TranslationMessages = {
   // App
   appName: 'MrRSS',
-  
+
   // Sidebar
   allArticles: '所有文章',
   unread: '未读',
@@ -11,14 +11,14 @@ const zh: TranslationMessages = {
   uncategorized: '未分类',
   addFeed: '添加订阅',
   settings: '设置',
-  
+
   // Article List
   articles: '文章',
   refresh: '刷新',
   markAllRead: '全部已读',
   search: '搜索...',
   noArticles: '未找到文章。',
-  
+
   // Article Detail
   back: '返回',
   markAsUnread: '标记为未读',
@@ -34,7 +34,7 @@ const zh: TranslationMessages = {
   zoomIn: '放大',
   zoomOut: '缩小',
   imageViewerHelp: '使用鼠标滚轮或 +/- 键缩放 • 拖动移动 • ESC 关闭',
-  
+
   // Context Menu
   unsubscribe: '取消订阅',
   editSubscription: '编辑订阅',
@@ -48,7 +48,7 @@ const zh: TranslationMessages = {
   showOriginal: '显示原网页',
   openWebsite: '打开网站',
   discoverFeeds: '发现订阅源',
-  
+
   // Feed Discovery
   fromFeed: '来自订阅源',
   discovering: '正在发现订阅源...',
@@ -88,13 +88,13 @@ const zh: TranslationMessages = {
   fetchingFriendPage: '正在获取友链页面',
   checkingSite: '正在检查站点',
   foundSoFar: '已找到 {count} 个订阅源',
-  
+
   // Settings Modal
   settingsTitle: '设置',
   general: '常规',
   feeds: '订阅源',
   about: '关于',
-  
+
   // General Settings
   appearance: '外观',
   theme: '主题',
@@ -143,7 +143,7 @@ const zh: TranslationMessages = {
   targetLanguageDesc: '将文章标题翻译为此语言',
   language: '语言',
   languageDesc: '选择界面语言',
-  
+
   // Languages
   english: '英语',
   spanish: '西班牙语',
@@ -151,20 +151,21 @@ const zh: TranslationMessages = {
   german: '德语',
   chinese: '中文',
   japanese: '日语',
-  
+
   // Feeds Settings
   dataManagement: '数据管理',
   importOPML: '导入 OPML',
   exportOPML: '导出 OPML',
   cleanDatabase: '清理数据库',
-  cleanDatabaseDesc: '删除除已读和已收藏外的所有文章。如果在常规设置中启用了"自动清理"，旧文章也会被自动清理。',
+  cleanDatabaseDesc:
+    '删除除已读和已收藏外的所有文章。如果在常规设置中启用了"自动清理"，旧文章也会被自动清理。',
   manageFeeds: '管理订阅源',
   deleteSelected: '删除选中',
   moveSelected: '移动选中',
   selectAll: '全选',
   edit: '编辑',
   delete: '删除',
-  
+
   // About
   aboutApp: '一个简洁、现代的 RSS 阅读器。',
   version: '版本',
@@ -184,7 +185,7 @@ const zh: TranslationMessages = {
   installFailed: '安装失败',
   releaseNotes: '发行说明',
   errorCheckingUpdates: '检查更新时出错',
-  
+
   // Modals
   addNewFeed: '添加新订阅',
   editFeed: '编辑订阅',
@@ -201,7 +202,7 @@ const zh: TranslationMessages = {
   adding: '添加中...',
   saving: '保存中...',
   saveSettings: '保存设置',
-  
+
   // Confirm Dialogs
   confirm: '确认',
   cancel: '取消',
@@ -214,7 +215,7 @@ const zh: TranslationMessages = {
   cleanDatabaseTitle: '清理数据库',
   cleanDatabaseMessage: '这将删除除已读和已收藏外的所有文章。是否继续？',
   clean: '清理',
-  
+
   // Toast Messages
   feedAddedSuccess: '订阅添加成功',
   feedUpdatedSuccess: '订阅更新成功',
@@ -230,16 +231,16 @@ const zh: TranslationMessages = {
   errorUpdatingFeed: '更新订阅时出错',
   errorCleaningDatabase: '清理数据库时出错',
   importFailed: '导入失败：{error}',
-  
+
   // Loading Messages
   loadingContent: '加载内容中',
   fetchingArticleContent: '正在从 RSS 源获取文章内容...',
-  
+
   // Prompts
   enterCategoryName: '输入新的分类名称：',
   moveFeeds: '移动订阅',
   move: '移动',
-  
+
   // Article Filter
   filter: '过滤',
   filterArticles: '过滤文章',
@@ -270,7 +271,7 @@ const zh: TranslationMessages = {
   removeCondition: '删除',
   filtersActive: '已启用 {count} 个过滤条件',
   andNMore: '等 {count} 个',
-  
+
   // Keyboard Shortcuts
   shortcuts: '快捷键',
   shortcutsDesc: '自定义常用操作的键盘快捷键',
@@ -299,7 +300,7 @@ const zh: TranslationMessages = {
   shortcutCleared: '快捷键已清除',
   shortcutUpdated: '快捷键已更新',
   escToClear: '按 Escape 清除',
-  
+
   // Rules
   rules: '规则',
   rulesDesc: '创建自动化规则，自动对文章执行操作',

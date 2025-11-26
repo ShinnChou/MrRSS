@@ -1,70 +1,85 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { ref, onMounted, onUnmounted, computed, watch, type Ref, type Component } from 'vue';
-import { 
-    PhKeyboard, PhArrowDown, PhArrowUp, PhArrowRight, PhX, PhBookOpen,
-    PhStar, PhArrowSquareOut, PhArticle, PhArrowClockwise, PhCheckCircle, 
-    PhGear, PhPlus, PhMagnifyingGlass, PhListDashes, PhCircle, PhHeart,
-    PhArrowCounterClockwise, PhInfo
-} from "@phosphor-icons/vue";
+import {
+  PhKeyboard,
+  PhArrowDown,
+  PhArrowUp,
+  PhArrowRight,
+  PhX,
+  PhBookOpen,
+  PhStar,
+  PhArrowSquareOut,
+  PhArticle,
+  PhArrowClockwise,
+  PhCheckCircle,
+  PhGear,
+  PhPlus,
+  PhMagnifyingGlass,
+  PhListDashes,
+  PhCircle,
+  PhHeart,
+  PhArrowCounterClockwise,
+  PhInfo,
+} from '@phosphor-icons/vue';
 import ShortcutItem from './ShortcutItem.vue';
 
 const { t } = useI18n();
 
 interface SettingsData {
-    shortcuts: string;
-    [key: string]: any;
+  shortcuts: string;
+  [key: string]: unknown;
 }
 
 interface Props {
-    settings: SettingsData;
+  settings: SettingsData;
 }
 
 const props = defineProps<Props>();
 
 interface Shortcuts {
-    nextArticle: string;
-    previousArticle: string;
-    openArticle: string;
-    closeArticle: string;
-    toggleReadStatus: string;
-    toggleFavoriteStatus: string;
-    openInBrowser: string;
-    toggleContentView: string;
-    refreshFeeds: string;
-    markAllRead: string;
-    openSettings: string;
-    addFeed: string;
-    focusSearch: string;
-    goToAllArticles: string;
-    goToUnread: string;
-    goToFavorites: string;
+  nextArticle: string;
+  previousArticle: string;
+  openArticle: string;
+  closeArticle: string;
+  toggleReadStatus: string;
+  toggleFavoriteStatus: string;
+  openInBrowser: string;
+  toggleContentView: string;
+  refreshFeeds: string;
+  markAllRead: string;
+  openSettings: string;
+  addFeed: string;
+  focusSearch: string;
+  goToAllArticles: string;
+  goToUnread: string;
+  goToFavorites: string;
 }
 
-interface ShortcutItem {
-    key: keyof Shortcuts;
-    label: string;
-    icon: Component;
+interface ShortcutItemData {
+  key: keyof Shortcuts;
+  label: string;
+  icon: Component;
 }
 
 // Default shortcuts configuration
 const defaultShortcuts: Shortcuts = {
-    nextArticle: 'j',
-    previousArticle: 'k',
-    openArticle: 'Enter',
-    closeArticle: 'Escape',
-    toggleReadStatus: 'r',
-    toggleFavoriteStatus: 's',
-    openInBrowser: 'o',
-    toggleContentView: 'v',
-    refreshFeeds: 'Shift+r',
-    markAllRead: 'Shift+a',
-    openSettings: ',',
-    addFeed: 'a',
-    focusSearch: '/',
-    goToAllArticles: '1',
-    goToUnread: '2',
-    goToFavorites: '3'
+  nextArticle: 'j',
+  previousArticle: 'k',
+  openArticle: 'Enter',
+  closeArticle: 'Escape',
+  toggleReadStatus: 'r',
+  toggleFavoriteStatus: 's',
+  openInBrowser: 'o',
+  toggleContentView: 'v',
+  refreshFeeds: 'Shift+r',
+  markAllRead: 'Shift+a',
+  openSettings: ',',
+  addFeed: 'a',
+  focusSearch: '/',
+  goToAllArticles: '1',
+  goToUnread: '2',
+  goToFavorites: '3',
 };
 
 // Current shortcuts (loaded from settings or use defaults)
@@ -75,215 +90,227 @@ const editingShortcut: Ref<keyof Shortcuts | null> = ref(null);
 const recordedKey = ref('');
 
 // Shortcut groups for display
-const shortcutGroups = computed<Array<{label: string; items: ShortcutItem[]}>>(() => [
-    {
-        label: t('shortcutNavigation'),
-        items: [
-            { key: 'nextArticle', label: t('nextArticle'), icon: PhArrowDown },
-            { key: 'previousArticle', label: t('previousArticle'), icon: PhArrowUp },
-            { key: 'openArticle', label: t('openArticle'), icon: PhArrowRight },
-            { key: 'closeArticle', label: t('closeArticle'), icon: PhX },
-            { key: 'goToAllArticles', label: t('goToAllArticles'), icon: PhListDashes },
-            { key: 'goToUnread', label: t('goToUnread'), icon: PhCircle },
-            { key: 'goToFavorites', label: t('goToFavorites'), icon: PhHeart }
-        ]
-    },
-    {
-        label: t('shortcutArticles'),
-        items: [
-            { key: 'toggleReadStatus', label: t('toggleReadStatus'), icon: PhBookOpen },
-            { key: 'toggleFavoriteStatus', label: t('toggleFavoriteStatus'), icon: PhStar },
-            { key: 'openInBrowser', label: t('openInBrowserShortcut'), icon: PhArrowSquareOut },
-            { key: 'toggleContentView', label: t('toggleContentView'), icon: PhArticle }
-        ]
-    },
-    {
-        label: t('shortcutOther'),
-        items: [
-            { key: 'refreshFeeds', label: t('refreshFeedsShortcut'), icon: PhArrowClockwise },
-            { key: 'markAllRead', label: t('markAllReadShortcut'), icon: PhCheckCircle },
-            { key: 'openSettings', label: t('openSettingsShortcut'), icon: PhGear },
-            { key: 'addFeed', label: t('addFeedShortcut'), icon: PhPlus },
-            { key: 'focusSearch', label: t('focusSearch'), icon: PhMagnifyingGlass }
-        ]
-    }
+const shortcutGroups = computed<Array<{ label: string; items: ShortcutItemData[] }>>(() => [
+  {
+    label: t('shortcutNavigation'),
+    items: [
+      { key: 'nextArticle', label: t('nextArticle'), icon: PhArrowDown },
+      { key: 'previousArticle', label: t('previousArticle'), icon: PhArrowUp },
+      { key: 'openArticle', label: t('openArticle'), icon: PhArrowRight },
+      { key: 'closeArticle', label: t('closeArticle'), icon: PhX },
+      { key: 'goToAllArticles', label: t('goToAllArticles'), icon: PhListDashes },
+      { key: 'goToUnread', label: t('goToUnread'), icon: PhCircle },
+      { key: 'goToFavorites', label: t('goToFavorites'), icon: PhHeart },
+    ],
+  },
+  {
+    label: t('shortcutArticles'),
+    items: [
+      { key: 'toggleReadStatus', label: t('toggleReadStatus'), icon: PhBookOpen },
+      { key: 'toggleFavoriteStatus', label: t('toggleFavoriteStatus'), icon: PhStar },
+      { key: 'openInBrowser', label: t('openInBrowserShortcut'), icon: PhArrowSquareOut },
+      { key: 'toggleContentView', label: t('toggleContentView'), icon: PhArticle },
+    ],
+  },
+  {
+    label: t('shortcutOther'),
+    items: [
+      { key: 'refreshFeeds', label: t('refreshFeedsShortcut'), icon: PhArrowClockwise },
+      { key: 'markAllRead', label: t('markAllReadShortcut'), icon: PhCheckCircle },
+      { key: 'openSettings', label: t('openSettingsShortcut'), icon: PhGear },
+      { key: 'addFeed', label: t('addFeedShortcut'), icon: PhPlus },
+      { key: 'focusSearch', label: t('focusSearch'), icon: PhMagnifyingGlass },
+    ],
+  },
 ]);
 
 // Load shortcuts from settings
 onMounted(() => {
-    if (props.settings.shortcuts) {
-        try {
-            const parsed = typeof props.settings.shortcuts === 'string' 
-                ? JSON.parse(props.settings.shortcuts) 
-                : props.settings.shortcuts;
-            shortcuts.value = { ...defaultShortcuts, ...parsed };
-        } catch (e) {
-            console.error('Error parsing shortcuts:', e);
-            shortcuts.value = { ...defaultShortcuts };
-        }
+  if (props.settings.shortcuts) {
+    try {
+      const parsed =
+        typeof props.settings.shortcuts === 'string'
+          ? JSON.parse(props.settings.shortcuts)
+          : props.settings.shortcuts;
+      shortcuts.value = { ...defaultShortcuts, ...parsed };
+    } catch (e) {
+      console.error('Error parsing shortcuts:', e);
+      shortcuts.value = { ...defaultShortcuts };
     }
-    
-    // Add global keyboard listener for recording
-    window.addEventListener('keydown', handleKeyRecord, true);
+  }
+
+  // Add global keyboard listener for recording
+  window.addEventListener('keydown', handleKeyRecord, true);
 });
 
 onUnmounted(() => {
-    window.removeEventListener('keydown', handleKeyRecord, true);
+  window.removeEventListener('keydown', handleKeyRecord, true);
 });
 
 // Start editing a shortcut
 function startEditing(shortcutKey: keyof Shortcuts) {
-    editingShortcut.value = shortcutKey;
-    recordedKey.value = '';
+  editingShortcut.value = shortcutKey;
+  recordedKey.value = '';
 }
 
 // Stop editing
 function stopEditing() {
-    editingShortcut.value = null;
-    recordedKey.value = '';
+  editingShortcut.value = null;
+  recordedKey.value = '';
 }
 
 // Handle key recording
 function handleKeyRecord(e: KeyboardEvent) {
-    if (!editingShortcut.value) return;
-    
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Handle Escape to clear the shortcut
-    if (e.key === 'Escape' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        // Clear the shortcut
-        shortcuts.value[editingShortcut.value] = '';
-        saveShortcuts();
-        window.showToast(t('shortcutCleared'), 'info');
-        stopEditing();
-        return;
-    }
-    
-    // Build key combination
-    let key = '';
-    if (e.ctrlKey) key += 'Ctrl+';
-    if (e.altKey) key += 'Alt+';
-    if (e.shiftKey) key += 'Shift+';
-    if (e.metaKey) key += 'Meta+';
-    
-    // Get the actual key
-    let actualKey = e.key;
-    
-    // Skip modifier keys alone
-    if (['Control', 'Alt', 'Shift', 'Meta'].includes(actualKey)) {
-        return;
-    }
-    
-    // Normalize key names
-    if (actualKey === ' ') actualKey = 'Space';
-    else if (actualKey.length === 1) actualKey = actualKey.toLowerCase();
-    
-    key += actualKey;
-    
-    // Check for conflicts
-    const conflictKey = Object.entries(shortcuts.value).find(
-        ([k, v]) => v === key && k !== editingShortcut.value
-    );
-    
-    if (conflictKey) {
-        window.showToast(t('shortcutConflict'), 'warning');
-        stopEditing();
-        return;
-    }
-    
-    // Update the shortcut
-    shortcuts.value[editingShortcut.value] = key;
+  if (!editingShortcut.value) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  // Handle Escape to clear the shortcut
+  if (e.key === 'Escape' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
+    // Clear the shortcut
+    shortcuts.value[editingShortcut.value] = '';
     saveShortcuts();
-    window.showToast(t('shortcutUpdated'), 'success');
+    window.showToast(t('shortcutCleared'), 'info');
     stopEditing();
+    return;
+  }
+
+  // Build key combination
+  let key = '';
+  if (e.ctrlKey) key += 'Ctrl+';
+  if (e.altKey) key += 'Alt+';
+  if (e.shiftKey) key += 'Shift+';
+  if (e.metaKey) key += 'Meta+';
+
+  // Get the actual key
+  let actualKey = e.key;
+
+  // Skip modifier keys alone
+  if (['Control', 'Alt', 'Shift', 'Meta'].includes(actualKey)) {
+    return;
+  }
+
+  // Normalize key names
+  if (actualKey === ' ') actualKey = 'Space';
+  else if (actualKey.length === 1) actualKey = actualKey.toLowerCase();
+
+  key += actualKey;
+
+  // Check for conflicts
+  const conflictKey = Object.entries(shortcuts.value).find(
+    ([k, v]) => v === key && k !== editingShortcut.value
+  );
+
+  if (conflictKey) {
+    window.showToast(t('shortcutConflict'), 'warning');
+    stopEditing();
+    return;
+  }
+
+  // Update the shortcut
+  shortcuts.value[editingShortcut.value] = key;
+  saveShortcuts();
+  window.showToast(t('shortcutUpdated'), 'success');
+  stopEditing();
 }
 
 // Save shortcuts to settings
 async function saveShortcuts() {
-    try {
-        // Update props.settings.shortcuts
-        props.settings.shortcuts = JSON.stringify(shortcuts.value);
-        
-        // The parent component will handle auto-save via the watcher
-        // But we also dispatch an event to notify the app
-        window.dispatchEvent(new CustomEvent('shortcuts-changed', {
-            detail: { shortcuts: shortcuts.value }
-        }));
-    } catch (e) {
-        console.error('Error saving shortcuts:', e);
-    }
+  try {
+    // Update props.settings.shortcuts
+    props.settings.shortcuts = JSON.stringify(shortcuts.value);
+
+    // The parent component will handle auto-save via the watcher
+    // But we also dispatch an event to notify the app
+    window.dispatchEvent(
+      new CustomEvent('shortcuts-changed', {
+        detail: { shortcuts: shortcuts.value },
+      })
+    );
+  } catch (e) {
+    console.error('Error saving shortcuts:', e);
+  }
 }
 
 // Reset all shortcuts to defaults
 function resetToDefaults() {
-    shortcuts.value = { ...defaultShortcuts };
-    saveShortcuts();
-    window.showToast(t('shortcutUpdated'), 'success');
+  shortcuts.value = { ...defaultShortcuts };
+  saveShortcuts();
+  window.showToast(t('shortcutUpdated'), 'success');
 }
 
 // Watch for settings changes from parent
-watch(() => props.settings.shortcuts, (newVal) => {
+watch(
+  () => props.settings.shortcuts,
+  (newVal) => {
     if (newVal) {
-        try {
-            const parsed = typeof newVal === 'string' ? JSON.parse(newVal) : newVal;
-            shortcuts.value = { ...defaultShortcuts, ...parsed };
-        } catch (e) {
-            console.error('Error parsing shortcuts:', e);
-        }
+      try {
+        const parsed = typeof newVal === 'string' ? JSON.parse(newVal) : newVal;
+        shortcuts.value = { ...defaultShortcuts, ...parsed };
+      } catch (e) {
+        console.error('Error parsing shortcuts:', e);
+      }
     }
-}, { immediate: true });
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
-    <div class="space-y-4 sm:space-y-6">
-        <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2 sm:gap-3">
-                <PhKeyboard :size="20" class="text-text-secondary sm:w-6 sm:h-6" />
-                <div>
-                    <h3 class="font-semibold text-sm sm:text-base">{{ t('shortcuts') }}</h3>
-                    <p class="text-xs text-text-secondary hidden sm:block">{{ t('shortcutsDesc') }}</p>
-                </div>
-            </div>
-            <button @click="resetToDefaults" class="btn-secondary text-xs sm:text-sm py-1.5 px-2.5 sm:px-3">
-                <PhArrowCounterClockwise :size="16" class="sm:w-5 sm:h-5" />
-                {{ t('resetToDefault') }}
-            </button>
+  <div class="space-y-4 sm:space-y-6">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <PhKeyboard :size="20" class="text-text-secondary sm:w-6 sm:h-6" />
+        <div>
+          <h3 class="font-semibold text-sm sm:text-base">{{ t('shortcuts') }}</h3>
+          <p class="text-xs text-text-secondary hidden sm:block">{{ t('shortcutsDesc') }}</p>
         </div>
-        
-        <!-- Tip moved to top with improved styling -->
-        <div class="tip-box">
-            <PhInfo :size="16" class="text-accent shrink-0 sm:w-5 sm:h-5" />
-            <span class="text-xs sm:text-sm">{{ t('escToClear') }}</span>
-        </div>
-
-        <div v-for="group in shortcutGroups" :key="group.label" class="setting-group">
-            <label class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2">
-                {{ group.label }}
-            </label>
-            
-            <div class="space-y-2">
-                <ShortcutItem
-                    v-for="item in group.items" 
-                    :key="item.key"
-                    :item="item"
-                    :shortcut-value="shortcuts[item.key as keyof Shortcuts]"
-                    :is-editing="editingShortcut === item.key"
-                    @edit="startEditing(item.key as keyof Shortcuts)"
-                />
-            </div>
-        </div>
+      </div>
+      <button
+        @click="resetToDefaults"
+        class="btn-secondary text-xs sm:text-sm py-1.5 px-2.5 sm:px-3"
+      >
+        <PhArrowCounterClockwise :size="16" class="sm:w-5 sm:h-5" />
+        {{ t('resetToDefault') }}
+      </button>
     </div>
+
+    <!-- Tip moved to top with improved styling -->
+    <div class="tip-box">
+      <PhInfo :size="16" class="text-accent shrink-0 sm:w-5 sm:h-5" />
+      <span class="text-xs sm:text-sm">{{ t('escToClear') }}</span>
+    </div>
+
+    <div v-for="group in shortcutGroups" :key="group.label" class="setting-group">
+      <label
+        class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
+      >
+        {{ group.label }}
+      </label>
+
+      <div class="space-y-2">
+        <ShortcutItem
+          v-for="item in group.items"
+          :key="item.key"
+          :item="item"
+          :shortcut-value="shortcuts[item.key as keyof Shortcuts]"
+          :is-editing="editingShortcut === item.key"
+          @edit="startEditing(item.key as keyof Shortcuts)"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
 .btn-secondary {
-    @apply bg-transparent border border-border text-text-primary rounded-md cursor-pointer flex items-center gap-1.5 sm:gap-2 font-medium hover:bg-bg-tertiary transition-colors;
+  @apply bg-transparent border border-border text-text-primary rounded-md cursor-pointer flex items-center gap-1.5 sm:gap-2 font-medium hover:bg-bg-tertiary transition-colors;
 }
 
 .tip-box {
-    @apply flex items-center gap-2 sm:gap-3 py-2 sm:py-2.5 px-2.5 sm:px-3 rounded-lg;
-    background-color: rgba(59, 130, 246, 0.05);
-    border: 1px solid rgba(59, 130, 246, 0.3);
+  @apply flex items-center gap-2 sm:gap-3 py-2 sm:py-2.5 px-2.5 sm:px-3 rounded-lg;
+  background-color: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 </style>

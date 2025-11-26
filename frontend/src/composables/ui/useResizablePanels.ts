@@ -7,7 +7,7 @@ export function useResizablePanels() {
   const isResizingArticleList = ref<boolean>(false);
 
   // Sidebar resize handlers
-  function startResizeSidebar(e: MouseEvent): void {
+  function startResizeSidebar(_: MouseEvent): void {
     isResizingSidebar.value = true;
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
@@ -15,9 +15,9 @@ export function useResizablePanels() {
     window.addEventListener('mouseup', stopResizeSidebar);
   }
 
-  function handleResizeSidebar(e: MouseEvent): void {
+  function handleResizeSidebar(): void {
     if (!isResizingSidebar.value) return;
-    const newWidth = e.clientX;
+    const newWidth = (window.event as MouseEvent).clientX;
     if (newWidth >= 180 && newWidth <= 450) {
       sidebarWidth.value = newWidth;
     }
@@ -32,7 +32,7 @@ export function useResizablePanels() {
   }
 
   // Article list resize handlers
-  function startResizeArticleList(e: MouseEvent): void {
+  function startResizeArticleList(_: MouseEvent): void {
     isResizingArticleList.value = true;
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
@@ -40,9 +40,9 @@ export function useResizablePanels() {
     window.addEventListener('mouseup', stopResizeArticleList);
   }
 
-  function handleResizeArticleList(e: MouseEvent): void {
+  function handleResizeArticleList(): void {
     if (!isResizingArticleList.value) return;
-    const newWidth = e.clientX - sidebarWidth.value;
+    const newWidth = (window.event as MouseEvent).clientX - sidebarWidth.value;
     if (newWidth >= 250 && newWidth <= 600) {
       articleListWidth.value = newWidth;
     }
@@ -68,6 +68,6 @@ export function useResizablePanels() {
     sidebarWidth,
     articleListWidth,
     startResizeSidebar,
-    startResizeArticleList
+    startResizeArticleList,
   };
 }

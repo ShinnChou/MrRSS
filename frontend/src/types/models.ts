@@ -4,12 +4,12 @@ export interface Article {
   id: number;
   feed_id: number;
   feed_title?: string;
-  feed_name?: string;  // Alias for feed_title (used in filters/rules)
+  feed_name?: string; // Alias for feed_title (used in filters/rules)
   title: string;
   original_title?: string;
   translated_title?: string;
   url: string;
-  image_url?: string;  // Article thumbnail image
+  image_url?: string; // Article thumbnail image
   content: string;
   published_at: string;
   is_read: boolean;
@@ -91,7 +91,7 @@ export interface FilterCondition {
   logic?: 'and' | 'or' | 'not';
 }
 
-export type RuleAction = 
+export type RuleAction =
   | { type: 'favorite' }
   | { type: 'unfavorite' }
   | { type: 'hide' }

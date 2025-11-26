@@ -1,7 +1,6 @@
-import { ref, computed, onMounted, onBeforeUnmount, type Ref, type ComputedRef } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useAppStore } from '@/stores/app';
 import { BrowserOpenURL } from '@/wailsjs/wailsjs/runtime/runtime';
-import type { Article } from '@/types/models';
 
 export interface KeyboardShortcuts {
   nextArticle: string;
@@ -30,7 +29,7 @@ export interface KeyboardShortcutCallbacks {
 
 export function useKeyboardShortcuts(callbacks: KeyboardShortcutCallbacks) {
   const store = useAppStore();
-  
+
   const shortcuts = ref<KeyboardShortcuts>({
     nextArticle: 'j',
     previousArticle: 'k',
@@ -47,7 +46,7 @@ export function useKeyboardShortcuts(callbacks: KeyboardShortcutCallbacks) {
     focusSearch: '/',
     goToAllArticles: '1',
     goToUnread: '2',
-    goToFavorites: '3'
+    goToFavorites: '3',
   });
 
   // Helper functions
@@ -57,11 +56,11 @@ export function useKeyboardShortcuts(callbacks: KeyboardShortcutCallbacks) {
     if (e.altKey) key += 'Alt+';
     if (e.shiftKey) key += 'Shift+';
     if (e.metaKey) key += 'Meta+';
-    
+
     let actualKey = e.key;
     if (actualKey === ' ') actualKey = 'Space';
     else if (actualKey.length === 1) actualKey = actualKey.toLowerCase();
-    
+
     key += actualKey;
     return key;
   }
@@ -69,11 +68,11 @@ export function useKeyboardShortcuts(callbacks: KeyboardShortcutCallbacks) {
   function navigateArticle(direction: number): void {
     const articles = store.articles;
     if (!articles || articles.length === 0) return;
-    
-    const currentIndex = store.currentArticleId 
-      ? articles.findIndex(a => a.id === store.currentArticleId)
+
+    const currentIndex = store.currentArticleId
+      ? articles.findIndex((a) => a.id === store.currentArticleId)
       : -1;
-    
+
     let newIndex: number;
     if (currentIndex === -1) {
       newIndex = direction > 0 ? 0 : articles.length - 1;
@@ -82,24 +81,24 @@ export function useKeyboardShortcuts(callbacks: KeyboardShortcutCallbacks) {
       if (newIndex < 0) newIndex = 0;
       if (newIndex >= articles.length) newIndex = articles.length - 1;
     }
-    
+
     selectArticleByIndex(newIndex);
   }
 
   function selectArticleByIndex(index: number): void {
     const article = store.articles[index];
     if (!article) return;
-    
+
     store.currentArticleId = article.id;
-    
+
     // Mark as read
     if (!article.is_read) {
       article.is_read = true;
       fetch(`/api/articles/read?id=${article.id}&read=true`, { method: 'POST' })
         .then(() => store.fetchUnreadCounts())
-        .catch(e => console.error('Error marking as read:', e));
+        .catch((e) => console.error('Error marking as read:', e));
     }
-    
+
     // Scroll the article into view
     setTimeout(() => {
       const articleEl = document.querySelector(`[data-article-id="${article.id}"]`);
@@ -110,34 +109,33 @@ export function useKeyboardShortcuts(callbacks: KeyboardShortcutCallbacks) {
   }
 
   function toggleCurrentArticleRead(): void {
-    const article = store.articles.find(a => a.id === store.currentArticleId);
+    const article = store.articles.find((a) => a.id === store.currentArticleId);
     if (!article) return;
-    
+
     const newState = !article.is_read;
     article.is_read = newState;
     fetch(`/api/articles/read?id=${article.id}&read=${newState}`, { method: 'POST' })
       .then(() => store.fetchUnreadCounts())
-      .catch(e => {
+      .catch((e) => {
         console.error('Error toggling read:', e);
         article.is_read = !newState;
       });
   }
 
   function toggleCurrentArticleFavorite(): void {
-    const article = store.articles.find(a => a.id === store.currentArticleId);
+    const article = store.articles.find((a) => a.id === store.currentArticleId);
     if (!article) return;
-    
+
     const newState = !article.is_favorite;
     article.is_favorite = newState;
-    fetch(`/api/articles/favorite?id=${article.id}`, { method: 'POST' })
-      .catch(e => {
-        console.error('Error toggling favorite:', e);
-        article.is_favorite = !newState;
-      });
+    fetch(`/api/articles/favorite?id=${article.id}`, { method: 'POST' }).catch((e) => {
+      console.error('Error toggling favorite:', e);
+      article.is_favorite = !newState;
+    });
   }
 
   function openCurrentArticleInBrowser(): void {
-    const article = store.articles.find(a => a.id === store.currentArticleId);
+    const article = store.articles.find((a) => a.id === store.currentArticleId);
     if (article && article.url) {
       BrowserOpenURL(article.url);
     }
@@ -157,9 +155,9 @@ export function useKeyboardShortcuts(callbacks: KeyboardShortcutCallbacks) {
     const tagName = target.tagName.toLowerCase();
     const isEditable = target.isContentEditable;
     const isInput = tagName === 'input' || tagName === 'textarea' || tagName === 'select';
-    
+
     const key = buildKeyCombo(e);
-    
+
     // Check for escape key to close modals first (always allow)
     if (key === shortcuts.value.closeArticle) {
       // Emit event for modal closes
@@ -170,19 +168,19 @@ export function useKeyboardShortcuts(callbacks: KeyboardShortcutCallbacks) {
       }
       return;
     }
-    
+
     // Skip shortcuts if in input field (except escape)
     if (isInput || isEditable) {
       return;
     }
-    
+
     // Match the key combination to a shortcut action
     const action = Object.entries(shortcuts.value).find(([, shortcut]) => shortcut === key)?.[0];
-    
+
     if (!action) return;
-    
+
     e.preventDefault();
-    
+
     // Execute the action
     switch (action) {
       case 'nextArticle':
@@ -255,6 +253,6 @@ export function useKeyboardShortcuts(callbacks: KeyboardShortcutCallbacks) {
   });
 
   return {
-    shortcuts
+    shortcuts,
   };
 }

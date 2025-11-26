@@ -20,13 +20,13 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    
+
     /* Path mapping */
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
-    
+
     /* Suppress deprecation warnings */
     "ignoreDeprecations": "6.0"
   },
