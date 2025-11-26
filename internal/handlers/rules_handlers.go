@@ -60,20 +60,21 @@ func (h *Handler) HandleApplyRule(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get all articles from database
-	articles, err := h.DB.GetArticles("", 0, "", true, 50000, 0)
+	// Note: Using a high limit to fetch all articles for rule application
+	articles, err := h.DB.GetArticles("", 0, "", true, 100000, 0)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Get feeds for category lookup
+	// Get feeds for category and title lookup
 	feeds, err := h.DB.GetFeeds()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Create a map of feed ID to category and title
+	// Create maps of feed ID to category and title
 	feedCategories := make(map[int64]string)
 	feedTitles := make(map[int64]string)
 	for _, feed := range feeds {
@@ -85,7 +86,7 @@ func (h *Handler) HandleApplyRule(w http.ResponseWriter, r *http.Request) {
 	affected := 0
 	for _, article := range articles {
 		// Check if article matches conditions
-		if matchesRuleConditions(article, rule.Conditions, feedCategories) {
+		if matchesRuleConditions(article, rule.Conditions, feedCategories, feedTitles) {
 			// Apply actions
 			for _, action := range rule.Actions {
 				if err := h.applyAction(article.ID, action); err != nil {
@@ -105,17 +106,17 @@ func (h *Handler) HandleApplyRule(w http.ResponseWriter, r *http.Request) {
 }
 
 // matchesRuleConditions checks if an article matches the rule conditions
-func matchesRuleConditions(article models.Article, conditions []RuleCondition, feedCategories map[int64]string) bool {
+func matchesRuleConditions(article models.Article, conditions []RuleCondition, feedCategories map[int64]string, feedTitles map[int64]string) bool {
 	// If no conditions, apply to all articles
 	if len(conditions) == 0 {
 		return true
 	}
 
-	result := evaluateRuleCondition(article, conditions[0], feedCategories)
+	result := evaluateRuleCondition(article, conditions[0], feedCategories, feedTitles)
 
 	for i := 1; i < len(conditions); i++ {
 		condition := conditions[i]
-		conditionResult := evaluateRuleCondition(article, condition, feedCategories)
+		conditionResult := evaluateRuleCondition(article, condition, feedCategories, feedTitles)
 
 		switch condition.Logic {
 		case "and":
@@ -129,12 +130,17 @@ func matchesRuleConditions(article models.Article, conditions []RuleCondition, f
 }
 
 // evaluateRuleCondition evaluates a single rule condition
-func evaluateRuleCondition(article models.Article, condition RuleCondition, feedCategories map[int64]string) bool {
+func evaluateRuleCondition(article models.Article, condition RuleCondition, feedCategories map[int64]string, feedTitles map[int64]string) bool {
 	var result bool
 
 	switch condition.Field {
 	case "feed_name":
-		result = matchRuleMultiSelect(article.FeedTitle, condition.Values, condition.Value)
+		// Use feedTitles map for reliable matching
+		feedTitle := feedTitles[article.FeedID]
+		if feedTitle == "" {
+			feedTitle = article.FeedTitle // Fallback to article's FeedTitle
+		}
+		result = matchRuleMultiSelect(feedTitle, condition.Values, condition.Value)
 
 	case "feed_category":
 		feedCategory := feedCategories[article.FeedID]

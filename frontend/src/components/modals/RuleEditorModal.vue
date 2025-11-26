@@ -176,8 +176,18 @@ function getMultiSelectDisplayText(condition, labelKey) {
         return condition.values[0];
     }
     
+    // Show first item and total count
+    // For Chinese: "xxx等N个" means "xxx and N items in total"
+    // For English: "xxx and N more" means N additional items
     const firstItem = condition.values[0];
-    const remaining = condition.values.length - 1;
+    const totalCount = condition.values.length;
+    const remaining = totalCount - 1;
+    
+    // Use different count based on locale
+    const locale = store.i18n.locale.value;
+    if (locale === 'zh') {
+        return `${firstItem} ${store.i18n.t('andNMore', { count: totalCount })}`;
+    }
     return `${firstItem} ${store.i18n.t('andNMore', { count: remaining })}`;
 }
 
