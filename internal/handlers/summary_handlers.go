@@ -51,10 +51,9 @@ func (h *Handler) HandleSummarizeArticle(w http.ResponseWriter, r *http.Request)
 
 	if content == "" {
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"summary":     "",
-			"key_points":  []string{},
+			"summary":      "",
 			"is_too_short": true,
-			"error":       "No content available for this article",
+			"error":        "No content available for this article",
 		})
 		return
 	}
@@ -65,7 +64,6 @@ func (h *Handler) HandleSummarizeArticle(w http.ResponseWriter, r *http.Request)
 
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"summary":        result.Summary,
-		"key_points":     result.KeyPoints,
 		"sentence_count": result.SentenceCount,
 		"is_too_short":   result.IsTooShort,
 	})

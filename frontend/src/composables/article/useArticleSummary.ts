@@ -8,7 +8,6 @@ interface SummarySettings {
 
 interface SummaryResult {
   summary: string;
-  key_points: string[];
   sentence_count: number;
   is_too_short: boolean;
   error?: string;
