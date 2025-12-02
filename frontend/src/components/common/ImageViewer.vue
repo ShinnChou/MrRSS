@@ -159,14 +159,10 @@ const imageStyle = computed<CSSProperties>(() => ({
 
 onMounted(() => {
   document.addEventListener('keydown', handleKeyDown);
-  document.addEventListener('mousemove', onDrag);
-  document.addEventListener('mouseup', stopDrag);
 });
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeyDown);
-  document.removeEventListener('mousemove', onDrag);
-  document.removeEventListener('mouseup', stopDrag);
 });
 </script>
 
@@ -204,19 +200,22 @@ onUnmounted(() => {
 
     <!-- Image Container -->
     <div
-      class="relative w-full h-full flex items-center justify-center overflow-hidden"
+      class="relative w-full h-full flex items-center justify-center overflow-hidden image-container"
       @click.stop
       @wheel="handleWheel"
+      @mousedown="startDrag"
+      @mousemove="onDrag"
+      @mouseup="stopDrag"
+      @mouseleave="stopDrag"
     >
       <img
         ref="imageRef"
         :src="src"
         :alt="alt"
         :style="imageStyle"
-        @mousedown="startDrag"
         @dragstart.prevent
-        class="max-w-full max-h-full object-contain transition-transform select-none"
-        :class="{ 'transition-none': isDragging }"
+        class="max-w-full max-h-full object-contain select-none"
+        :class="[isDragging ? '' : 'transition-transform duration-150']"
       />
     </div>
 
@@ -229,8 +228,15 @@ onUnmounted(() => {
 
 <style scoped>
 .control-btn {
-  @apply bg-bg-primary text-text-primary px-3 py-2 rounded-lg hover:bg-bg-primary transition-colors backdrop-blur-sm flex items-center justify-center min-w-[40px];
-  background-color: rgba(var(--color-bg-primary-rgb, 255, 255, 255), 0.9);
+  @apply px-3 py-2 rounded-lg transition-colors backdrop-blur-sm flex items-center justify-center min-w-[40px];
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #212529;
+}
+
+/* Dark mode support */
+:global(.dark-mode) .control-btn {
+  background-color: rgba(45, 45, 45, 0.9);
+  color: #e0e0e0;
 }
 
 .control-btn:disabled {
@@ -238,6 +244,19 @@ onUnmounted(() => {
 }
 
 .control-btn:not(:disabled):hover {
-  @apply bg-bg-secondary;
+  background-color: rgba(240, 240, 240, 0.95);
+}
+
+:global(.dark-mode) .control-btn:not(:disabled):hover {
+  background-color: rgba(60, 60, 60, 0.95);
+}
+
+/* Image container cursor */
+.image-container {
+  cursor: default;
+}
+
+.image-container.dragging {
+  cursor: grabbing;
 }
 </style>

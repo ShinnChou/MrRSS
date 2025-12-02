@@ -35,6 +35,12 @@ export function useArticleDetail() {
   const userPreferredMode = ref<ViewMode | null>(null); // Remember user's manual choice
   const imageViewerSrc = ref<string | null>(null);
   const imageViewerAlt = ref('');
+  const imageContextMenu = ref<{ show: boolean; x: number; y: number; src: string }>({
+    show: false,
+    x: 0,
+    y: 0,
+    src: '',
+  });
 
   // Watch for article changes and apply view mode
   watch(
@@ -157,14 +163,25 @@ export function useArticleDetail() {
       });
     });
 
-    // Handle all images - make them clickable for zoom/pan
+    // Handle all images - make them clickable for zoom/pan and add context menu
     const images = document.querySelectorAll<HTMLImageElement>('.prose img');
     images.forEach((img) => {
       img.style.cursor = 'pointer';
+      // Left click - open image viewer
       img.addEventListener('click', (e: Event) => {
         e.preventDefault();
         imageViewerSrc.value = img.src;
         imageViewerAlt.value = img.alt || '';
+      });
+      // Right click - show context menu for saving
+      img.addEventListener('contextmenu', (e: MouseEvent) => {
+        e.preventDefault();
+        imageContextMenu.value = {
+          show: true,
+          x: e.clientX,
+          y: e.clientY,
+          src: img.src,
+        };
       });
     });
   }
@@ -172,6 +189,55 @@ export function useArticleDetail() {
   function closeImageViewer() {
     imageViewerSrc.value = null;
     imageViewerAlt.value = '';
+  }
+
+  function closeImageContextMenu() {
+    imageContextMenu.value.show = false;
+  }
+
+  // Download image from URL
+  async function downloadImage(src: string) {
+    try {
+      const response = await fetch(src);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const blob = await response.blob();
+
+      // Extract and sanitize filename from URL
+      let filename = 'image';
+      try {
+        const url = new URL(src);
+        const pathname = url.pathname;
+        const pathSegments = pathname.split('/').filter((segment) => segment.length > 0);
+        if (pathSegments.length > 0) {
+          const lastSegment = pathSegments[pathSegments.length - 1];
+          filename = lastSegment.split('?')[0].replace(/[^a-zA-Z0-9._-]/g, '_') || 'image';
+        }
+      } catch {
+        filename = 'image';
+      }
+
+      // Ensure it has a valid extension based on MIME type
+      if (!filename.match(/\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i)) {
+        const mimeType = blob.type;
+        const ext = mimeType.split('/')[1]?.replace('jpeg', 'jpg') || 'png';
+        filename = `${filename}.${ext}`;
+      }
+
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to download image:', error);
+      window.open(src, '_blank');
+    }
   }
 
   // Listen for render content event from context menu
@@ -249,6 +315,7 @@ export function useArticleDetail() {
     isLoadingContent,
     imageViewerSrc,
     imageViewerAlt,
+    imageContextMenu,
     locale,
 
     // Functions
@@ -258,6 +325,8 @@ export function useArticleDetail() {
     openOriginal,
     toggleContentView,
     closeImageViewer,
+    closeImageContextMenu,
+    downloadImage,
 
     // Translations
     t,

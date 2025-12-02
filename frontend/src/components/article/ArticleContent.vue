@@ -501,9 +501,24 @@ onMounted(async () => {
 .prose :deep(audio) {
   width: 100%;
   max-width: 100%;
-  margin: 1em 0;
-  border-radius: 0.5rem;
+  min-height: 54px;
+  margin: 1.5em 0;
+  border-radius: 0.75rem;
   background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+}
+
+/* Audio container for enhanced podcast display */
+.prose :deep(.audio-container),
+.prose :deep(.podcast-player) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+  padding: 1em;
+  margin: 1.5em 0;
+  background-color: var(--bg-secondary);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
 }
 
 /* Video player styling */
@@ -512,8 +527,32 @@ onMounted(async () => {
   max-width: 100%;
   height: auto;
   margin: 1.5em 0;
-  border-radius: 0.5rem;
-  background-color: var(--bg-secondary);
+  border-radius: 0.75rem;
+  background-color: #000;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Video container for enhanced display */
+.prose :deep(.video-container),
+.prose :deep(.video-wrapper) {
+  position: relative;
+  width: 100%;
+  margin: 1.5em 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background-color: #000;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.prose :deep(.video-container video),
+.prose :deep(.video-wrapper video) {
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 /* Iframe for embedded videos (YouTube, Vimeo, etc.) */
@@ -522,9 +561,41 @@ onMounted(async () => {
   max-width: 100%;
   aspect-ratio: 16 / 9;
   margin: 1.5em 0;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   border: none;
-  background-color: var(--bg-secondary);
+  background-color: #000;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Responsive iframe container */
+.prose :deep(.iframe-container),
+.prose :deep(.embed-container),
+.prose :deep(.video-embed) {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  margin: 1.5em 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background-color: #000;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.prose :deep(.iframe-container iframe),
+.prose :deep(.embed-container iframe),
+.prose :deep(.video-embed iframe) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 /* Figure and figcaption styling for media */
@@ -536,7 +607,9 @@ onMounted(async () => {
   font-size: 0.875em;
   color: var(--text-secondary);
   text-align: center;
-  margin-top: 0.5em;
+  margin-top: 0.75em;
+  padding: 0 0.5em;
+  line-height: 1.5;
 }
 
 /* Enclosure media container styling (RSS media enclosures) */
@@ -544,7 +617,7 @@ onMounted(async () => {
   margin: 1.5em 0;
   padding: 1em;
   background-color: var(--bg-secondary);
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   border: 1px solid var(--border-color);
 }
 

@@ -36,6 +36,7 @@ export interface TranslationMessages {
   imageViewerHelp: string;
   imageViewerHelpExtended: string;
   downloadImage: string;
+  viewImage: string;
 
   // Context Menu
   unsubscribe: string;
