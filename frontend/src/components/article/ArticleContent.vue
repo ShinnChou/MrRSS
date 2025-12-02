@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { ref, watch, onMounted, computed } from 'vue';
+import { ref, watch, onMounted, computed, nextTick } from 'vue';
 import { PhArticle, PhTextAlignLeft, PhSpinnerGap, PhTranslate } from '@phosphor-icons/vue';
 import type { Article } from '@/types/models';
 import { formatDate } from '@/utils/date';
@@ -34,14 +34,18 @@ const translationEnabled = ref(false);
 const targetLanguage = ref('en');
 const translatedSummary = ref('');
 const translatedTitle = ref('');
-const translatedContent = ref('');
 const isTranslatingSummary = ref(false);
 const isTranslatingTitle = ref(false);
 const isTranslatingContent = ref(false);
 
-// Computed: check if we should show bilingual content
-const showBilingualTitle = computed(() => translationEnabled.value && translatedTitle.value);
-const showBilingualContent = computed(() => translationEnabled.value && translatedContent.value);
+// Computed: check if we should show bilingual title
+const showBilingualTitle = computed(() => {
+  return (
+    translationEnabled.value &&
+    translatedTitle.value &&
+    translatedTitle.value !== props.article?.title
+  );
+});
 
 // Load summary and translation settings
 async function loadSettings() {
@@ -131,19 +135,72 @@ async function translateTitle() {
   isTranslatingTitle.value = false;
 }
 
-// Translate content - strip HTML tags for translation, then display both
-async function translateContent() {
+// Tags that contain text to translate
+const textTags = [
+  'P',
+  'H1',
+  'H2',
+  'H3',
+  'H4',
+  'H5',
+  'H6',
+  'LI',
+  'BLOCKQUOTE',
+  'TD',
+  'TH',
+  'FIGCAPTION',
+];
+
+// Translate content paragraph by paragraph and insert translations after each original
+async function translateContentParagraphs() {
   if (!translationEnabled.value || !props.articleContent) return;
 
   isTranslatingContent.value = true;
 
-  // Create a temporary element to extract text from HTML
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = props.articleContent;
-  const textContent = tempDiv.textContent || tempDiv.innerText || '';
+  // Wait for content to render
+  await nextTick();
 
-  if (textContent.trim()) {
-    translatedContent.value = await translateText(textContent.trim());
+  // Find all text elements in the prose content
+  const proseContainer = document.querySelector('.prose-content');
+  if (!proseContainer) {
+    isTranslatingContent.value = false;
+    return;
+  }
+
+  // Find all translatable elements
+  const elements = proseContainer.querySelectorAll(textTags.join(','));
+
+  for (const el of elements) {
+    const htmlEl = el as HTMLElement;
+    // Skip if already has translation
+    if (htmlEl.nextElementSibling?.classList.contains('translation-text')) continue;
+    // Skip if inside a translation element
+    if (htmlEl.closest('.translation-text')) continue;
+
+    // Get the text content
+    const text = htmlEl.textContent?.trim();
+    if (!text || text.length < 2) continue;
+
+    // Translate the text
+    const translated = await translateText(text);
+
+    // Skip if translation is same as original or empty
+    if (!translated || translated === text) continue;
+
+    // Create translation element with same tag type
+    const translationEl = document.createElement(htmlEl.tagName.toLowerCase());
+    translationEl.className = 'translation-text';
+    translationEl.textContent = translated;
+
+    // Copy important attributes for blockquotes
+    if (htmlEl.tagName === 'BLOCKQUOTE') {
+      translationEl.style.borderLeft = '4px solid var(--accent-color)';
+      translationEl.style.paddingLeft = '1em';
+      translationEl.style.fontStyle = 'italic';
+    }
+
+    // Insert translation after original
+    htmlEl.parentNode?.insertBefore(translationEl, htmlEl.nextSibling);
   }
 
   isTranslatingContent.value = false;
@@ -156,7 +213,6 @@ watch(
     summaryResult.value = null;
     translatedSummary.value = '';
     translatedTitle.value = '';
-    translatedContent.value = '';
 
     if (props.article) {
       if (summaryEnabled.value) {
@@ -178,7 +234,7 @@ watch(
         generateSummary();
       }
       if (translationEnabled.value) {
-        translateContent();
+        nextTick(() => translateContentParagraphs());
       }
     }
   }
@@ -189,8 +245,7 @@ watch(
   () => props.articleContent,
   (newContent) => {
     if (newContent && translationEnabled.value && !isTranslatingContent.value) {
-      translatedContent.value = '';
-      translateContent();
+      nextTick(() => translateContentParagraphs());
     }
   }
 );
@@ -204,7 +259,7 @@ onMounted(async () => {
     if (translationEnabled.value) {
       translateTitle();
       if (props.articleContent) {
-        translateContent();
+        nextTick(() => translateContentParagraphs());
       }
     }
   }
@@ -216,22 +271,17 @@ onMounted(async () => {
     <div class="max-w-3xl mx-auto bg-bg-primary">
       <!-- Title Section - Bilingual when translation enabled -->
       <div class="mb-3 sm:mb-4">
-        <!-- Translated Title (shown first if available) -->
-        <h1
-          v-if="showBilingualTitle"
-          class="text-xl sm:text-3xl font-bold text-text-primary leading-tight mb-2"
-        >
-          {{ translatedTitle }}
-        </h1>
         <!-- Original Title -->
-        <h1
-          :class="[
-            'text-xl sm:text-3xl font-bold leading-tight',
-            showBilingualTitle ? 'text-text-secondary text-base sm:text-xl' : 'text-text-primary',
-          ]"
-        >
+        <h1 class="text-xl sm:text-3xl font-bold leading-tight text-text-primary">
           {{ article.title }}
         </h1>
+        <!-- Translated Title (shown below if different from original) -->
+        <h2
+          v-if="showBilingualTitle"
+          class="text-base sm:text-xl font-medium leading-tight mt-2 text-text-secondary"
+        >
+          {{ translatedTitle }}
+        </h2>
         <!-- Translation loading indicator for title -->
         <div v-if="isTranslatingTitle" class="flex items-center gap-1 mt-1 text-text-secondary">
           <PhSpinnerGap :size="12" class="animate-spin" />
@@ -340,43 +390,16 @@ onMounted(async () => {
         </p>
       </div>
 
-      <!-- Content display - Bilingual when translation enabled -->
+      <!-- Content display with inline translations -->
       <div v-else-if="articleContent">
-        <!-- Bilingual content display -->
-        <div v-if="showBilingualContent" class="space-y-6">
-          <!-- Translated content -->
-          <div class="prose prose-sm sm:prose-lg max-w-none text-text-primary">
-            <div class="whitespace-pre-wrap">{{ translatedContent }}</div>
-          </div>
-
-          <!-- Divider -->
-          <div class="flex items-center gap-4 py-4">
-            <div class="flex-1 border-t border-border"></div>
-            <span class="text-xs text-text-secondary flex items-center gap-1">
-              <PhTranslate :size="14" />
-              {{ t('originalContent') }}
-            </span>
-            <div class="flex-1 border-t border-border"></div>
-          </div>
-
-          <!-- Original content -->
-          <div
-            class="prose prose-sm sm:prose-lg max-w-none text-text-secondary opacity-80"
-            v-html="articleContent"
-          ></div>
-        </div>
-
-        <!-- Single language content (no translation or still translating) -->
-        <div v-else>
-          <div
-            class="prose prose-sm sm:prose-lg max-w-none text-text-primary"
-            v-html="articleContent"
-          ></div>
-          <!-- Translation loading indicator -->
-          <div v-if="isTranslatingContent" class="flex items-center gap-2 mt-4 text-text-secondary">
-            <PhSpinnerGap :size="16" class="animate-spin" />
-            <span class="text-sm">{{ t('translatingContent') }}</span>
-          </div>
+        <div
+          class="prose prose-sm sm:prose-lg max-w-none text-text-primary prose-content"
+          v-html="articleContent"
+        ></div>
+        <!-- Translation loading indicator -->
+        <div v-if="isTranslatingContent" class="flex items-center gap-2 mt-4 text-text-secondary">
+          <PhSpinnerGap :size="16" class="animate-spin" />
+          <span class="text-sm">{{ t('translatingContent') }}</span>
         </div>
       </div>
 
@@ -452,5 +475,24 @@ onMounted(async () => {
 }
 .prose :deep(li) {
   margin-bottom: 0.5em;
+}
+
+/* Translation text styling - lighter color */
+.prose :deep(.translation-text) {
+  color: var(--text-secondary);
+  opacity: 0.85;
+  margin-top: 0.25em;
+  margin-bottom: 1em;
+  font-size: 0.95em;
+  line-height: 1.6;
+}
+
+/* Blockquote translation preserves blockquote style */
+.prose :deep(blockquote.translation-text) {
+  border-left: 4px solid var(--accent-color);
+  padding-left: 1em;
+  font-style: italic;
+  color: var(--text-secondary);
+  opacity: 0.75;
 }
 </style>
