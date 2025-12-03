@@ -8,8 +8,6 @@ import (
 	"MrRSS/internal/utils"
 	"context"
 	"log"
-	"regexp"
-	"strings"
 	"sync"
 	"time"
 
@@ -31,12 +29,6 @@ type Fetcher struct {
 	mu             sync.Mutex
 }
 
-type Progress struct {
-	Total     int  `json:"total"`
-	Current   int  `json:"current"`
-	IsRunning bool `json:"is_running"`
-}
-
 func NewFetcher(db *database.DB, translator translation.Translator) *Fetcher {
 	// Initialize script executor with scripts directory
 	scriptsDir, err := utils.GetScriptsDir()
@@ -53,12 +45,6 @@ func NewFetcher(db *database.DB, translator translation.Translator) *Fetcher {
 	}
 }
 
-func (f *Fetcher) GetProgress() Progress {
-	f.mu.Lock()
-	defer f.mu.Unlock()
-	return f.progress
-}
-
 // setupTranslator configures the translator based on database settings.
 func (f *Fetcher) setupTranslator() {
 	provider, _ := f.db.GetSetting("translation_provider")
@@ -71,20 +57,6 @@ func (f *Fetcher) setupTranslator() {
 		t = translation.NewGoogleFreeTranslator()
 	}
 	f.translator = t
-}
-
-// waitForProgressComplete waits for any running operation to complete with a timeout.
-// Returns true if the wait was successful, false if timeout occurred.
-func (f *Fetcher) waitForProgressComplete(timeout time.Duration) bool {
-	deadline := time.Now().Add(timeout)
-	for f.GetProgress().IsRunning {
-		if time.Now().After(deadline) {
-			log.Println("Timeout waiting for previous operation to complete")
-			return false
-		}
-		time.Sleep(100 * time.Millisecond)
-	}
-	return true
 }
 
 func (f *Fetcher) FetchAll(ctx context.Context) {
@@ -197,70 +169,8 @@ func (f *Fetcher) FetchFeed(ctx context.Context, feed models.Feed) {
 		f.db.UpdateFeedLink(feed.ID, parsedFeed.Link)
 	}
 
-	// Check translation settings
-	translationEnabledStr, _ := f.db.GetSetting("translation_enabled")
-	targetLang, _ := f.db.GetSetting("target_language")
-	translationEnabled := translationEnabledStr == "true"
-
-	var articlesToSave []*models.Article
-
-	for _, item := range parsedFeed.Items {
-		published := time.Now()
-		if item.PublishedParsed != nil {
-			published = *item.PublishedParsed
-		}
-
-		imageURL := ""
-		if item.Image != nil {
-			imageURL = item.Image.URL
-		} else if len(item.Enclosures) > 0 && item.Enclosures[0].Type == "image/jpeg" { // Simple check
-			imageURL = item.Enclosures[0].URL
-		}
-
-		// Fallback: Try to find image in description/content
-		if imageURL == "" {
-			content := item.Content
-			if content == "" {
-				content = item.Description
-			}
-			re := regexp.MustCompile(`<img[^>]+src="([^">]+)"`)
-			matches := re.FindStringSubmatch(content)
-			if len(matches) > 1 {
-				imageURL = matches[1]
-			}
-		}
-
-		translatedTitle := ""
-		if translationEnabled && f.translator != nil {
-			t, err := f.translator.Translate(item.Title, targetLang)
-			if err == nil {
-				translatedTitle = t
-			}
-		}
-
-		// Extract content from RSS item (prefer Content over Description)
-		content := item.Content
-		if content == "" {
-			content = item.Description
-		}
-
-		// Generate title if missing
-		title := item.Title
-		if title == "" {
-			title = generateTitleFromContent(content)
-		}
-
-		article := &models.Article{
-			FeedID:          feed.ID,
-			Title:           title,
-			URL:             item.Link,
-			ImageURL:        imageURL,
-			Content:         content,
-			PublishedAt:     published,
-			TranslatedTitle: translatedTitle,
-		}
-		articlesToSave = append(articlesToSave, article)
-	}
+	// Process articles
+	articlesToSave := f.processArticles(feed, parsedFeed.Items)
 
 	// Check context before heavy DB operation
 	select {
@@ -396,123 +306,4 @@ Finish:
 	// Update last article update time
 	f.db.SetSetting("last_article_update", time.Now().Format(time.RFC3339))
 	log.Printf("Batch feed update complete for %d feeds", len(feedIDs))
-}
-
-// AddSubscription adds a new feed subscription and returns the feed ID.
-func (f *Fetcher) AddSubscription(url string, category string, customTitle string) (int64, error) {
-	parsedFeed, err := f.fp.ParseURL(url)
-	if err != nil {
-		return 0, err
-	}
-
-	title := parsedFeed.Title
-	if customTitle != "" {
-		title = customTitle
-	}
-
-	feed := &models.Feed{
-		Title:       title,
-		URL:         url,
-		Link:        parsedFeed.Link,
-		Description: parsedFeed.Description,
-		Category:    category,
-	}
-
-	if parsedFeed.Image != nil {
-		feed.ImageURL = parsedFeed.Image.URL
-	}
-
-	return f.db.AddFeed(feed)
-}
-
-// AddScriptSubscription adds a new feed subscription that uses a custom script
-// and returns the feed ID.
-func (f *Fetcher) AddScriptSubscription(scriptPath string, category string, customTitle string) (int64, error) {
-	// Validate script path
-	if f.scriptExecutor == nil {
-		return 0, &ScriptError{Message: "script executor not initialized"}
-	}
-
-	// Execute script to get initial feed info
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	parsedFeed, err := f.scriptExecutor.ExecuteScript(ctx, scriptPath)
-	if err != nil {
-		return 0, err
-	}
-
-	title := parsedFeed.Title
-	if customTitle != "" {
-		title = customTitle
-	}
-
-	// Use a placeholder URL for script-based feeds
-	url := "script://" + scriptPath
-
-	feed := &models.Feed{
-		Title:       title,
-		URL:         url,
-		Link:        parsedFeed.Link,
-		Description: parsedFeed.Description,
-		Category:    category,
-		ScriptPath:  scriptPath,
-	}
-
-	if parsedFeed.Image != nil {
-		feed.ImageURL = parsedFeed.Image.URL
-	}
-
-	return f.db.AddFeed(feed)
-}
-
-// ScriptError represents an error related to script execution
-type ScriptError struct {
-	Message string
-}
-
-func (e *ScriptError) Error() string {
-	return e.Message
-}
-
-// ImportSubscription imports a feed subscription and returns the feed ID.
-func (f *Fetcher) ImportSubscription(title, url, category string) (int64, error) {
-	feed := &models.Feed{
-		Title:    title,
-		URL:      url,
-		Link:     "", // Link will be fetched later when feed is refreshed
-		Category: category,
-	}
-	return f.db.AddFeed(feed)
-}
-
-// ParseFeed parses an RSS feed from a URL and returns the parsed feed
-func (f *Fetcher) ParseFeed(ctx context.Context, url string) (*gofeed.Feed, error) {
-	return f.fp.ParseURLWithContext(url, ctx)
-}
-
-// generateTitleFromContent generates a title from content when title is missing
-func generateTitleFromContent(content string) string {
-	if content == "" {
-		return "Untitled Article"
-	}
-
-	// Remove HTML tags
-	htmlTagRegex := regexp.MustCompile(`<[^>]+>`)
-	plainText := htmlTagRegex.ReplaceAllString(content, "")
-
-	// Trim whitespace
-	plainText = strings.TrimSpace(plainText)
-
-	// Limit to 100 characters
-	if len(plainText) > 100 {
-		plainText = plainText[:100] + "..."
-	}
-
-	// If still empty after cleaning, use default
-	if plainText == "" {
-		return "Untitled Article"
-	}
-
-	return plainText
 }

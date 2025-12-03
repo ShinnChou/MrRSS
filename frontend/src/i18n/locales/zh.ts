@@ -256,6 +256,7 @@ const zh: TranslationMessages = {
   // Loading Messages
   loadingContent: '加载内容中',
   fetchingArticleContent: '正在从 RSS 源获取文章内容...',
+  noContentAvailable: '无可用内容',
 
   // Prompts
   enterCategoryName: '输入新的分类名称：',

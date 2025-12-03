@@ -255,6 +255,7 @@ export interface TranslationMessages {
   // Loading Messages
   loadingContent: string;
   fetchingArticleContent: string;
+  noContentAvailable: string;
 
   // Prompts
   enterCategoryName: string;

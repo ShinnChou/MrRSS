@@ -258,6 +258,7 @@ const en: TranslationMessages = {
   // Loading Messages
   loadingContent: 'Loading content',
   fetchingArticleContent: 'Fetching article content from RSS feed...',
+  noContentAvailable: 'No content available',
 
   // Prompts
   enterCategoryName: 'Enter new category name:',

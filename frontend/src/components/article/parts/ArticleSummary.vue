@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { PhTextAlignLeft, PhSpinnerGap } from '@phosphor-icons/vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
   summaryResult: {
@@ -16,6 +17,8 @@ interface Props {
 }
 
 defineProps<Props>();
+
+const { t } = useI18n();
 
 const showSummary = ref(true);
 </script>
@@ -33,7 +36,7 @@ const showSummary = ref(true);
     >
       <div class="flex items-center gap-2 text-accent font-medium">
         <PhTextAlignLeft :size="20" />
-        <span>Article Summary</span>
+        <span>{{ t('articleSummary') }}</span>
       </div>
       <span class="text-xs text-text-secondary">
         {{ showSummary ? '▲' : '▼' }}
@@ -45,12 +48,12 @@ const showSummary = ref(true);
       <!-- Loading State -->
       <div v-if="isLoadingSummary" class="flex items-center gap-2 text-text-secondary">
         <PhSpinnerGap :size="16" class="animate-spin" />
-        <span class="text-sm">Generating summary...</span>
+        <span class="text-sm">{{ t('generatingSummary') }}</span>
       </div>
 
       <!-- Too Short Warning -->
       <div v-else-if="summaryResult?.is_too_short" class="text-sm text-text-secondary italic">
-        Article is too short for summary
+        {{ t('summaryTooShort') }}
       </div>
 
       <!-- Summary Display -->
@@ -69,12 +72,12 @@ const showSummary = ref(true);
         <!-- Translation loading indicator -->
         <div v-if="isTranslatingSummary" class="flex items-center gap-1 mt-2 text-text-secondary">
           <PhSpinnerGap :size="12" class="animate-spin" />
-          <span class="text-xs">Translating...</span>
+          <span class="text-xs">{{ t('translating') }}</span>
         </div>
       </div>
 
       <!-- No Summary Available -->
-      <div v-else class="text-sm text-text-secondary italic">No summary available</div>
+      <div v-else class="text-sm text-text-secondary italic">{{ t('noSummaryAvailable') }}</div>
     </div>
   </div>
 </template>

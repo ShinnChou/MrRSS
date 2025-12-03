@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { PhArticle } from '@phosphor-icons/vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -19,9 +22,11 @@ import { PhArticle } from '@phosphor-icons/vue';
         <PhArticle :size="48" class="text-accent sm:w-16 sm:h-16" />
       </div>
     </div>
-    <p class="text-base sm:text-lg font-medium text-text-primary mb-1 sm:mb-2">Loading content</p>
+    <p class="text-base sm:text-lg font-medium text-text-primary mb-1 sm:mb-2">
+      {{ t('loadingContent') }}
+    </p>
     <p class="text-xs sm:text-sm text-text-secondary px-4 text-center">
-      Fetching article content...
+      {{ t('fetchingArticleContent') }}
     </p>
   </div>
 </template>

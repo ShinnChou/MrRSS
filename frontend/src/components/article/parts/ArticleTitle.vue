@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { PhSpinnerGap, PhTranslate } from '@phosphor-icons/vue';
 import type { Article } from '@/types/models';
 import { formatDate } from '@/utils/date';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
   article: Article;
@@ -12,6 +13,8 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const { t } = useI18n();
 
 // Computed: check if we should show bilingual title
 const showBilingualTitle = computed(() => {
@@ -52,7 +55,7 @@ const showBilingualTitle = computed(() => {
     <span>{{ formatDate(article.published_at, 'en-US') }}</span>
     <span v-if="translationEnabled" class="flex items-center gap-1 text-accent">
       <PhTranslate :size="14" />
-      <span class="text-xs">Auto translate enabled</span>
+      <span class="text-xs">{{ t('autoTranslateEnabled') }}</span>
     </span>
   </div>
 </template>
