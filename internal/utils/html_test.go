@@ -72,6 +72,11 @@ func TestCleanHTML(t *testing.T) {
 			expected: `Line 1<br>Line 2`,
 		},
 		{
+			name:     "Malformed hr tag without attributes",
+			input:    `Section 1<hr-->Section 2`,
+			expected: `Section 1<hr>Section 2`,
+		},
+		{
 			name:     "Real CoolShell sample",
 			input:    `<p--><img decoding="async" loading="lazy" class="alignright" src="test.png" alt="" width="300">这两天技术圈里热议的一件事</p>`,
 			expected: `<p><img decoding="async" loading="lazy" class="alignright" src="test.png" alt="" width="300">这两天技术圈里热议的一件事</p>`,
