@@ -131,6 +131,7 @@ func initSchema(db *sql.DB) error {
 		title TEXT,
 		url TEXT UNIQUE,
 		image_url TEXT,
+		audio_url TEXT DEFAULT '',
 		translated_title TEXT,
 		content TEXT DEFAULT '',
 		published_at DATETIME,
@@ -170,6 +171,9 @@ func runMigrations(db *sql.DB) error {
 
 	// Migration: Add is_read_later column for read later feature
 	_, _ = db.Exec(`ALTER TABLE articles ADD COLUMN is_read_later BOOLEAN DEFAULT 0`)
+
+	// Migration: Add audio_url column for podcast support
+	_, _ = db.Exec(`ALTER TABLE articles ADD COLUMN audio_url TEXT DEFAULT ''`)
 
 	return nil
 }
