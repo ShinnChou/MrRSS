@@ -6,6 +6,7 @@ import ArticleTitle from './parts/ArticleTitle.vue';
 import ArticleSummary from './parts/ArticleSummary.vue';
 import ArticleLoading from './parts/ArticleLoading.vue';
 import ArticleBody from './parts/ArticleBody.vue';
+import AudioPlayer from './parts/AudioPlayer.vue';
 import { useArticleSummary } from '@/composables/article/useArticleSummary';
 import { useArticleTranslation } from '@/composables/article/useArticleTranslation';
 import './ArticleContent.css';
@@ -250,6 +251,13 @@ onMounted(async () => {
         :translated-title="translatedTitle"
         :is-translating-title="isTranslatingTitle"
         :translation-enabled="translationEnabled"
+      />
+
+      <!-- Audio Player (if article has audio) -->
+      <AudioPlayer
+        v-if="article.audio_url"
+        :audio-url="article.audio_url"
+        :article-title="article.title"
       />
 
       <ArticleSummary

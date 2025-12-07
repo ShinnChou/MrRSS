@@ -10,6 +10,7 @@ export interface Article {
   translated_title?: string;
   url: string;
   image_url?: string; // Article thumbnail image
+  audio_url?: string; // Podcast audio file URL
   content: string;
   published_at: string;
   is_read: boolean;

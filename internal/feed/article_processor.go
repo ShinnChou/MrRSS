@@ -25,6 +25,7 @@ func (f *Fetcher) processArticles(feed models.Feed, items []*gofeed.Item) []*mod
 		}
 
 		imageURL := extractImageURL(item)
+		audioURL := extractAudioURL(item)
 
 		translatedTitle := ""
 		if translationEnabled && f.translator != nil {
@@ -51,6 +52,7 @@ func (f *Fetcher) processArticles(feed models.Feed, items []*gofeed.Item) []*mod
 			Title:           title,
 			URL:             item.Link,
 			ImageURL:        imageURL,
+			AudioURL:        audioURL,
 			Content:         content,
 			PublishedAt:     published,
 			TranslatedTitle: translatedTitle,
@@ -68,9 +70,11 @@ func extractImageURL(item *gofeed.Item) string {
 		return item.Image.URL
 	}
 
-	// Try enclosures
-	if len(item.Enclosures) > 0 && item.Enclosures[0].Type == "image/jpeg" {
-		return item.Enclosures[0].URL
+	// Try enclosures for images (check various image MIME types)
+	for _, enc := range item.Enclosures {
+		if strings.HasPrefix(enc.Type, "image/") {
+			return enc.URL
+		}
 	}
 
 	// Fallback: Try to find image in description/content
@@ -83,6 +87,19 @@ func extractImageURL(item *gofeed.Item) string {
 	matches := re.FindStringSubmatch(content)
 	if len(matches) > 1 {
 		return matches[1]
+	}
+
+	return ""
+}
+
+// extractAudioURL extracts the audio URL from a feed item (for podcasts)
+func extractAudioURL(item *gofeed.Item) string {
+	// Try enclosures for audio files
+	for _, enc := range item.Enclosures {
+		// Check for audio MIME types
+		if strings.HasPrefix(enc.Type, "audio/") {
+			return enc.URL
+		}
 	}
 
 	return ""
