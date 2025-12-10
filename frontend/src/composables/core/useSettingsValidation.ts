@@ -46,27 +46,9 @@ export function useSettingsValidation(settings: Ref<SettingsData>) {
     return isTranslationValid.value && isSummaryValid.value;
   });
 
-  /**
-   * Get validation errors
-   */
-  const validationErrors = computed(() => {
-    const errors: string[] = [];
-
-    if (!isTranslationValid.value) {
-      errors.push('Translation credentials are required');
-    }
-
-    if (!isSummaryValid.value) {
-      errors.push('Summary AI credentials are required');
-    }
-
-    return errors;
-  });
-
   return {
     isTranslationValid,
     isSummaryValid,
     isValid,
-    validationErrors,
   };
 }

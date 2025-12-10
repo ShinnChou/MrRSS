@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n';
 import { useAppStore } from '@/stores/app';
 import type { SettingsData } from '@/types/settings';
 import { settingsDefaults } from '@/config/defaults';
+import { useSettingsValidation } from './useSettingsValidation';
 
 export function useSettingsAutoSave(settings: Ref<SettingsData>) {
   const { locale } = useI18n();
@@ -13,6 +14,9 @@ export function useSettingsAutoSave(settings: Ref<SettingsData>) {
 
   let saveTimeout: ReturnType<typeof setTimeout> | null = null;
   let isInitialLoad = true;
+
+  // Use validation composable
+  const { isValid } = useSettingsValidation(settings);
 
   // Track previous translation settings
   const prevTranslationSettings: Ref<{
@@ -24,39 +28,6 @@ export function useSettingsAutoSave(settings: Ref<SettingsData>) {
     targetLang: settingsDefaults.target_language,
     provider: settingsDefaults.translation_provider,
   });
-
-  /**
-   * Validate settings before saving
-   */
-  function validateSettings(): boolean {
-    // Translation validation
-    if (settings.value.translation_enabled) {
-      if (settings.value.translation_provider === 'deepl') {
-        if (!settings.value.deepl_api_key?.trim()) {
-          return false;
-        }
-      } else if (settings.value.translation_provider === 'baidu') {
-        if (!settings.value.baidu_app_id?.trim() || !settings.value.baidu_secret_key?.trim()) {
-          return false;
-        }
-      } else if (settings.value.translation_provider === 'ai') {
-        if (!settings.value.ai_api_key?.trim()) {
-          return false;
-        }
-      }
-    }
-
-    // Summary validation
-    if (settings.value.summary_enabled) {
-      if (settings.value.summary_provider === 'ai') {
-        if (!settings.value.summary_ai_api_key?.trim()) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  }
 
   /**
    * Initialize translation tracking
@@ -83,8 +54,8 @@ export function useSettingsAutoSave(settings: Ref<SettingsData>) {
       }
 
       // Validate settings before saving
-      if (!validateSettings()) {
-        console.log('Settings validation failed - skipping auto-save');
+      if (!isValid.value) {
+        // Skip save silently - validation errors are shown in UI
         return;
       }
 
@@ -218,6 +189,5 @@ export function useSettingsAutoSave(settings: Ref<SettingsData>) {
   return {
     autoSave,
     debouncedAutoSave,
-    validateSettings,
   };
 }
