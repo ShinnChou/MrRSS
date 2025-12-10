@@ -30,6 +30,7 @@ interface Props {
   article: Article;
   articleContent: string;
   isLoadingContent: boolean;
+  attachImageEventListeners?: () => void;
 }
 
 const props = defineProps<Props>();
@@ -282,17 +283,38 @@ async function translateContentParagraphs(content: string) {
     renderMathFormulas(el as HTMLElement);
     highlightCodeBlocks(el as HTMLElement);
 
-    // Attach event listeners to links in translated text
+    // Attach event listeners to links in translated text - open in external browser
     el.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', (e: Event) => {
-        e.preventDefault();
-        const href = link.getAttribute('href');
-        if (href) {
-          BrowserOpenURL(href);
-        }
-      });
+      link.addEventListener(
+        'click',
+        (e: Event) => {
+          // Check if the link contains an image
+          const hasImage = link.querySelector('img');
+          if (hasImage) {
+            // Let the image click handler take precedence - don't open the link
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+
+          // For text links, open in external browser
+          e.preventDefault();
+          e.stopPropagation();
+          const href = link.getAttribute('href');
+          if (href) {
+            BrowserOpenURL(href);
+          }
+        },
+        true
+      ); // Use capture phase to ensure our handler runs first
     });
   });
+
+  // Re-attach image event listeners after translation modifies the DOM
+  if (props.attachImageEventListeners) {
+    await nextTick();
+    props.attachImageEventListeners();
+  }
 
   isTranslatingContent.value = false;
 }
