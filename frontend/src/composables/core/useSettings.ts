@@ -51,6 +51,7 @@ export function useSettings() {
     proxy_username: settingsDefaults.proxy_username,
     proxy_password: settingsDefaults.proxy_password,
     google_translate_endpoint: settingsDefaults.google_translate_endpoint,
+    show_article_preview_images: settingsDefaults.show_article_preview_images,
   });
 
   /**
@@ -107,6 +108,7 @@ export function useSettings() {
         proxy_password: data.proxy_password || settingsDefaults.proxy_password,
         google_translate_endpoint:
           data.google_translate_endpoint || settingsDefaults.google_translate_endpoint,
+        show_article_preview_images: data.show_article_preview_images === 'true',
       };
 
       return settings.value;
