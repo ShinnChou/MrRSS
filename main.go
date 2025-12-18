@@ -348,19 +348,14 @@ func main() {
 
 	// Create main window options
 	windowOptions := application.WebviewWindowOptions{
-		Title:  "MrRSS",
-		Width:  windowWidth,
-		Height: windowHeight,
-		URL:    "/",
-		Mac: application.MacWindow{
-			TitleBar: application.MacTitleBar{
-				AppearsTransparent:   true,
-				HideTitle:            true,
-				FullSizeContent:      true,
-				UseToolbar:           false,
-				HideToolbarSeparator: true,
-			},
-		},
+		Name:             "MrRSS-main-window",
+		Title:            "MrRSS",
+		Width:            windowWidth,
+		Height:           windowHeight,
+		URL:              "/",
+		Mac:              application.MacWindow{},
+		Windows:          application.WindowsWindow{},
+		Linux:            application.LinuxWindow{},
 		BackgroundColour: application.NewRGB(255, 255, 255),
 	}
 
@@ -533,6 +528,15 @@ func main() {
 			mainWindow.Hide()
 			e.Cancel()
 		}
+	})
+
+	// Register move and resize handlers to save window state
+	mainWindow.RegisterHook(events.Common.WindowDidMove, func(e *application.WindowEvent) {
+		storeWindowState()
+	})
+
+	mainWindow.RegisterHook(events.Common.WindowDidResize, func(e *application.WindowEvent) {
+		storeWindowState()
 	})
 
 	// Setup tray on startup if close_to_tray is enabled
