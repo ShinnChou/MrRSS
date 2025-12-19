@@ -2,6 +2,8 @@ package translation
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
 	"sync"
 )
 
@@ -133,8 +135,9 @@ func (t *DynamicTranslator) getTranslatorWithProvider() (Translator, string, err
 		}
 		translator = NewBaiduTranslator(appID, secretKey)
 	case "ai":
-		if apiKey == "" {
-			return nil, "", fmt.Errorf("AI API key is required")
+		// Allow empty API key for local endpoints (e.g., Ollama)
+		if apiKey == "" && !isLocalEndpoint(endpoint) {
+			return nil, "", fmt.Errorf("AI API key is required for non-local endpoints")
 		}
 		aiTranslator := NewAITranslator(apiKey, endpoint, model)
 		if systemPrompt != "" {
@@ -156,4 +159,35 @@ func (t *DynamicTranslator) getTranslatorWithProvider() (Translator, string, err
 	t.cachedPrompt = systemPrompt
 
 	return translator, provider, nil
+}
+
+// isLocalEndpoint checks if an endpoint URL points to a local service (localhost, 127.0.0.1, etc.)
+// This allows using empty API keys for local LLM services like Ollama
+func isLocalEndpoint(endpointURL string) bool {
+	if endpointURL == "" {
+		return false
+	}
+
+	// Parse the URL to extract the host
+	parsedURL, err := url.Parse(endpointURL)
+	if err != nil {
+		return false
+	}
+
+	host := parsedURL.Host
+	// Remove port if present
+	if idx := strings.LastIndex(host, ":"); idx != -1 {
+		// Handle IPv6 addresses like [::1]:8080
+		if !strings.Contains(host[idx:], "]") {
+			host = host[:idx]
+		}
+	}
+	// Remove brackets from IPv6 addresses
+	host = strings.Trim(host, "[]")
+
+	return host == "localhost" ||
+		host == "127.0.0.1" ||
+		host == "::1" ||
+		strings.HasPrefix(host, "127.") ||
+		host == "0.0.0.0"
 }

@@ -22,7 +22,7 @@ type AISummarizer struct {
 }
 
 // NewAISummarizer creates a new AI summarizer with the given credentials.
-// endpoint should be the API base URL (e.g., "https://api.openai.com/v1" for OpenAI)
+// endpoint should be the full API URL (e.g., "https://api.openai.com/v1/chat/completions" for OpenAI, "http://localhost:11434/api/generate" for Ollama)
 // model should be the model name (e.g., "gpt-4o-mini", "claude-3-haiku-20240307")
 // Uses global AI settings shared between translation and summarization.
 func NewAISummarizer(apiKey, endpoint, model string) *AISummarizer {
@@ -49,6 +49,7 @@ func (s *AISummarizer) SetSystemPrompt(prompt string) {
 }
 
 // Summarize generates a summary of the given text using an OpenAI-compatible API.
+// Automatically detects and adapts to different API formats (OpenAI vs Ollama).
 func (s *AISummarizer) Summarize(text string, length SummaryLength) (SummaryResult, error) {
 	// Clean the text first
 	cleanedText := cleanText(text)
@@ -77,6 +78,36 @@ func (s *AISummarizer) Summarize(text string, length SummaryLength) (SummaryResu
 	}
 	userPrompt := fmt.Sprintf("Summarize the following text in approximately %d words:\n\n%s", targetWords, cleanedText)
 
+	// Try OpenAI format first
+	result, err := s.tryOpenAIFormat(systemPrompt, userPrompt)
+	if err == nil {
+		// Count sentences in the summary
+		sentences := splitSentences(result)
+		return SummaryResult{
+			Summary:       result,
+			SentenceCount: len(sentences),
+			IsTooShort:    false,
+		}, nil
+	}
+
+	// If OpenAI format fails, try Ollama format
+	result, err = s.tryOllamaFormat(systemPrompt, userPrompt)
+	if err == nil {
+		// Count sentences in the summary
+		sentences := splitSentences(result)
+		return SummaryResult{
+			Summary:       result,
+			SentenceCount: len(sentences),
+			IsTooShort:    false,
+		}, nil
+	}
+
+	// Both formats failed
+	return SummaryResult{}, fmt.Errorf("all API formats failed: OpenAI error: %v, Ollama error: %v", err, err)
+}
+
+// tryOpenAIFormat attempts to use OpenAI-compatible API format
+func (s *AISummarizer) tryOpenAIFormat(systemPrompt, userPrompt string) (string, error) {
 	requestBody := map[string]interface{}{
 		"model": s.Model,
 		"messages": []map[string]string{
@@ -89,45 +120,17 @@ func (s *AISummarizer) Summarize(text string, length SummaryLength) (SummaryResu
 
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
-		return SummaryResult{}, fmt.Errorf("failed to marshal request: %w", err)
+		return "", fmt.Errorf("failed to marshal OpenAI request: %w", err)
 	}
 
-	// Validate endpoint URL to prevent SSRF attacks
-	apiURL := s.Endpoint + "/chat/completions"
-	parsedURL, err := url.Parse(apiURL)
+	resp, err := s.sendRequest(jsonBody)
 	if err != nil {
-		return SummaryResult{}, fmt.Errorf("invalid API endpoint URL: %w", err)
-	}
-	// Allow HTTP for local endpoints (localhost, 127.0.0.1, etc.) for local LLM support (e.g., Ollama)
-	if parsedURL.Scheme != "https" && !isLocalEndpoint(parsedURL.Host) {
-		return SummaryResult{}, fmt.Errorf("API endpoint must use HTTPS for security (HTTP allowed only for localhost)")
-	}
-
-	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonBody))
-	if err != nil {
-		return SummaryResult{}, fmt.Errorf("failed to create request: %w", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+s.APIKey)
-
-	resp, err := s.client.Do(req)
-	if err != nil {
-		return SummaryResult{}, fmt.Errorf("ai api request failed: %w", err)
+		return "", fmt.Errorf("OpenAI request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		var errorResp struct {
-			Error struct {
-				Message string `json:"message"`
-			} `json:"error"`
-		}
-		// Try to decode error response; if it fails, return generic error with status code
-		if err := json.NewDecoder(resp.Body).Decode(&errorResp); err == nil && errorResp.Error.Message != "" {
-			return SummaryResult{}, fmt.Errorf("ai api error: %s", errorResp.Error.Message)
-		}
-		return SummaryResult{}, fmt.Errorf("ai api returned status: %d", resp.StatusCode)
+		return "", fmt.Errorf("OpenAI API returned status: %d", resp.StatusCode)
 	}
 
 	var result struct {
@@ -139,24 +142,89 @@ func (s *AISummarizer) Summarize(text string, length SummaryLength) (SummaryResu
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return SummaryResult{}, fmt.Errorf("failed to decode ai response: %w", err)
+		return "", fmt.Errorf("failed to decode OpenAI response: %w", err)
 	}
 
 	if len(result.Choices) > 0 && result.Choices[0].Message.Content != "" {
 		// Clean up the response
 		summary := strings.TrimSpace(result.Choices[0].Message.Content)
-
-		// Count sentences in the summary
-		sentences := splitSentences(summary)
-
-		return SummaryResult{
-			Summary:       summary,
-			SentenceCount: len(sentences),
-			IsTooShort:    false,
-		}, nil
+		return summary, nil
 	}
 
-	return SummaryResult{}, fmt.Errorf("no summary found in ai response")
+	return "", fmt.Errorf("no summary found in OpenAI response")
+}
+
+// tryOllamaFormat attempts to use Ollama API format
+func (s *AISummarizer) tryOllamaFormat(systemPrompt, userPrompt string) (string, error) {
+	// Combine system and user prompts for Ollama
+	fullPrompt := systemPrompt + "\n\n" + userPrompt
+
+	requestBody := map[string]interface{}{
+		"model":  s.Model,
+		"prompt": fullPrompt,
+		"stream": false,
+	}
+
+	jsonBody, err := json.Marshal(requestBody)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal Ollama request: %w", err)
+	}
+
+	resp, err := s.sendRequest(jsonBody)
+	if err != nil {
+		return "", fmt.Errorf("Ollama request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("Ollama API returned status: %d", resp.StatusCode)
+	}
+
+	var result struct {
+		Response string `json:"response"`
+		Done     bool   `json:"done"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", fmt.Errorf("failed to decode Ollama response: %w", err)
+	}
+
+	if result.Done && result.Response != "" {
+		// Clean up the response
+		summary := strings.TrimSpace(result.Response)
+		return summary, nil
+	}
+
+	return "", fmt.Errorf("no summary found in Ollama response")
+}
+
+// sendRequest sends the HTTP request with proper headers
+func (s *AISummarizer) sendRequest(jsonBody []byte) (*http.Response, error) {
+	apiURL := s.Endpoint
+
+	// Validate endpoint URL to prevent SSRF attacks
+	parsedURL, err := url.Parse(apiURL)
+	if err != nil {
+		return nil, fmt.Errorf("invalid API endpoint URL: %w", err)
+	}
+
+	// Allow HTTP for local endpoints (localhost, 127.0.0.1, etc.) for local LLM support (e.g., Ollama)
+	if parsedURL.Scheme != "https" && !isLocalEndpoint(parsedURL.Host) {
+		return nil, fmt.Errorf("API endpoint must use HTTPS for security (HTTP allowed only for localhost)")
+	}
+
+	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	// Only add Authorization header if API key is provided
+	if s.APIKey != "" {
+		req.Header.Set("Authorization", "Bearer "+s.APIKey)
+	}
+
+	return s.client.Do(req)
 }
 
 // isLocalEndpoint checks if a host is a local endpoint (localhost, 127.0.0.1, etc.)

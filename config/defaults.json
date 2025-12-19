@@ -16,7 +16,7 @@
   "baidu_app_id": "",
   "baidu_secret_key": "",
   "ai_api_key": "",
-  "ai_endpoint": "https://api.openai.com/v1",
+  "ai_endpoint": "https://api.openai.com/v1/chat/completions",
   "ai_model": "gpt-4o-mini",
   "ai_translation_prompt": "You are a translator. Translate the given text accurately. Output ONLY the translated text, nothing else.",
   "ai_summary_prompt": "You are a summarizer. Generate a concise summary of the given text. Output ONLY the summary, nothing else.",
