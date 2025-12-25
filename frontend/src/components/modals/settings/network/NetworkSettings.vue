@@ -61,9 +61,24 @@ async function detectNetwork() {
 
 function formatTime(timeStr: string): string {
   if (!timeStr) return '';
+
   const date = new Date(timeStr);
+
+  // Check if the date is invalid or is the Unix epoch (zero time)
+  if (isNaN(date.getTime()) || date.getTime() === 0) {
+    return '';
+  }
+
   const now = new Date();
   const diff = now.getTime() - date.getTime();
+
+  // If the date is in the future or too far in the past (more than 10 years),
+  // it's likely an invalid/uninitialized timestamp
+  const maxReasonableDiff = 10 * 365 * 24 * 60 * 60 * 1000; // 10 years in milliseconds
+  if (diff < 0 || diff > maxReasonableDiff) {
+    return '';
+  }
+
   const minutes = Math.floor(diff / 60000);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
