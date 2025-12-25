@@ -265,7 +265,7 @@ const zh: TranslationMessages = {
   feedDeletedSuccess: '订阅删除成功',
   feedName: '订阅源名称',
   feedProxy: '订阅源代理',
-  feedProxyDesc: '为此订阅源配置代理设置（覆盖全局设置）',
+  feedProxyDesc: '为此订阅源配置代理设置',
   feedProxyHost: '代理主机',
   feedProxyPassword: '密码（可选）',
   feedProxyPort: '代理端口',

@@ -269,7 +269,7 @@ const en: TranslationMessages = {
   feedDeletedSuccess: 'Feed deleted successfully',
   feedName: 'Feed Name',
   feedProxy: 'Feed Proxy',
-  feedProxyDesc: 'Configure proxy settings for this feed (overrides global setting)',
+  feedProxyDesc: 'Configure proxy settings for this feed',
   feedProxyHost: 'Proxy Host',
   feedProxyPassword: 'Password (Optional)',
   feedProxyPort: 'Proxy Port',
