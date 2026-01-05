@@ -98,9 +98,9 @@ async function syncNow() {
 watch(
   () => props.settings.freshrss_enabled,
   async (newVal, oldVal) => {
-    // Convert string values to boolean for comparison
-    const oldBool = oldVal === 'true' || oldVal === true;
-    const newBool = newVal === 'true' || newVal === true;
+    // Use boolean values directly (settings system ensures these are booleans)
+    const oldBool = oldVal;
+    const newBool = newVal;
 
     // When FreshRSS is disabled, refresh feeds and unread counts
     if (oldBool && !newBool) {

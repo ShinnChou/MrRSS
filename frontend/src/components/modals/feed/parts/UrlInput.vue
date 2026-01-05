@@ -34,27 +34,6 @@ const inputPlaceholder = computed(() => {
   return t('rsshubUrlPlaceholder');
 });
 
-// Handle blur event to auto-add prefix when user finishes typing
-function handleBlur() {
-  let value = localValue.value.trim();
-
-  // Auto-add rsshub:// prefix for route names:
-  // 1. Value is not empty
-  // 2. Doesn't have any protocol yet
-  // 3. Looks like a route name (no spaces)
-  if (
-    value &&
-    !value.startsWith('http://') &&
-    !value.startsWith('https://') &&
-    !value.startsWith('rsshub://') &&
-    !value.includes(' ')
-  ) {
-    value = `rsshub://${value}`;
-    localValue.value = value;
-    emit('update:modelValue', value);
-  }
-}
-
 // Handle input event - just update local value
 function handleInput(event: Event) {
   const target = event.target as HTMLInputElement;
@@ -74,7 +53,6 @@ function handleInput(event: Event) {
       :placeholder="inputPlaceholder"
       :class="['input-field', props.mode === 'add' && props.isInvalid ? 'border-red-500' : '']"
       @input="handleInput"
-      @blur="handleBlur"
     />
   </div>
 </template>

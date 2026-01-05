@@ -49,6 +49,8 @@ function loadRules() {
         typeof props.settings.rules === 'string'
           ? JSON.parse(props.settings.rules)
           : props.settings.rules;
+
+      // No transformation needed - feed_type values are already codes
       rules.value = Array.isArray(parsed) ? parsed : [];
     } catch (e) {
       console.error('Error parsing rules:', e);
@@ -69,6 +71,7 @@ watch(
 // Save rules to settings
 async function saveRules() {
   try {
+    // No transformation needed - feed_type values are already codes
     const updatedSettings = { ...props.settings, rules: JSON.stringify(rules.value) };
     emit('update:settings', updatedSettings);
     await fetch('/api/settings', {
@@ -149,6 +152,7 @@ async function applyRule(rule: Rule): Promise<void> {
   applyingRuleId.value = rule.id;
 
   try {
+    // No transformation needed - feed_type values are already codes
     const res = await fetch('/api/rules/apply', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -268,7 +268,9 @@ If you discover a security vulnerability, please follow our [Security Policy](SE
 
 ## 📝 License
 
-This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details.
+
+This project uses icon files sourced from [DIYgod/RSSHub](https://github.com/DIYgod/RSSHub) and [FreshRSS/FreshRSS](https://github.com/FreshRSS/FreshRSS). These resources are licensed under the AGPL-3.0 License.
 
 ## 🙏 Acknowledgments
 

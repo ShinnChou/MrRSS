@@ -51,7 +51,7 @@ func (f *Fetcher) AddRSSHubSubscription(route string, category string, customTit
 		return 0, fmt.Errorf("RSSHub route cannot be empty")
 	}
 
-	// Validate route by testing it
+	// Validate route by testing it (skip if API key is empty)
 	endpoint, _ := f.db.GetSetting("rsshub_endpoint")
 	if endpoint == "" {
 		endpoint = "https://rsshub.app"
@@ -59,8 +59,12 @@ func (f *Fetcher) AddRSSHubSubscription(route string, category string, customTit
 	apiKey, _ := f.db.GetEncryptedSetting("rsshub_api_key")
 
 	client := rsshub.NewClient(endpoint, apiKey)
-	if err := client.ValidateRoute(route); err != nil {
-		return 0, fmt.Errorf("RSSHub route validation failed: %w", err)
+
+	// Skip validation if API key is empty (public rsshub.app instance)
+	if apiKey != "" {
+		if err := client.ValidateRoute(route); err != nil {
+			return 0, fmt.Errorf("RSSHub route validation failed: %w", err)
+		}
 	}
 
 	// Generate title from route
@@ -128,9 +132,14 @@ func (f *Fetcher) fetchAndSanitizeFeed(ctx context.Context, feedURL string) (str
 	}
 	debugTimer.Stage("Request created")
 
-	// Add user agent to avoid being blocked
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
-	req.Header.Set("Accept", "application/rss+xml, application/xml, text/xml, */*")
+	// Add browser-like headers to avoid being blocked by Cloudflare and anti-bot protections
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+	req.Header.Set("Accept", "application/rss+xml, application/xml, text/xml, application/atom+xml;q=0.9,*/*;q=0.8")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+	req.Header.Set("DNT", "1")
+	req.Header.Set("Connection", "keep-alive")
+	req.Header.Set("Upgrade-Insecure-Requests", "1")
 
 	debugTimer.LogWithTime("Sending HTTP request to %s", feedURL)
 	resp, err := httpClient.Do(req)

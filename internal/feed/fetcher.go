@@ -8,6 +8,7 @@ import (
 	"MrRSS/internal/translation"
 	"MrRSS/internal/utils"
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -113,6 +114,12 @@ func (f *Fetcher) transformRSSHubURL(url string) (string, error) {
 		return url, nil
 	}
 
+	// Check if RSSHub is enabled
+	enabledStr, _ := f.db.GetSetting("rsshub_enabled")
+	if enabledStr != "true" {
+		return "", fmt.Errorf("RSSHub integration is disabled. Please enable it in settings")
+	}
+
 	endpoint, _ := f.db.GetSetting("rsshub_endpoint")
 	if endpoint == "" {
 		endpoint = "https://rsshub.app"
@@ -177,8 +184,13 @@ func (f *Fetcher) getHTTPClient(feed models.Feed) (*http.Client, error) {
 	}
 	// If ProxyEnabled=false, proxyURL remains empty (no proxy)
 
-	// Create HTTP client with or without proxy
-	return CreateHTTPClient(proxyURL)
+	// Create HTTP client with browser-like headers to bypass Cloudflare and anti-bot protections
+	// This is critical for RSSHub feeds and other services with anti-bot protection
+	return utils.CreateHTTPClientWithUserAgent(
+		proxyURL,
+		30*time.Second,
+		"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+	)
 }
 
 // setupTranslator configures the translator based on database settings.

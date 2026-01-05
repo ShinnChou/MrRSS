@@ -9,7 +9,40 @@ import (
 
 	"MrRSS/internal/database"
 	"MrRSS/internal/models"
+	"MrRSS/internal/rsshub"
 )
+
+// getFeedType returns the type code of a feed
+// Possible values: "regular", "freshrss", "rsshub", "script", "xpath", "email"
+func getFeedType(feed *models.Feed) string {
+	// Check FreshRSS
+	if feed.IsFreshRSSSource {
+		return "freshrss"
+	}
+
+	// Check RSSHub
+	if rsshub.IsRSSHubURL(feed.URL) {
+		return "rsshub"
+	}
+
+	// Check custom script
+	if feed.ScriptPath != "" {
+		return "script"
+	}
+
+	// Check email
+	if feed.Type == "email" {
+		return "email"
+	}
+
+	// Check XPath
+	if feed.Type == "HTML+XPath" || feed.Type == "XML+XPath" {
+		return "xpath"
+	}
+
+	// Default: regular RSS/Atom feed
+	return "regular"
+}
 
 // Condition represents a condition in a rule
 type Condition struct {
@@ -73,7 +106,7 @@ func (e *Engine) ApplyRulesToArticles(articles []models.Article) (int, error) {
 	for _, feed := range feeds {
 		feedCategories[feed.ID] = feed.Category
 		feedTitles[feed.ID] = feed.Title
-		feedTypes[feed.ID] = feed.Type
+		feedTypes[feed.ID] = getFeedType(&feed)
 		feedIsImageMode[feed.ID] = feed.IsImageMode
 		feedIsFreshRSS[feed.ID] = feed.IsFreshRSSSource
 	}
@@ -129,7 +162,7 @@ func (e *Engine) ApplyRule(rule Rule) (int, error) {
 	for _, feed := range feeds {
 		feedCategories[feed.ID] = feed.Category
 		feedTitles[feed.ID] = feed.Title
-		feedTypes[feed.ID] = feed.Type
+		feedTypes[feed.ID] = getFeedType(&feed)
 		feedIsImageMode[feed.ID] = feed.IsImageMode
 		feedIsFreshRSS[feed.ID] = feed.IsFreshRSSSource
 	}

@@ -26,6 +26,15 @@ const { t, locale } = useI18n();
 const { showPreviewImages } = useShowPreviewImages();
 const store = useAppStore();
 
+// Check if article is from RSSHub feed
+const isRSSHubArticle = computed(() => {
+  // RSSHub feeds have rsshub:// URL
+  return (
+    props.article.feed_title &&
+    store.feeds.some((f) => f.id === props.article.feed_id && f.url.startsWith('rsshub://'))
+  );
+});
+
 // Translation function wrapper for formatDate
 const formatDateWithI18n = (dateStr: string): string => {
   return formatDateUtil(dateStr, locale.value, t);
@@ -190,6 +199,14 @@ onUnmounted(() => {
             class="w-3.5 h-3.5 shrink-0 sm:w-4 sm:h-4"
             :title="t('freshRSSSyncedFeed')"
             alt="FreshRSS"
+          />
+          <!-- RSSHub indicator -->
+          <img
+            v-if="isRSSHubArticle"
+            src="/assets/plugin_icons/rsshub.svg"
+            class="w-3.5 h-3.5 shrink-0 sm:w-4 sm:h-4"
+            :title="t('rsshubFeed')"
+            alt="RSSHub"
           />
           <span class="whitespace-nowrap">{{ formatDateWithI18n(article.published_at) }}</span>
         </div>

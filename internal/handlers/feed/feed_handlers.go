@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"MrRSS/internal/handlers/core"
+	"MrRSS/internal/rsshub"
 )
 
 // HandleFeeds returns all feeds.
@@ -160,6 +161,32 @@ func HandleUpdateFeed(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
+	}
+
+	// Validate RSSHub URL if provided
+	if req.URL != "" && rsshub.IsRSSHubURL(req.URL) {
+		// Check if RSSHub is enabled
+		enabledStr, _ := h.DB.GetSetting("rsshub_enabled")
+		if enabledStr != "true" {
+			http.Error(w, "RSSHub integration is disabled. Please enable it in settings", http.StatusBadRequest)
+			return
+		}
+
+		endpoint, _ := h.DB.GetSetting("rsshub_endpoint")
+		if endpoint == "" {
+			endpoint = "https://rsshub.app"
+		}
+		apiKey, _ := h.DB.GetEncryptedSetting("rsshub_api_key")
+
+		// Skip validation if API key is empty (public rsshub.app instance with Cloudflare protection)
+		if apiKey != "" {
+			route := rsshub.ExtractRoute(req.URL)
+			client := rsshub.NewClient(endpoint, apiKey)
+			if err := client.ValidateRoute(route); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+		}
 	}
 
 	if err := h.DB.UpdateFeed(req.ID, req.Title, req.URL, req.Category, req.ScriptPath, req.HideFromTimeline, req.ProxyURL, req.ProxyEnabled, req.RefreshInterval, req.IsImageMode, req.Type, req.XPathItem, req.XPathItemTitle, req.XPathItemContent, req.XPathItemUri, req.XPathItemAuthor, req.XPathItemTimestamp, req.XPathItemTimeFormat, req.XPathItemThumbnail, req.XPathItemCategories, req.XPathItemUid, req.ArticleViewMode, req.AutoExpandContent, req.EmailAddress, req.EmailIMAPServer, req.EmailUsername, req.EmailPassword, req.EmailFolder, req.EmailIMAPPort); err != nil {

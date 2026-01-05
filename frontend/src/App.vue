@@ -324,6 +324,7 @@ function onFeedUpdated(): void {
       :default-value="inputDialog.defaultValue"
       :confirm-text="inputDialog.confirmText"
       :cancel-text="inputDialog.cancelText"
+      :suggestions="inputDialog.suggestions"
       @confirm="inputDialog.onConfirm"
       @cancel="inputDialog.onCancel"
       @close="inputDialog = null"

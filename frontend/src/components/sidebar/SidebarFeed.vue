@@ -36,6 +36,10 @@ function getFavicon(url: string): string {
   }
 }
 
+function isRSSHubFeed(feed: Feed): boolean {
+  return feed.url.startsWith('rsshub://');
+}
+
 function handleDragStart(event: Event) {
   emit('dragstart', event);
 }
@@ -82,6 +86,15 @@ function handleDragEnd() {
       />
     </div>
     <span class="truncate flex-1">{{ feed.title }}</span>
+
+    <!-- RSSHub indicator -->
+    <img
+      v-if="isRSSHubFeed(feed)"
+      src="/assets/plugin_icons/rsshub.svg"
+      class="w-3.5 h-3.5 shrink-0"
+      :title="t('rsshubFeed')"
+      alt="RSSHub"
+    />
     <PhImage
       v-if="feed.is_image_mode"
       :size="16"

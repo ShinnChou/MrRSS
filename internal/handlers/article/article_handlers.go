@@ -8,7 +8,40 @@ import (
 
 	"MrRSS/internal/handlers/core"
 	"MrRSS/internal/models"
+	"MrRSS/internal/rsshub"
 )
+
+// GetFeedType returns the type code of a feed
+// Possible values: "regular", "freshrss", "rsshub", "script", "xpath", "email"
+func GetFeedType(feed *models.Feed) string {
+	// Check FreshRSS
+	if feed.IsFreshRSSSource {
+		return "freshrss"
+	}
+
+	// Check RSSHub
+	if rsshub.IsRSSHubURL(feed.URL) {
+		return "rsshub"
+	}
+
+	// Check custom script
+	if feed.ScriptPath != "" {
+		return "script"
+	}
+
+	// Check email
+	if feed.Type == "email" {
+		return "email"
+	}
+
+	// Check XPath
+	if feed.Type == "HTML+XPath" || feed.Type == "XML+XPath" {
+		return "xpath"
+	}
+
+	// Default: regular RSS/Atom feed
+	return "regular"
+}
 
 // HandleProgress returns the current fetch progress with statistics.
 func HandleProgress(h *core.Handler, w http.ResponseWriter, r *http.Request) {
@@ -124,20 +157,18 @@ func HandleFilteredArticles(h *core.Handler, w http.ResponseWriter, r *http.Requ
 	feedCategories := make(map[int64]string)
 	feedTypes := make(map[int64]string)
 	feedIsImageMode := make(map[int64]bool)
-	feedIsFreshRSS := make(map[int64]bool)
 
 	for _, feed := range feeds {
 		feedCategories[feed.ID] = feed.Category
-		feedTypes[feed.ID] = feed.Type
+		feedTypes[feed.ID] = GetFeedType(&feed)
 		feedIsImageMode[feed.ID] = feed.IsImageMode
-		feedIsFreshRSS[feed.ID] = feed.IsFreshRSSSource
 	}
 
 	// Apply filter conditions
 	if len(req.Conditions) > 0 {
 		var filteredArticles []models.Article
 		for _, article := range articles {
-			if evaluateArticleConditions(article, req.Conditions, feedCategories, feedTypes, feedIsImageMode, feedIsFreshRSS) {
+			if evaluateArticleConditions(article, req.Conditions, feedCategories, feedTypes, feedIsImageMode) {
 				filteredArticles = append(filteredArticles, article)
 			}
 		}

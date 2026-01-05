@@ -268,7 +268,9 @@ go build -tags server -o mrrss-server .
 
 ## 📝 许可证
 
-本项目采用 GPLv3 许可证 - 详情请参阅 [LICENSE](LICENSE) 文件。
+本项目采用 GPL-3.0 许可证 - 详情请参阅 [LICENSE](LICENSE) 文件。
+
+本项目使用了来源于 [DIYgod/RSSHub](https://github.com/DIYgod/RSSHub) 项目和 [FreshRSS/FreshRSS](https://github.com/FreshRSS/FreshRSS) 项目的图标文件。该部分资源遵循 AGPL-3.0 协议。
 
 ## 🙏 致谢
 

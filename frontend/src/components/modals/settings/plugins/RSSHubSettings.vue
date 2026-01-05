@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { PhLink, PhKey, PhTestTube } from '@phosphor-icons/vue';
 import type { SettingsData } from '@/types/settings';
+import { useAppStore } from '@/stores/app';
 
 const { t } = useI18n();
+const store = useAppStore();
 
 interface Props {
   settings: SettingsData;
@@ -17,6 +19,30 @@ const emit = defineEmits<{
 }>();
 
 const isTesting = ref(false);
+
+// Check if there are any RSSHub feeds
+const hasRSSHubFeeds = computed(() => {
+  return store.feeds && store.feeds.some((f) => f.url.startsWith('rsshub://'));
+});
+
+// Handle RSSHub toggle - prevent disabling if there are RSSHub feeds
+function handleToggleRSSHub(e: Event) {
+  const target = e.target as HTMLInputElement;
+  const newValue = target.checked;
+
+  // Prevent disabling if there are RSSHub feeds
+  if (!newValue && hasRSSHubFeeds.value) {
+    window.showToast(t('rsshubCannotDisableWithFeeds'), 'error');
+    // Reset checkbox to enabled
+    target.checked = true;
+    return;
+  }
+
+  emit('update:settings', {
+    ...props.settings,
+    rsshub_enabled: newValue,
+  });
+}
 
 // Test RSSHub connection
 async function testConnection() {
@@ -50,7 +76,7 @@ async function testConnection() {
 </script>
 
 <template>
-  <!-- RSSHub Header -->
+  <!-- Enable RSSHub -->
   <div class="setting-item">
     <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
       <img
@@ -59,22 +85,31 @@ async function testConnection() {
         class="w-5 h-5 sm:w-6 sm:h-6 mt-0.5 shrink-0"
       />
       <div class="flex-1 min-w-0">
-        <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">RSSHub</div>
+        <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">{{ t('rsshubEnabled') }}</div>
         <div class="text-xs text-text-secondary hidden sm:block">
-          {{ t('rsshubDescription') }}
+          {{ t('rsshubEnabledDesc') }}
         </div>
       </div>
     </div>
+    <input
+      type="checkbox"
+      :checked="props.settings.rsshub_enabled"
+      class="toggle"
+      @change="handleToggleRSSHub"
+    />
   </div>
 
-  <div class="ml-2 sm:ml-4 space-y-2 sm:space-y-3 border-l-2 border-border pl-2 sm:pl-4">
+  <div
+    v-if="props.settings.rsshub_enabled"
+    class="ml-2 sm:ml-4 space-y-2 sm:space-y-3 border-l-2 border-border pl-2 sm:pl-4"
+  >
     <!-- Endpoint -->
     <div class="sub-setting-item">
       <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
         <PhLink :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('rsshubEndpoint') }}
+            {{ t('rsshubEndpoint') }} <span class="text-red-500">*</span>
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
             {{ t('rsshubEndpointDesc') }}
