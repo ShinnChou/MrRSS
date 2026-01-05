@@ -44,8 +44,6 @@ import (
 	"MrRSS/internal/translation"
 	"MrRSS/internal/utils"
 
-	_ "MrRSS/docs" // Swagger docs
-
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
@@ -263,8 +261,14 @@ func main() {
 	apiMux.HandleFunc("/api/rsshub/test-connection", func(w http.ResponseWriter, r *http.Request) { rsshubHandler.HandleTestConnection(h, w, r) })
 	apiMux.HandleFunc("/api/rsshub/validate-route", func(w http.ResponseWriter, r *http.Request) { rsshubHandler.HandleValidateRoute(h, w, r) })
 
-	// Swagger Documentation
-	apiMux.HandleFunc("/swagger/*", httpSwagger.WrapHandler)
+	// Swagger Documentation - Serve swagger.json file
+	apiMux.HandleFunc("/docs/SERVER_MODE/swagger.json", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "docs/SERVER_MODE/swagger.json")
+	})
+
+	apiMux.HandleFunc("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("/docs/SERVER_MODE/swagger.json"),
+	))
 
 	// Static Files
 	log.Println("Setting up static files...")

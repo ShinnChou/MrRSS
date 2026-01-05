@@ -9,6 +9,17 @@ import (
 )
 
 // HandleAddFeed adds a new RSSHub feed subscription
+//
+//	@Summary		Add RSSHub feed
+//	@Description	Adds a new RSSHub feed subscription with the specified route, category, and title
+//	@Tags			feeds
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		object{route=string,category=string,title=string}	true	"RSSHub feed details"
+//	@Success		200		{object}	object{success=bool,feed_id=int64}				"Feed added successfully"
+//	@Failure		400		{object}	object{error=string}								"Invalid request"
+//	@Failure		500		{object}	object{error=string}								"Server error"
+//	@Router			/api/rsshub/add [post]
 func HandleAddFeed(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -47,6 +58,16 @@ func HandleAddFeed(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleTestConnection tests the RSSHub endpoint and API key
+//
+//	@Summary		Test RSSHub connection
+//	@Description	Tests the connection to RSSHub endpoint with the provided API key by validating a common route
+//	@Tags			rsshub
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		object{endpoint=string,api_key=string}	true	"RSSHub connection details"
+//	@Success		200		{object}	object{success=bool,message=string}	"Connection successful"
+//	@Failure		200		{object}	object{success=bool,error=string}		"Connection failed"
+//	@Router			/api/rsshub/test-connection [post]
 func HandleTestConnection(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -88,6 +109,16 @@ func HandleTestConnection(h *core.Handler, w http.ResponseWriter, r *http.Reques
 }
 
 // HandleValidateRoute validates a specific RSSHub route
+//
+//	@Summary		Validate RSSHub route
+//	@Description	Validates if a specific RSSHub route exists and is accessible using the configured endpoint and API key
+//	@Tags			rsshub
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		object{route=string}	true	"Route to validate"
+//	@Success		200		{object}	object{valid=bool,message=string}	"Route is valid"
+//	@Failure		200		{object}	object{valid=bool,error=string}		"Route is invalid"
+//	@Router			/api/rsshub/validate-route [post]
 func HandleValidateRoute(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

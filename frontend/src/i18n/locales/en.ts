@@ -664,7 +664,7 @@ const en: TranslationMessages = {
   rssUrl: 'RSS URL',
   rssUrlDescription: 'Subscribe to RSS/Atom feeds',
   rssUrlPlaceholder: 'https://example.com/rss',
-  rsshubUrlPlaceholder: 'RSS URL or route (e.g., rsshub://nytimes or nytimes)',
+  rsshubUrlPlaceholder: 'RSS route (supporting rsshub:// protocol)',
   rsshubSupported: 'RSSHub Support Enabled',
   ruleActions: 'Actions',
   ruleAppliedSuccess: 'Rule applied to {count} articles',

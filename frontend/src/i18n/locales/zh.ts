@@ -659,7 +659,7 @@ const zh: TranslationMessages = {
   rssUrl: 'RSS 地址',
   rssUrlDescription: '订阅 RSS/Atom 订阅源',
   rssUrlPlaceholder: 'https://example.com/rss',
-  rsshubUrlPlaceholder: 'RSS URL 或路由（如：rsshub://nytimes 或 nytimes）',
+  rsshubUrlPlaceholder: 'RSS 路由（支持 rsshub:// 格式）',
   rsshubSupported: '已启用 RSSHub 支持',
   ruleActions: '操作',
   ruleAppliedSuccess: '规则已应用于 {count} 篇文章',
