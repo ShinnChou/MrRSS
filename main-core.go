@@ -43,7 +43,30 @@ import (
 	"MrRSS/internal/network"
 	"MrRSS/internal/translation"
 	"MrRSS/internal/utils"
+
+	_ "MrRSS/docs" // Swagger docs
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
+
+// @title           MrRSS API
+// @version         1.3.14
+// @description     MrRSS is a modern, cross-platform desktop RSS reader with auto-translation, smart feed discovery, and AI-powered summarization.
+
+// @contact.name   API Support
+// @contact.url    https://github.com/WCY-dt/MrRSS
+// @contact.email  mail@ch3nyang.top
+
+// @license.name  GPL-3.0
+// @license.url   https://www.gnu.org/licenses/gpl-3.0.en.html
+
+// @host      localhost:1234
+// @BasePath  /api
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 
 var debugLogging = os.Getenv("MRRSS_DEBUG") != ""
 
@@ -201,6 +224,7 @@ func main() {
 	apiMux.HandleFunc("/api/articles/mark-all-read", func(w http.ResponseWriter, r *http.Request) { article.HandleMarkAllAsRead(h, w, r) })
 	apiMux.HandleFunc("/api/articles/clear-read-later", func(w http.ResponseWriter, r *http.Request) { article.HandleClearReadLater(h, w, r) })
 	apiMux.HandleFunc("/api/articles/summarize", func(w http.ResponseWriter, r *http.Request) { summary.HandleSummarizeArticle(h, w, r) })
+	apiMux.HandleFunc("/api/articles/clear-summaries", func(w http.ResponseWriter, r *http.Request) { summary.HandleClearSummaries(h, w, r) })
 	apiMux.HandleFunc("/api/articles/export/obsidian", func(w http.ResponseWriter, r *http.Request) { article.HandleExportToObsidian(h, w, r) })
 	apiMux.HandleFunc("/api/settings", func(w http.ResponseWriter, r *http.Request) { settings.HandleSettings(h, w, r) })
 	apiMux.HandleFunc("/api/refresh", func(w http.ResponseWriter, r *http.Request) { article.HandleRefresh(h, w, r) })
@@ -232,12 +256,15 @@ func main() {
 	apiMux.HandleFunc("/api/custom-css", func(w http.ResponseWriter, r *http.Request) { customcss.HandleGetCSS(h, w, r) })
 	apiMux.HandleFunc("/api/custom-css/delete", func(w http.ResponseWriter, r *http.Request) { customcss.HandleDeleteCSS(h, w, r) })
 	apiMux.HandleFunc("/api/freshrss/sync", func(w http.ResponseWriter, r *http.Request) { freshrssHandler.HandleSync(h, w, r) })
-	apiMux.HandleFunc("/api/freshrss/test-connection", func(w http.ResponseWriter, r *http.Request) { freshrssHandler.HandleTestConnection(h, w, r) })
+	apiMux.HandleFunc("/api/freshrss/sync-feed", func(w http.ResponseWriter, r *http.Request) { freshrssHandler.HandleSyncFeed(h, w, r) })
 	apiMux.HandleFunc("/api/freshrss/status", func(w http.ResponseWriter, r *http.Request) { freshrssHandler.HandleSyncStatus(h, w, r) })
 	// RSSHub routes
 	apiMux.HandleFunc("/api/rsshub/add", func(w http.ResponseWriter, r *http.Request) { rsshubHandler.HandleAddFeed(h, w, r) })
 	apiMux.HandleFunc("/api/rsshub/test-connection", func(w http.ResponseWriter, r *http.Request) { rsshubHandler.HandleTestConnection(h, w, r) })
 	apiMux.HandleFunc("/api/rsshub/validate-route", func(w http.ResponseWriter, r *http.Request) { rsshubHandler.HandleValidateRoute(h, w, r) })
+
+	// Swagger Documentation
+	apiMux.HandleFunc("/swagger/*", httpSwagger.WrapHandler)
 
 	// Static Files
 	log.Println("Setting up static files...")
