@@ -36,6 +36,7 @@ import (
 	rules "MrRSS/internal/handlers/rules"
 	script "MrRSS/internal/handlers/script"
 	settings "MrRSS/internal/handlers/settings"
+	stathandlers "MrRSS/internal/handlers/statistics"
 	summary "MrRSS/internal/handlers/summary"
 	translationhandlers "MrRSS/internal/handlers/translation"
 	update "MrRSS/internal/handlers/update"
@@ -262,6 +263,16 @@ func main() {
 	apiMux.HandleFunc("/api/rsshub/test-connection", func(w http.ResponseWriter, r *http.Request) { rsshubHandler.HandleTestConnection(h, w, r) })
 	apiMux.HandleFunc("/api/rsshub/validate-route", func(w http.ResponseWriter, r *http.Request) { rsshubHandler.HandleValidateRoute(h, w, r) })
 	apiMux.HandleFunc("/api/rsshub/transform-url", func(w http.ResponseWriter, r *http.Request) { rsshubHandler.HandleTransformURL(h, w, r) })
+	// Statistics routes
+	apiMux.HandleFunc("/api/statistics", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodDelete {
+			stathandlers.HandleResetStatistics(h, w, r)
+		} else {
+			stathandlers.HandleGetStatistics(h, w, r)
+		}
+	})
+	apiMux.HandleFunc("/api/statistics/all-time", func(w http.ResponseWriter, r *http.Request) { stathandlers.HandleGetAllTimeStatistics(h, w, r) })
+	apiMux.HandleFunc("/api/statistics/available-months", func(w http.ResponseWriter, r *http.Request) { stathandlers.HandleGetAvailableMonths(h, w, r) })
 
 	// Swagger Documentation - Serve swagger.json file
 	apiMux.HandleFunc("/docs/SERVER_MODE/swagger.json", func(w http.ResponseWriter, r *http.Request) {

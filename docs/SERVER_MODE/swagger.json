@@ -1293,6 +1293,65 @@
             }
         },
         "/browser/open": {
+            "get": {
+                "description": "Open a URL in the user's default web browser",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "browser"
+                ],
+                "summary": "Open URL in browser",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "URL to open (for GET requests)",
+                        "name": "url",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Open URL request (url) (for POST requests)",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success status (status) or redirect URL (redirect)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid URL)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Returns redirect response for client-side URL opening",
                 "consumes": [
