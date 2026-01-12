@@ -18,8 +18,9 @@ import {
   PhListDashes,
 } from '@phosphor-icons/vue';
 import type { SettingsData } from '@/types/settings';
+import { openInBrowser } from '@/utils/browser';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { fetchSettings } = useSettings();
 
 interface Props {
@@ -37,6 +38,13 @@ const deleteLoading = ref(false);
 
 // Use props settings for real-time updates (passed from parent)
 const hasCustomCSS = computed(() => !!props.settings.custom_css_file);
+
+function openDocumentation() {
+  const docUrl = locale.value.startsWith('zh')
+    ? 'https://github.com/WCY-dt/MrRSS/blob/main/docs/CUSTOM_CSS.zh.md'
+    : 'https://github.com/WCY-dt/MrRSS/blob/main/docs/CUSTOM_CSS.md';
+  openInBrowser(docUrl);
+}
 
 const handleFileUpload = async () => {
   uploading.value = true;
@@ -371,15 +379,14 @@ const handleDeleteCSS = async () => {
             <span class="text-xs text-text-secondary">{{ t('customCSSApplied') }}</span>
           </div>
           <!-- Documentation Link -->
-          <a
-            href="https://github.com/WCY-dt/MrRSS/blob/main/docs/CUSTOM_CSS.md"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
             class="text-xs text-accent hover:underline flex items-center gap-1 mt-1"
+            @click="openDocumentation"
           >
             <PhBookOpen :size="12" />
             {{ t('customCSSGuide') }}
-          </a>
+          </button>
         </div>
       </div>
       <div class="flex items-center gap-2">
