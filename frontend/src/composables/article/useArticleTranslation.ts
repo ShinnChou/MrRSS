@@ -125,7 +125,11 @@ export function useArticleTranslation() {
 
   // Update translation settings from event
   function handleTranslationSettingsChange(enabled: boolean, targetLang: string): void {
-    translationSettings.value = { enabled, targetLang };
+    translationSettings.value = {
+      enabled,
+      targetLang,
+      translationOnlyMode: translationSettings.value.translationOnlyMode,
+    };
 
     // Disconnect observer if translation is disabled
     if (!enabled && observer) {
