@@ -64,14 +64,11 @@ func (ld *LanguageDetector) DetectLanguage(text string) string {
 
 	info := whatlanggo.DetectWithOptions(textForDetection, options)
 
-	// Check confidence level - only accept high confidence detections
-	if info.Confidence < 0.5 {
-		return ""
+	if info.Confidence >= 0.5 {
+		return whatlangToISOCode(info.Lang)
 	}
 
-	// Convert whatlanggo Lang to ISO 639-1 code
-	detectedCode := whatlangToISOCode(info.Lang)
-	return detectedCode
+	return ""
 }
 
 // ShouldTranslate determines if translation is needed based on language detection
@@ -83,6 +80,7 @@ func (ld *LanguageDetector) ShouldTranslate(text, targetLang string) bool {
 	detectedLang := ld.DetectLanguage(text)
 
 	// If detection failed, assume translation is needed (fallback behavior)
+	// This is a conservative approach to avoid missing translations
 	if detectedLang == "" {
 		return true
 	}
