@@ -110,6 +110,14 @@ func HandleGetFilterCounts(h *core.Handler, w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	// Get image unread counts per feed
+	imageUnreadCounts, err := h.DB.GetImageUnreadCountsForAllFeeds()
+	if err != nil {
+		log.Printf("[HandleGetFilterCounts] ERROR getting image unread counts: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	response := map[string]interface{}{
 		"unread":            unreadCounts,
 		"favorites":         favoriteCounts,
@@ -117,6 +125,7 @@ func HandleGetFilterCounts(h *core.Handler, w http.ResponseWriter, r *http.Reque
 		"read_later":        readLaterCounts,
 		"read_later_unread": readLaterUnreadCounts,
 		"images":            imageCounts,
+		"images_unread":     imageUnreadCounts,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

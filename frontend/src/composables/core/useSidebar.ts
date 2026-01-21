@@ -104,7 +104,7 @@ export function useSidebar() {
         countsSource = store.filterCounts.unread;
         break;
       case 'imageGallery':
-        countsSource = store.filterCounts.images;
+        countsSource = store.filterCounts.images_unread;
         break;
       default:
         // For 'all' or empty filter, use regular unread counts
@@ -143,7 +143,7 @@ export function useSidebar() {
       case 'unread':
         return store.filterCounts.unread;
       case 'imageGallery':
-        return store.filterCounts.images;
+        return store.filterCounts.images_unread;
       default:
         // For 'all' or empty filter, use regular unread counts
         return store.unreadCounts.feedCounts;

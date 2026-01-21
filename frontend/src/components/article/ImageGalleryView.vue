@@ -15,6 +15,8 @@ import {
   PhTextTSlash,
   PhMagnifyingGlassPlus,
   PhMagnifyingGlassMinus,
+  PhEnvelope,
+  PhEnvelopeOpen,
 } from '@phosphor-icons/vue';
 import { openInBrowser } from '@/utils/browser';
 
@@ -267,6 +269,8 @@ async function toggleFavorite(article: Article, event?: Event) {
       if (selectedArticle.value && selectedArticle.value.id === article.id) {
         selectedArticle.value.is_favorite = article.is_favorite;
       }
+      // Update filter counts after toggling favorite status
+      await store.fetchFilterCounts();
     }
   } catch (e) {
     console.error('Failed to toggle favorite:', e);
@@ -415,6 +419,9 @@ async function markAsRead(article: Article) {
     });
     if (res.ok) {
       article.is_read = true;
+      // Update unread counts after marking as read
+      await store.fetchUnreadCounts();
+      await store.fetchFilterCounts();
     }
   } catch (e) {
     console.error('Failed to mark as read:', e);
@@ -569,6 +576,47 @@ async function copyImage(src: string) {
 function openOriginal(article: Article) {
   openInBrowser(article.url);
   closeContextMenu();
+}
+
+// Toggle article read status
+async function toggleReadStatus(article: Article) {
+  const newState = !article.is_read;
+  article.is_read = newState;
+  try {
+    await fetch(`/api/articles/read?id=${article.id}&read=${newState}`, {
+      method: 'POST',
+    });
+    // Update unread counts after toggling read status
+    await store.fetchUnreadCounts();
+    await store.fetchFilterCounts();
+  } catch (e) {
+    console.error('Error toggling read status:', e);
+    // Revert the state change on error
+    article.is_read = !newState;
+    window.showToast(t('errorSavingSettings'), 'error');
+  }
+}
+
+// Copy article title
+async function copyArticleTitle(article: Article) {
+  try {
+    await navigator.clipboard.writeText(article.title);
+    window.showToast(t('copiedToClipboard'), 'success');
+  } catch (error) {
+    console.error('Failed to copy title:', error);
+    window.showToast(t('failedToCopy'), 'error');
+  }
+}
+
+// Copy article link
+async function copyArticleLink(article: Article) {
+  try {
+    await navigator.clipboard.writeText(article.url);
+    window.showToast(t('copiedToClipboard'), 'success');
+  } catch (error) {
+    console.error('Failed to copy link:', error);
+    window.showToast(t('failedToCopy'), 'error');
+  }
 }
 
 // Open article in detail view
@@ -1099,6 +1147,55 @@ onUnmounted(() => {
       :style="{ top: contextMenu.y + 'px', left: contextMenu.x + 'px' }"
       @click.stop
     >
+      <button
+        class="w-full px-4 py-2 flex items-center gap-3 text-sm text-text-primary hover:bg-bg-tertiary active:bg-bg-secondary transition-colors cursor-pointer"
+        @click="
+          toggleReadStatus(contextMenu.article);
+          closeContextMenu();
+        "
+      >
+        <PhEnvelope v-if="!contextMenu.article.is_read" :size="16" />
+        <PhEnvelopeOpen v-else :size="16" />
+        <span>{{ contextMenu.article.is_read ? t('markAsUnread') : t('markAsRead') }}</span>
+      </button>
+      <button
+        class="w-full px-4 py-2 flex items-center gap-3 text-sm text-text-primary hover:bg-bg-tertiary active:bg-bg-secondary transition-colors cursor-pointer"
+        @click="
+          toggleFavorite(contextMenu.article);
+          closeContextMenu();
+        "
+      >
+        <PhHeart
+          :size="16"
+          :weight="contextMenu.article.is_favorite ? 'fill' : 'regular'"
+          :class="contextMenu.article.is_favorite ? 'text-yellow-500' : ''"
+        />
+        <span>{{
+          contextMenu.article.is_favorite ? t('removeFromFavorites') : t('addToFavorites')
+        }}</span>
+      </button>
+      <div class="h-px bg-border my-1"></div>
+      <button
+        class="w-full px-4 py-2 flex items-center gap-3 text-sm text-text-primary hover:bg-bg-tertiary active:bg-bg-secondary transition-colors cursor-pointer"
+        @click="
+          copyArticleTitle(contextMenu.article);
+          closeContextMenu();
+        "
+      >
+        <PhTextT :size="16" />
+        <span>{{ t('copyTitle') }}</span>
+      </button>
+      <button
+        class="w-full px-4 py-2 flex items-center gap-3 text-sm text-text-primary hover:bg-bg-tertiary active:bg-bg-secondary transition-colors cursor-pointer"
+        @click="
+          copyArticleLink(contextMenu.article);
+          closeContextMenu();
+        "
+      >
+        <PhCopy :size="16" />
+        <span>{{ t('copyLink') }}</span>
+      </button>
+      <div class="h-px bg-border my-1"></div>
       <button
         class="w-full px-4 py-2 flex items-center gap-3 text-sm text-text-primary hover:bg-bg-tertiary active:bg-bg-secondary transition-colors cursor-pointer"
         @click="

@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed minor styling issues. (#492, #493, #494, #496, #503, #505, #506, #510, #516, #517, #519, #521, #522, #523)
 - Fixed the issue where pure text can not be translated correctly. (#511, #514)
+- Fixed the issue where reading status not updating correctly in image gallery mode.
 
 ## [1.3.16] - 2026-01-15
 

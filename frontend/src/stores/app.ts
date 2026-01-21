@@ -247,6 +247,7 @@ export const useAppStore = defineStore('app', () => {
     read_later: {},
     read_later_unread: {},
     images: {},
+    images_unread: {},
   });
 
   async function fetchFilterCounts(): Promise<void> {
@@ -260,6 +261,7 @@ export const useAppStore = defineStore('app', () => {
         read_later: data.read_later || {},
         read_later_unread: data.read_later_unread || {},
         images: data.images || {},
+        images_unread: data.images_unread || {},
       };
     } catch (e) {
       console.error('[App Store] Fetch filter counts error:', e);
@@ -270,6 +272,7 @@ export const useAppStore = defineStore('app', () => {
         read_later: {},
         read_later_unread: {},
         images: {},
+        images_unread: {},
       };
     }
   }
