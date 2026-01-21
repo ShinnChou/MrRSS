@@ -11,6 +11,20 @@ import (
 	"MrRSS/internal/utils"
 )
 
+// TestCustomTranslationRequest represents a request to test custom translation configuration
+type TestCustomTranslationRequest struct {
+	Text   string                             `json:"text" example:"Hello, world!"`
+	Target string                             `json:"target_lang" example:"zh"`
+	Config translation.CustomTranslatorConfig `json:"config"`
+}
+
+// TestCustomTranslationResponse represents the response from a custom translation test
+type TestCustomTranslationResponse struct {
+	Success bool   `json:"success"`
+	Result  string `json:"result,omitempty"`
+	Error   string `json:"error,omitempty"`
+}
+
 // HandleTranslateArticle translates an article's title.
 // @Summary      Translate article title
 // @Description  Translate an article's title to the target language (uses AI or Google based on settings)
