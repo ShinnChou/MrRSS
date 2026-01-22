@@ -2,6 +2,7 @@
 export { default as SettingItem } from './base/SettingItem.vue';
 export { default as SubSettingItem } from './base/SubSettingItem.vue';
 export { default as SettingGroup } from './base/SettingGroup.vue';
+export { default as NestedSettingsContainer } from './base/NestedSettingsContainer.vue';
 export { default as InfoBox } from './base/InfoBox.vue';
 
 // Setting Controls

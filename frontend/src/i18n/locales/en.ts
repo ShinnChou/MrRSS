@@ -281,6 +281,7 @@ const en: TranslationMessages = {
       customCategory: 'Custom Category...',
       deleteFeedMessage: 'Are you sure you want to delete this feed?',
       deleteFeedTitle: 'Delete Feed',
+      deleteMultipleFeedsMessage: 'Are you sure you want to delete these {count} feeds?',
       deleteMultipleFeedsTitle: 'Delete Multiple Feeds',
       dragToReorder: 'Drag to reorder or move to another category',
       duplicateFeedURL: 'A feed with this URL already exists',
@@ -309,6 +310,9 @@ const en: TranslationMessages = {
       feedAddedSuccess: 'Feed added successfully',
       feedCategory: 'Feed Category',
       feedDeletedSuccess: 'Feed deleted successfully',
+      articlesDeleted: '{count} articles deleted',
+      articlesRemoved: '{count} entries removed',
+      filesRemoved: '{count} files removed',
       feedDiscovery: 'Feed Discovery',
       feedName: 'Feed Name',
       feedReordered: 'Feed reordered successfully',
@@ -367,6 +371,7 @@ const en: TranslationMessages = {
       subscribeSelected: 'Subscribe Selected',
       subscribing: 'Subscribing',
       unsubscribedSuccess: 'Successfully unsubscribed',
+      unsubscribeMessage: 'Are you sure you want to unsubscribe from this feed?',
       unsubscribeTitle: 'Unsubscribe',
     },
     filter: {
@@ -458,6 +463,7 @@ const en: TranslationMessages = {
         'Are you sure you want to clear all chat history? This action cannot be undone.',
       clearAllChatsDesc: 'Delete all AI chat sessions',
       clearAllChatsFailed: 'Failed to clear chat history',
+      clearAllChatsSuccess: 'Chat history cleared successfully',
       configValid: 'Config Valid',
       connectionSuccess: 'Connection',
       isDanger:
@@ -653,6 +659,10 @@ const en: TranslationMessages = {
       mediaCacheMaxAgeDesc: 'Delete cached media older than this many days',
       mediaCacheMaxSize: 'Max Cache Size',
       mediaCacheMaxSizeDesc: 'Maximum media cache size',
+      clearArticleContentCacheConfirm:
+        'Are you sure you want to clear all article content cache? This action cannot be undone.',
+      clearMediaCacheConfirm:
+        'Are you sure you want to clear all media cache? This action cannot be undone.',
     },
     feed: {
       addFeed: 'Add Feed',
@@ -738,10 +748,13 @@ const en: TranslationMessages = {
       apiPassword: 'API Password',
       apiPasswordDesc: 'FreshRSS API password (different from login password)',
       apiPasswordPlaceholder: 'Enter your API password',
+      daysAgo: '{count} days ago',
       disableConfirm:
         'Disabling FreshRSS will delete local FreshRSS feeds and articles. This action cannot be undone. Are you sure you want to continue?',
       enabled: 'FreshRSS Integration',
       enabledDesc: 'Sync feeds and articles with a FreshRSS server',
+      hoursAgo: '{count} hours ago',
+      minsAgo: '{count} minutes ago',
       syncFailed: 'Sync failed',
       feedLocked: 'FreshRSS feed cannot be edited, moved, or modified',
       justNow: 'Just now',
@@ -889,7 +902,7 @@ const en: TranslationMessages = {
     },
     update: {
       autoUpdateInterval: 'Auto Update Interval',
-      autoUpdateIntervalDesc: 'Interval for automatic update checks (hours)',
+      autoUpdateIntervalDesc: 'Interval for automatic update checks',
       checkForUpdates: 'Check for Updates',
       currentVersion: 'Current version',
       installFailed: 'Installation failed',
@@ -955,6 +968,28 @@ const en: TranslationMessages = {
       sidebar: 'Toggle Sidebar',
     },
   },
+
+  // Top-level keys (used without namespace)
+  andNMore: '+{count} more',
+  daysAgo: '{count} days ago',
+  discoveredFeeds: 'Discovered {count} feeds',
+  feedsSubscribedPartial: 'Partially subscribed: {succeeded}/{total} feeds',
+  feedsSubscribedSuccess: 'Successfully subscribed to {count} feeds',
+  feedsWithFilter: 'Feeds with filter',
+  foundFeeds: 'Found {count} feeds',
+  foundPotentialLinks: 'Found {count} potential feed links',
+  foundSoFar: 'Found {count} feeds so far',
+  generatingSummaryTime: 'Generating summary took {time}',
+  hoursAgo: '{count} hours ago',
+  itemsSelected: '{count} items selected',
+  markedNArticlesAsRead: 'Marked {count} articles as read',
+  minutesAgo: '{count} minutes ago',
+  newVersionAvailable: 'New version available',
+  processingFeed: 'Processing feed {current}/{total}',
+  ruleAppliedSuccess: 'Rule applied successfully',
+  secondsAgo: '{count} seconds ago',
+  someFeedsFailedToSubscribe: 'Some feeds failed to subscribe',
+  totalAndSelected: '{total} total, {selected} selected',
 
   appName: 'MrRSS',
 };

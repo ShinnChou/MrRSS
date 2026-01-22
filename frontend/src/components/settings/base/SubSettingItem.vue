@@ -6,24 +6,17 @@ interface Props {
   title: string;
   description?: string;
   required?: boolean;
-  indent?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
   icon: undefined,
   description: '',
   required: false,
-  indent: true,
 });
 </script>
 
 <template>
-  <div
-    class="sub-setting-item"
-    :class="{
-      'ml-2 sm:ml-4 space-y-2 sm:space-y-3 pl-3 sm:pl-4 border-l-2 border-border': indent,
-    }"
-  >
+  <div class="sub-setting-item">
     <div class="flex items-center sm:items-start justify-between gap-2 sm:gap-4 w-full">
       <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
         <component
@@ -42,6 +35,7 @@ withDefaults(defineProps<Props>(), {
           >
             {{ description }}
           </div>
+          <slot name="extraInfo" />
         </div>
       </div>
       <div class="shrink-0">

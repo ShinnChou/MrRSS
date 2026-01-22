@@ -101,7 +101,7 @@ export function useFeedManagement() {
       const res = await fetch('/api/articles/cleanup', { method: 'POST' });
       if (res.ok) {
         const result = await res.json();
-        window.showToast(`Deleted ${result.deleted} articles`, 'success');
+        window.showToast(t('modal.feed.articlesDeleted', { count: result.deleted }), 'success');
         store.fetchArticles();
       } else {
         window.showToast(t('common.errors.cleaningDatabase'), 'error');

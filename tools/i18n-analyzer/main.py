@@ -221,15 +221,16 @@ def find_i18n_usage(key: str, search_dir: Path) -> List[Tuple[str, int]]:
     """
     usages = []
     # Pattern ensures the key is inside a t() call with proper quoting
-    # Handles: t('key'), t("key"), t( 'key' ), t( "key" ), t(`key`)
+    # Handles: t('key'), t("key"), t('key', { param }), t("key", { count: 5 })
     # Uses (?<!\w) to ensure 't' is not part of another identifier (e.g., createElement)
     # Uses re.DOTALL to match across newlines (for formatted code)
     pattern = re.compile(
         rf"""(?<!\w)t\(\s*     # t( with optional whitespace, t must be a standalone identifier
         ['"`]({re.escape(key)})['"`]  # the key in quotes
+        \s*(?:,.+?)?          # optionally followed by comma and parameters
         \s*\)                  # closing ) with optional whitespace
         """,
-        re.VERBOSE,
+        re.VERBOSE | re.DOTALL,
     )
 
     # Walk through all Vue, TypeScript, and JavaScript files
@@ -280,14 +281,15 @@ def find_all_i18n_calls(search_dir: Path) -> Dict[str, List[Tuple[str, int]]]:
     """
     all_calls = {}
 
-    # Pattern to match t('key') or t("key") with optional whitespace
+    # Pattern to match t('key') or t("key") with optional whitespace and parameters
     # Only matches valid i18n key characters: a-zA-Z0-9._-
     # Uses (?<!\w) to ensure 't' is not part of another identifier (e.g., createElement)
     # This prevents matching invalid patterns like 'createElement(', 'closest(', etc.
     pattern = re.compile(r"""(?<!\w)t\(\s*              # t( with optional whitespace, t must be a standalone identifier
         ['"`]([a-zA-Z0-9._\-]+)['"`]                # the key in quotes (valid i18n chars only)
+        \s*(?:,.+?)?                                # optionally followed by comma and parameters
         \s*\)                                      # closing ) with optional whitespace
-        """, re.VERBOSE)
+        """, re.VERBOSE | re.DOTALL)
 
     # Search in all TypeScript, JavaScript, and Vue files
     for ext in ["*.vue", "*.ts", "*.tsx", "*.js", "*.jsx"]:
