@@ -28,8 +28,8 @@ const isClearingCache = ref(false);
 
 async function clearSummaryCache() {
   const confirmed = await window.showConfirm({
-    title: t('clearSummaryCache'),
-    message: t('clearSummaryCacheConfirm'),
+    title: t('setting.content.clearSummaryCache'),
+    message: t('setting.content.clearSummaryCacheConfirm'),
     isDanger: true,
   });
   if (!confirmed) return;
@@ -41,16 +41,16 @@ async function clearSummaryCache() {
     });
 
     if (response.ok) {
-      window.showToast(t('clearSummaryCacheSuccess'), 'success');
+      window.showToast(t('setting.content.clearSummaryCacheSuccess'), 'success');
       // Refresh article list to show updated summaries
       window.dispatchEvent(new CustomEvent('refresh-articles'));
     } else {
       console.error('Server error:', response.status);
-      window.showToast(t('clearSummaryCacheFailed'), 'error');
+      window.showToast(t('setting.content.clearSummaryCacheFailed'), 'error');
     }
   } catch (error) {
     console.error('Failed to clear summary cache:', error);
-    window.showToast(t('clearSummaryCacheFailed'), 'error');
+    window.showToast(t('setting.content.clearSummaryCacheFailed'), 'error');
   } finally {
     isClearingCache.value = false;
   }
@@ -63,17 +63,17 @@ async function clearSummaryCache() {
       class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
     >
       <PhTextAlignLeft :size="14" class="sm:w-4 sm:h-4" />
-      {{ t('summary') }}
+      {{ t('setting.content.summary') }}
     </label>
     <div class="setting-item mb-2 sm:mb-4">
       <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
         <PhTextT :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('enableSummary') }}
+            {{ t('setting.content.enableSummary') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('enableSummaryDesc') }}
+            {{ t('setting.content.enableSummaryDesc') }}
           </div>
         </div>
       </div>
@@ -99,9 +99,11 @@ async function clearSummaryCache() {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhPackage :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('summaryProvider') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.content.summaryProvider') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('summaryProviderDesc') }}
+              {{ t('setting.content.summaryProviderDesc') }}
             </div>
           </div>
         </div>
@@ -116,7 +118,7 @@ async function clearSummaryCache() {
               })
           "
         >
-          <option value="local">{{ t('localAlgorithm') }}</option>
+          <option value="local">{{ t('setting.content.localAlgorithm') }}</option>
           <option value="ai">{{ t('setting.content.aiSummary') }}</option>
         </select>
       </div>
@@ -124,7 +126,7 @@ async function clearSummaryCache() {
       <!-- AI Summary Prompt -->
       <div v-if="props.settings.summary_provider === 'ai'" class="tip-box">
         <PhInfo :size="16" class="text-accent shrink-0 sm:w-5 sm:h-5" />
-        <span class="text-xs sm:text-sm">{{ t('aiSettingsConfiguredInAITab') }}</span>
+        <span class="text-xs sm:text-sm">{{ t('common.aiSettingsConfiguredInAITab') }}</span>
       </div>
       <div
         v-if="props.settings.summary_provider === 'ai'"
@@ -145,7 +147,7 @@ async function clearSummaryCache() {
           :value="props.settings.ai_summary_prompt"
           class="input-field w-full text-xs sm:text-sm resize-none"
           rows="3"
-          :placeholder="t('aiSummaryPromptPlaceholder')"
+          :placeholder="t('setting.content.aiSummaryPromptPlaceholder')"
           @input="
             (e) =>
               emit('update:settings', {
@@ -161,9 +163,11 @@ async function clearSummaryCache() {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhRobot :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('summaryTriggerMode') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.content.summaryTriggerMode') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('summaryTriggerModeDesc') }}
+              {{ t('setting.content.summaryTriggerModeDesc') }}
             </div>
           </div>
         </div>
@@ -178,8 +182,8 @@ async function clearSummaryCache() {
               })
           "
         >
-          <option value="auto">{{ t('summaryTriggerModeAuto') }}</option>
-          <option value="manual">{{ t('summaryTriggerModeManual') }}</option>
+          <option value="auto">{{ t('setting.content.summaryTriggerModeAuto') }}</option>
+          <option value="manual">{{ t('setting.content.summaryTriggerModeManual') }}</option>
         </select>
       </div>
 
@@ -187,9 +191,11 @@ async function clearSummaryCache() {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhTextAlignLeft :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('summaryLength') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.content.summaryLength') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('summaryLengthDesc') }}
+              {{ t('setting.content.summaryLengthDesc') }}
             </div>
           </div>
         </div>
@@ -204,9 +210,9 @@ async function clearSummaryCache() {
               })
           "
         >
-          <option value="short">{{ t('summaryLengthShort') }}</option>
-          <option value="medium">{{ t('summaryLengthMedium') }}</option>
-          <option value="long">{{ t('summaryLengthLong') }}</option>
+          <option value="short">{{ t('setting.content.summaryLengthShort') }}</option>
+          <option value="medium">{{ t('setting.content.summaryLengthMedium') }}</option>
+          <option value="long">{{ t('setting.content.summaryLengthLong') }}</option>
         </select>
       </div>
 
@@ -215,9 +221,11 @@ async function clearSummaryCache() {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhTrash :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('clearSummaryCache') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.content.clearSummaryCache') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('clearSummaryCacheDesc') }}
+              {{ t('setting.content.clearSummaryCacheDesc') }}
             </div>
           </div>
         </div>
@@ -228,7 +236,11 @@ async function clearSummaryCache() {
           @click="clearSummaryCache"
         >
           <PhBroom :size="16" class="sm:w-5 sm:h-5" />
-          {{ isClearingCache ? t('cleaning') : t('clearSummaryCacheButton') }}
+          {{
+            isClearingCache
+              ? t('setting.database.cleaning')
+              : t('setting.content.clearSummaryCacheButton')
+          }}
         </button>
       </div>
     </div>

@@ -50,7 +50,7 @@ onMounted(() => {
   <div class="setting-section">
     <label class="section-label">
       <PhTextT :size="16" class="w-4 h-4" />
-      {{ t('typography') }}
+      {{ t('setting.tab.typography') }}
     </label>
 
     <!-- Content Font Family -->
@@ -59,10 +59,10 @@ onMounted(() => {
         <PhTextT :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('contentFontFamily') }}
+            {{ t('setting.typography.contentFontFamily') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('contentFontFamilyDesc') }}
+            {{ t('setting.typography.contentFontFamilyDesc') }}
           </div>
         </div>
       </div>
@@ -77,12 +77,12 @@ onMounted(() => {
             })
         "
       >
-        <optgroup :label="t('fontSystem')">
-          <option value="system">{{ t('fontSystemDefault') }}</option>
+        <optgroup :label="t('setting.typography.fontSystem')">
+          <option value="system">{{ t('setting.typography.fontSystemDefault') }}</option>
         </optgroup>
 
-        <optgroup v-if="availableFonts.serif.length > 0" :label="t('fontSerif')">
-          <option value="serif">{{ t('fontSerifDefault') }}</option>
+        <optgroup v-if="availableFonts.serif.length > 0" :label="t('setting.typography.fontSerif')">
+          <option value="serif">{{ t('setting.typography.fontSerifDefault') }}</option>
           <option
             v-for="font in availableFonts.serif"
             :key="font"
@@ -93,8 +93,11 @@ onMounted(() => {
           </option>
         </optgroup>
 
-        <optgroup v-if="availableFonts.sansSerif.length > 0" :label="t('fontSansSerif')">
-          <option value="sans-serif">{{ t('fontSansSerifDefault') }}</option>
+        <optgroup
+          v-if="availableFonts.sansSerif.length > 0"
+          :label="t('setting.typography.fontSansSerif')"
+        >
+          <option value="sans-serif">{{ t('setting.typography.fontSansSerifDefault') }}</option>
           <option
             v-for="font in availableFonts.sansSerif"
             :key="font"
@@ -105,8 +108,11 @@ onMounted(() => {
           </option>
         </optgroup>
 
-        <optgroup v-if="availableFonts.monospace.length > 0" :label="t('fontMonospace')">
-          <option value="monospace">{{ t('fontMonospaceDefault') }}</option>
+        <optgroup
+          v-if="availableFonts.monospace.length > 0"
+          :label="t('setting.typography.fontMonospace')"
+        >
+          <option value="monospace">{{ t('setting.typography.fontMonospaceDefault') }}</option>
           <option
             v-for="font in availableFonts.monospace"
             :key="font"
@@ -125,10 +131,10 @@ onMounted(() => {
         <PhTextAa :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('contentFontSize') }}
+            {{ t('setting.typography.contentFontSize') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('contentFontSizeDesc') }}
+            {{ t('setting.typography.contentFontSizeDesc') }}
           </div>
         </div>
       </div>
@@ -157,10 +163,10 @@ onMounted(() => {
         <PhTextIndent :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('contentLineHeight') }}
+            {{ t('setting.typography.contentLineHeight') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('contentLineHeightDesc') }}
+            {{ t('setting.typography.contentLineHeightDesc') }}
           </div>
         </div>
       </div>

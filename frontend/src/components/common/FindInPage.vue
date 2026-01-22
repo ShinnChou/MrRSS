@@ -265,7 +265,7 @@ onBeforeUnmount(() => {
         v-model="searchQuery"
         type="text"
         class="find-input"
-        :placeholder="t('findInPagePlaceholder')"
+        :placeholder="t('common.findInPage.findInPagePlaceholder')"
         @keydown.enter.exact.prevent="goToNext"
         @keydown.enter.shift.prevent="goToPrevious"
         @keydown.esc.prevent="handleEscOnInput"
@@ -274,7 +274,7 @@ onBeforeUnmount(() => {
         v-if="searchQuery"
         :size="16"
         class="clear-icon"
-        :title="t('clear')"
+        :title="t('common.clear')"
         @click="searchQuery = ''"
       />
     </div>
@@ -284,7 +284,7 @@ onBeforeUnmount(() => {
       <button
         class="nav-button"
         :disabled="totalMatches === 0"
-        :title="t('previousMatch')"
+        :title="t('common.findInPage.previousMatch')"
         @click="goToPrevious"
       >
         <PhCaretUp :size="16" />
@@ -292,18 +292,18 @@ onBeforeUnmount(() => {
       <button
         class="nav-button"
         :disabled="totalMatches === 0"
-        :title="t('nextMatch')"
+        :title="t('common.findInPage.nextMatch')"
         @click="goToNext"
       >
         <PhCaretDown :size="16" />
       </button>
-      <button class="nav-button" :title="t('close')" @click="close">
+      <button class="nav-button" :title="t('common.close')" @click="close">
         <PhX :size="16" />
       </button>
     </div>
 
     <!-- Close button when no search content -->
-    <button v-if="!searchQuery" class="nav-button" :title="t('close')" @click="close">
+    <button v-if="!searchQuery" class="nav-button" :title="t('common.close')" @click="close">
       <PhX :size="16" />
     </button>
   </div>

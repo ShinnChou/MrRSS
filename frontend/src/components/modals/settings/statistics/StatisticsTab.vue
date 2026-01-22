@@ -68,12 +68,12 @@ const allStatTypes = [
 ] as const;
 
 const statLabels: Record<string, string> = {
-  feed_refresh: t('feedRefreshes'),
-  article_read: t('articlesRead'),
-  article_view: t('articlesViewed'),
+  feed_refresh: t('modal.feed.refreshes'),
+  article_read: t('setting.statistic.articlesRead'),
+  article_view: t('setting.statistic.articlesViewed'),
   ai_chat: t('setting.statistic.aiChats'),
   ai_summary: t('setting.statistic.aiSummaries'),
-  article_favorite: t('articlesFavorited'),
+  article_favorite: t('setting.statistic.articlesFavorited'),
 };
 
 const statIcons: Record<string, any> = {
@@ -95,9 +95,9 @@ const statColors: Record<string, string> = {
 };
 
 const intervalOptions = [
-  { value: 'week' as Period, label: t('byWeek'), icon: PhCalendar },
-  { value: 'month' as Period, label: t('byMonth'), icon: PhCalendar },
-  { value: 'year' as Period, label: t('byYear'), icon: PhCalendar },
+  { value: 'week' as Period, label: t('setting.statistic.byWeek'), icon: PhCalendar },
+  { value: 'month' as Period, label: t('setting.statistic.byMonth'), icon: PhCalendar },
+  { value: 'year' as Period, label: t('setting.statistic.byYear'), icon: PhCalendar },
 ];
 
 const totalStats = computed(() => {
@@ -173,8 +173,8 @@ function onIntervalChange(event: Event) {
 
 async function resetStatistics() {
   const confirmed = await window.showConfirm({
-    title: t('statisticsResetToDefault'),
-    message: t('statisticsResetConfirm'),
+    title: t('setting.statistic.resetToDefault'),
+    message: t('setting.statistic.resetConfirm'),
     isDanger: true,
   });
   if (!confirmed) return;
@@ -186,16 +186,16 @@ async function resetStatistics() {
     });
 
     if (response.ok) {
-      window.showToast(t('statisticsResetSuccess'), 'success');
+      window.showToast(t('setting.statistic.resetSuccess'), 'success');
       // Refresh statistics after reset
       await fetchStatistics();
     } else {
       console.error('Server error:', response.status);
-      window.showToast(t('statisticsResetFailed'), 'error');
+      window.showToast(t('setting.statistic.resetFailed'), 'error');
     }
   } catch (error) {
     console.error('Failed to reset statistics:', error);
-    window.showToast(t('statisticsResetFailed'), 'error');
+    window.showToast(t('setting.statistic.resetFailed'), 'error');
   } finally {
     isResetting.value = false;
   }
@@ -219,15 +219,17 @@ onMounted(async () => {
       <div class="flex items-center gap-2 sm:gap-3">
         <PhChartBar :size="20" class="text-text-secondary sm:w-6 sm:h-6" />
         <div>
-          <h3 class="font-semibold text-sm sm:text-base">{{ t('statistics') }}</h3>
+          <h3 class="font-semibold text-sm sm:text-base">
+            {{ t('setting.statistic.statistics') }}
+          </h3>
           <p class="text-xs text-text-secondary hidden sm:block">
-            {{ t('statisticsDescription') }}
+            {{ t('setting.statistic.description') }}
           </p>
         </div>
       </div>
       <button class="btn-secondary" :disabled="isResetting" @click="resetStatistics">
         <PhArrowCounterClockwise :size="16" class="sm:w-5 sm:h-5" />
-        {{ t('statisticsResetToDefault') }}
+        {{ t('setting.statistic.resetToDefault') }}
       </button>
     </div>
 
@@ -243,7 +245,7 @@ onMounted(async () => {
           @click="setPeriod('all')"
         >
           <PhCalendarStar :size="16" />
-          {{ t('allTime') }}
+          {{ t('setting.statistic.allTime') }}
         </button>
 
         <!-- Fixed Interval with Dropdown -->
@@ -258,7 +260,7 @@ onMounted(async () => {
         >
           <div class="flex items-center gap-1.5 px-3 py-2 flex-1">
             <PhCalendar :size="16" />
-            <span class="text-xs font-medium">{{ t('fixedInterval') }}</span>
+            <span class="text-xs font-medium">{{ t('setting.feed.fixedInterval') }}</span>
           </div>
           <div class="relative flex items-center" @click.stop>
             <select
@@ -294,7 +296,7 @@ onMounted(async () => {
           @click="setPeriod('custom')"
         >
           <PhCalendarDots :size="16" />
-          {{ t('customRange') }}
+          {{ t('setting.statistic.customRange') }}
         </button>
       </div>
     </div>
@@ -307,14 +309,14 @@ onMounted(async () => {
       <div class="flex flex-col gap-1.5 flex-1 min-w-[150px]">
         <label class="flex items-center gap-1.5 text-xs text-text-primary font-medium">
           <PhCalendarPlus :size="16" />
-          {{ t('startDate') }}:
+          {{ t('setting.statistic.startDate') }}:
         </label>
         <input v-model="customStartDate" type="date" class="date-input" @change="fetchStatistics" />
       </div>
       <div class="flex flex-col gap-1.5 flex-1 min-w-[150px]">
         <label class="flex items-center gap-1.5 text-xs text-text-primary font-medium">
           <PhCalendarX :size="16" />
-          {{ t('endDate') }}:
+          {{ t('setting.statistic.endDate') }}:
         </label>
         <input v-model="customEndDate" type="date" class="date-input" @change="fetchStatistics" />
       </div>
@@ -322,7 +324,7 @@ onMounted(async () => {
         class="px-4 py-2 bg-accent text-white border-none rounded-md font-medium cursor-pointer transition-all hover:opacity-90 hover:-translate-y-px h-9"
         @click="fetchStatistics"
       >
-        {{ t('apply') }}
+        {{ t('common.form.apply') }}
       </button>
     </div>
 
@@ -348,7 +350,7 @@ onMounted(async () => {
 
     <!-- Error State -->
     <div v-if="error" class="flex items-center justify-center p-8 gap-4">
-      <p class="text-red-500">{{ t('error') }}: {{ error }}</p>
+      <p class="text-red-500">{{ t('common.error') }}: {{ error }}</p>
     </div>
 
     <!-- Statistics Display -->

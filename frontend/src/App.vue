@@ -71,7 +71,7 @@ const { shortcuts } = useKeyboardShortcuts({
   },
   onMarkAllRead: async () => {
     await store.markAllAsRead();
-    window.showToast(t('markedAllAsRead'), 'success');
+    window.showToast(t('article.action.markedAllAsRead'), 'success');
   },
 });
 

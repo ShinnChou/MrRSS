@@ -128,7 +128,7 @@ watch(
       {{ t('setting.ai.aiSettings') }}
     </label>
     <div class="text-xs text-text-secondary mb-3 sm:mb-4">
-      {{ t('aiSettingsDesc') }}
+      {{ t('setting.ai.settingsDesc') }}
     </div>
 
     <!-- API Key -->

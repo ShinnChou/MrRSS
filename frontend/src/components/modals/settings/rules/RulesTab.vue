@@ -112,10 +112,10 @@ function editRule(rule: Rule): void {
 // Delete rule
 async function deleteRule(ruleId: number): Promise<void> {
   const confirmed = await window.showConfirm({
-    title: t('ruleDeleteConfirmTitle'),
-    message: t('ruleDeleteConfirmMessage'),
-    confirmText: t('delete'),
-    cancelText: t('cancel'),
+    title: t('modal.rule.deleteConfirmTitle'),
+    message: t('modal.rule.deleteConfirmMessage'),
+    confirmText: t('common.delete'),
+    cancelText: t('common.cancel'),
     isDanger: true,
   });
 
@@ -123,7 +123,7 @@ async function deleteRule(ruleId: number): Promise<void> {
 
   rules.value = rules.value.filter((r) => r.id !== ruleId);
   await saveRules();
-  window.showToast(t('ruleDeletedSuccess'), 'success');
+  window.showToast(t('modal.rule.deletedSuccess'), 'success');
 }
 
 // Toggle rule enabled state
@@ -153,7 +153,7 @@ async function handleSaveRule(rule: Rule): Promise<void> {
 
   await saveRules();
   showRuleEditor.value = false;
-  window.showToast(t('ruleSavedSuccess'), 'success');
+  window.showToast(t('modal.rule.savedSuccess'), 'success');
 
   // Apply rule to existing articles when adding a new rule
   if (isNew && rule.enabled) {
@@ -179,11 +179,11 @@ async function applyRule(rule: Rule): Promise<void> {
       store.fetchArticles();
       store.fetchUnreadCounts();
     } else {
-      window.showToast(t('errorSavingSettings'), 'error');
+      window.showToast(t('common.errors.savingSettings'), 'error');
     }
   } catch (e) {
     console.error('Error applying rule:', e);
-    window.showToast(t('errorSavingSettings'), 'error');
+    window.showToast(t('common.errors.savingSettings'), 'error');
   } finally {
     applyingRuleId.value = null;
   }
@@ -305,7 +305,7 @@ async function onDrop(targetRuleId: number, event: DragEvent) {
         class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
       >
         <PhLightning :size="14" class="sm:w-4 sm:h-4" />
-        {{ t('rules') }}
+        {{ t('modal.rule.rules') }}
       </label>
 
       <!-- Header with description and add button -->
@@ -313,8 +313,12 @@ async function onDrop(targetRuleId: number, event: DragEvent) {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhLightning :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">{{ t('rules') }}</div>
-            <div class="text-xs text-text-secondary hidden sm:block">{{ t('rulesDesc') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
+              {{ t('modal.rule.rules') }}
+            </div>
+            <div class="text-xs text-text-secondary hidden sm:block">
+              {{ t('modal.rule.rulesDesc') }}
+            </div>
           </div>
         </div>
         <button class="btn-secondary" @click="addRule">
@@ -326,8 +330,8 @@ async function onDrop(targetRuleId: number, event: DragEvent) {
       <!-- Empty state -->
       <div v-if="rules.length === 0" class="empty-state">
         <PhLightning :size="48" class="mx-auto mb-3 opacity-30" />
-        <p class="text-text-secondary text-sm sm:text-base">{{ t('noRules') }}</p>
-        <p class="text-text-secondary text-xs mt-1">{{ t('noRulesHint') }}</p>
+        <p class="text-text-secondary text-sm sm:text-base">{{ t('setting.rule.noRules') }}</p>
+        <p class="text-text-secondary text-xs mt-1">{{ t('setting.rule.noRulesHint') }}</p>
       </div>
 
       <!-- Rules List -->

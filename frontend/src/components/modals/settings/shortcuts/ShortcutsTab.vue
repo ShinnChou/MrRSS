@@ -124,37 +124,61 @@ const recordedKey = ref('');
 // Shortcut groups for display
 const shortcutGroups = computed<Array<{ label: string; items: ShortcutItemData[] }>>(() => [
   {
-    label: t('shortcutNavigation'),
+    label: t('shortcut.category.navigation'),
     items: [
-      { key: 'nextArticle', label: t('nextArticle'), icon: PhArrowDown },
-      { key: 'previousArticle', label: t('previousArticle'), icon: PhArrowUp },
-      { key: 'openArticle', label: t('openArticle'), icon: PhArrowRight },
-      { key: 'closeArticle', label: t('closeArticle'), icon: PhX },
-      { key: 'goToAllArticles', label: t('goToAllArticles'), icon: PhListDashes },
-      { key: 'goToUnread', label: t('goToUnread'), icon: PhCircle },
-      { key: 'goToFavorites', label: t('goToFavorites'), icon: PhHeart },
-      { key: 'goToReadLater', label: t('goToReadLater'), icon: PhClockCountdown },
+      { key: 'nextArticle', label: t('article.navigation.nextArticle'), icon: PhArrowDown },
+      { key: 'previousArticle', label: t('article.navigation.previousArticle'), icon: PhArrowUp },
+      { key: 'openArticle', label: t('article.action.openArticle'), icon: PhArrowRight },
+      { key: 'closeArticle', label: t('article.action.closeArticle'), icon: PhX },
+      {
+        key: 'goToAllArticles',
+        label: t('article.navigation.goToAllArticles'),
+        icon: PhListDashes,
+      },
+      { key: 'goToUnread', label: t('article.navigation.goToUnread'), icon: PhCircle },
+      { key: 'goToFavorites', label: t('article.navigation.goToFavorites'), icon: PhHeart },
+      {
+        key: 'goToReadLater',
+        label: t('article.navigation.goToReadLater'),
+        icon: PhClockCountdown,
+      },
     ],
   },
   {
-    label: t('shortcutArticles'),
+    label: t('shortcut.category.articles'),
     items: [
-      { key: 'toggleReadStatus', label: t('toggleReadStatus'), icon: PhBookOpen },
-      { key: 'toggleFavoriteStatus', label: t('toggleFavoriteStatus'), icon: PhStar },
-      { key: 'toggleReadLaterStatus', label: t('toggleReadLaterStatus'), icon: PhClockCountdown },
-      { key: 'openInBrowser', label: t('openInBrowserShortcut'), icon: PhArrowSquareOut },
-      { key: 'toggleContentView', label: t('toggleContentView'), icon: PhArticle },
+      { key: 'toggleReadStatus', label: t('shortcut.toggle.readStatus'), icon: PhBookOpen },
+      {
+        key: 'toggleFavoriteStatus',
+        label: t('article.action.toggleFavoriteStatus'),
+        icon: PhStar,
+      },
+      {
+        key: 'toggleReadLaterStatus',
+        label: t('shortcut.toggle.readLaterStatus'),
+        icon: PhClockCountdown,
+      },
+      {
+        key: 'openInBrowser',
+        label: t('article.action.openInBrowserShortcut'),
+        icon: PhArrowSquareOut,
+      },
+      { key: 'toggleContentView', label: t('shortcut.toggle.contentView'), icon: PhArticle },
     ],
   },
   {
-    label: t('shortcutOther'),
+    label: t('shortcut.category.other'),
     items: [
-      { key: 'refreshFeeds', label: t('refreshFeedsShortcut'), icon: PhArrowClockwise },
-      { key: 'markAllRead', label: t('markAllReadShortcut'), icon: PhCheckCircle },
-      { key: 'openSettings', label: t('openSettingsShortcut'), icon: PhGear },
+      {
+        key: 'refreshFeeds',
+        label: t('article.action.refreshFeedsShortcut'),
+        icon: PhArrowClockwise,
+      },
+      { key: 'markAllRead', label: t('article.action.markAllReadShortcut'), icon: PhCheckCircle },
+      { key: 'openSettings', label: t('setting.shortcut.openSettingsShortcut'), icon: PhGear },
       { key: 'addFeed', label: t('setting.shortcut.addFeedShortcut'), icon: PhPlus },
-      { key: 'focusSearch', label: t('focusFeedSearch'), icon: PhMagnifyingGlass },
-      { key: 'toggleFilter', label: t('toggleFilter'), icon: PhFunnel },
+      { key: 'focusSearch', label: t('setting.shortcut.focusFeedSearch'), icon: PhMagnifyingGlass },
+      { key: 'toggleFilter', label: t('shortcut.toggle.filter'), icon: PhFunnel },
     ],
   },
 ]);
@@ -206,7 +230,7 @@ function handleKeyRecord(e: KeyboardEvent) {
     // Clear the shortcut
     shortcuts.value[editingShortcut.value] = '';
     saveShortcuts();
-    window.showToast(t('shortcutCleared'), 'info');
+    window.showToast(t('setting.shortcut.shortcutsCleared'), 'info');
     stopEditing();
     return;
   }
@@ -238,7 +262,7 @@ function handleKeyRecord(e: KeyboardEvent) {
   );
 
   if (conflictKey) {
-    window.showToast(t('shortcutConflict'), 'warning');
+    window.showToast(t('setting.shortcut.shortcutsConflict'), 'warning');
     stopEditing();
     return;
   }
@@ -246,7 +270,7 @@ function handleKeyRecord(e: KeyboardEvent) {
   // Update the shortcut
   shortcuts.value[editingShortcut.value] = key;
   saveShortcuts();
-  window.showToast(t('shortcutUpdated'), 'success');
+  window.showToast(t('setting.shortcut.shortcutsUpdated'), 'success');
   stopEditing();
 }
 
@@ -273,7 +297,7 @@ async function saveShortcuts() {
 function resetToDefaults() {
   shortcuts.value = { ...defaultShortcuts };
   saveShortcuts();
-  window.showToast(t('shortcutUpdated'), 'success');
+  window.showToast(t('setting.shortcut.shortcutsUpdated'), 'success');
 }
 
 // Watch for settings changes from parent
@@ -299,13 +323,15 @@ watch(
       <div class="flex items-center gap-2 sm:gap-3">
         <PhKeyboard :size="20" class="text-text-secondary sm:w-6 sm:h-6" />
         <div>
-          <h3 class="font-semibold text-sm sm:text-base">{{ t('shortcuts') }}</h3>
-          <p class="text-xs text-text-secondary hidden sm:block">{{ t('shortcutsDesc') }}</p>
+          <h3 class="font-semibold text-sm sm:text-base">{{ t('setting.shortcut.shortcuts') }}</h3>
+          <p class="text-xs text-text-secondary hidden sm:block">
+            {{ t('setting.shortcut.shortcutsDesc') }}
+          </p>
         </div>
       </div>
       <button class="btn-secondary" @click="resetToDefaults">
         <PhArrowCounterClockwise :size="16" class="sm:w-5 sm:h-5" />
-        {{ t('resetToDefault') }}
+        {{ t('common.action.resetToDefault') }}
       </button>
     </div>
 
@@ -315,10 +341,10 @@ watch(
         <PhKeyboard :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('shortcutsEnabled') }}
+            {{ t('setting.shortcut.shortcutsEnabled') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('shortcutsEnabledDesc') }}
+            {{ t('setting.shortcut.shortcutsEnabledDesc') }}
           </div>
         </div>
       </div>
@@ -333,7 +359,7 @@ watch(
     <!-- Tip moved to top with improved styling -->
     <div class="tip-box">
       <PhInfo :size="16" class="text-accent shrink-0 sm:w-5 sm:h-5" />
-      <span class="text-xs sm:text-sm">{{ t('escToClear') }}</span>
+      <span class="text-xs sm:text-sm">{{ t('common.action.escToClear') }}</span>
     </div>
 
     <div v-for="group in shortcutGroups" :key="group.label" class="setting-group">

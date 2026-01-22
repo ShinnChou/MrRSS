@@ -18,7 +18,7 @@ const emit = defineEmits<{
   <div class="setting-section">
     <label class="section-label">
       <PhCursorClick :size="16" class="w-4 h-4" />
-      {{ t('interactionSettings') }}
+      {{ t('setting.tab.interactionSettings') }}
     </label>
 
     <div class="setting-item">
@@ -26,10 +26,10 @@ const emit = defineEmits<{
         <PhCursorClick :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('hoverMarkAsRead') }}
+            {{ t('setting.reading.hoverMarkAsRead') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('hoverMarkAsReadDesc') }}
+            {{ t('setting.reading.hoverMarkAsReadDesc') }}
           </div>
         </div>
       </div>
@@ -52,10 +52,10 @@ const emit = defineEmits<{
         <PhEyeSlash :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('showHiddenArticles') }}
+            {{ t('setting.reading.showHiddenArticles') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('showHiddenArticlesDesc') }}
+            {{ t('setting.reading.showHiddenArticlesDesc') }}
           </div>
         </div>
       </div>

@@ -33,11 +33,11 @@ const emit = defineEmits<{
       class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
     >
       <PhWall :size="14" class="sm:w-4 sm:h-4" />
-      {{ t('proxySettings') }}
+      {{ t('setting.network.proxySettings') }}
     </label>
     <div class="tip-box">
       <PhInfo :size="16" class="text-accent shrink-0 sm:w-5 sm:h-5" />
-      <span class="text-xs sm:text-sm">{{ t('systemProxyInfo') }}</span>
+      <span class="text-xs sm:text-sm">{{ t('setting.network.systemProxyInfo') }}</span>
     </div>
 
     <!-- Enable Proxy Toggle -->
@@ -46,10 +46,10 @@ const emit = defineEmits<{
         <PhGlobe :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('enableProxy') }}
+            {{ t('setting.network.enableProxy') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('enableProxyDesc') }}
+            {{ t('setting.network.enableProxyDesc') }}
           </div>
         </div>
       </div>
@@ -78,10 +78,10 @@ const emit = defineEmits<{
           <PhPlug :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
             <div class="font-medium mb-0 sm:mb-1 text-xs sm:text-sm">
-              {{ t('proxyType') }}
+              {{ t('setting.network.proxyType') }}
             </div>
             <div class="text-[10px] sm:text-xs text-text-secondary hidden sm:block">
-              {{ t('proxyTypeDesc') }}
+              {{ t('setting.network.proxyTypeDesc') }}
             </div>
           </div>
         </div>
@@ -96,9 +96,9 @@ const emit = defineEmits<{
               })
           "
         >
-          <option value="http">{{ t('httpProxy') }}</option>
-          <option value="https">{{ t('httpsProxy') }}</option>
-          <option value="socks5">{{ t('socks5Proxy') }}</option>
+          <option value="http">{{ t('setting.network.httpProxy') }}</option>
+          <option value="https">{{ t('setting.network.httpsProxy') }}</option>
+          <option value="socks5">{{ t('setting.network.socks5Proxy') }}</option>
         </select>
       </div>
 
@@ -108,17 +108,17 @@ const emit = defineEmits<{
           <PhLink :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
             <div class="font-medium mb-0 sm:mb-1 text-xs sm:text-sm">
-              {{ t('proxyHost') }} <span class="text-red-500">*</span>
+              {{ t('setting.network.proxyHost') }} <span class="text-red-500">*</span>
             </div>
             <div class="text-[10px] sm:text-xs text-text-secondary hidden sm:block">
-              {{ t('proxyHostDesc') }}
+              {{ t('setting.network.proxyHostDesc') }}
             </div>
           </div>
         </div>
         <input
           :value="props.settings.proxy_host"
           type="text"
-          :placeholder="t('proxyHostPlaceholder')"
+          :placeholder="t('setting.network.proxyHostPlaceholder')"
           :class="[
             'input-field w-36 sm:w-48 text-xs sm:text-sm',
             props.settings.proxy_enabled && !props.settings.proxy_host?.trim()
@@ -141,17 +141,17 @@ const emit = defineEmits<{
           <PhUsb :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
             <div class="font-medium mb-0 sm:mb-1 text-xs sm:text-sm">
-              {{ t('proxyPort') }} <span class="text-red-500">*</span>
+              {{ t('setting.network.proxyPort') }} <span class="text-red-500">*</span>
             </div>
             <div class="text-[10px] sm:text-xs text-text-secondary hidden sm:block">
-              {{ t('proxyPortDesc') }}
+              {{ t('setting.network.proxyPortDesc') }}
             </div>
           </div>
         </div>
         <input
           :value="props.settings.proxy_port"
           type="text"
-          :placeholder="t('proxyPortPlaceholder')"
+          :placeholder="t('setting.network.proxyPortPlaceholder')"
           :class="[
             'input-field w-20 sm:w-24 text-center text-xs sm:text-sm',
             props.settings.proxy_enabled && !props.settings.proxy_port?.trim()
@@ -174,17 +174,17 @@ const emit = defineEmits<{
           <PhUser :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
             <div class="font-medium mb-0 sm:mb-1 text-xs sm:text-sm">
-              {{ t('proxyUsername') }}
+              {{ t('setting.network.proxyUsername') }}
             </div>
             <div class="text-[10px] sm:text-xs text-text-secondary hidden sm:block">
-              {{ t('proxyUsernameDesc') }}
+              {{ t('setting.network.proxyUsernameDesc') }}
             </div>
           </div>
         </div>
         <input
           :value="props.settings.proxy_username"
           type="text"
-          :placeholder="t('proxyUsernamePlaceholder')"
+          :placeholder="t('setting.network.proxyUsernamePlaceholder')"
           class="input-field w-28 sm:w-36 text-xs sm:text-sm"
           @input="
             (e) =>
@@ -202,17 +202,17 @@ const emit = defineEmits<{
           <PhKey :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
             <div class="font-medium mb-0 sm:mb-1 text-xs sm:text-sm">
-              {{ t('proxyPassword') }}
+              {{ t('setting.network.proxyPassword') }}
             </div>
             <div class="text-[10px] sm:text-xs text-text-secondary hidden sm:block">
-              {{ t('proxyPasswordDesc') }}
+              {{ t('setting.network.proxyPasswordDesc') }}
             </div>
           </div>
         </div>
         <input
           :value="props.settings.proxy_password"
           type="password"
-          :placeholder="t('proxyPasswordPlaceholder')"
+          :placeholder="t('setting.network.proxyPasswordPlaceholder')"
           class="input-field w-28 sm:w-36 text-xs sm:text-sm"
           @input="
             (e) =>
@@ -231,7 +231,7 @@ const emit = defineEmits<{
         class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
       >
         <PhArrowClockwise :size="14" class="sm:w-4 sm:h-4" />
-        {{ t('feedRefreshSettings') }}
+        {{ t('modal.feed.refreshSettings') }}
       </label>
 
       <div class="setting-item">
@@ -239,10 +239,10 @@ const emit = defineEmits<{
           <PhTimer :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
             <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-              {{ t('retryTimeout') }}
+              {{ t('setting.feed.retryTimeout') }}
             </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('retryTimeoutDesc') }}
+              {{ t('setting.feed.retryTimeoutDesc') }}
             </div>
           </div>
         </div>
@@ -262,7 +262,7 @@ const emit = defineEmits<{
                 })
             "
           />
-          <span class="text-xs sm:text-sm text-text-secondary">{{ t('seconds') }}</span>
+          <span class="text-xs sm:text-sm text-text-secondary">{{ t('common.time.seconds') }}</span>
         </div>
       </div>
     </div>

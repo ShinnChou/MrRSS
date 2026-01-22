@@ -22,7 +22,7 @@ defineProps<Props>();
 <template>
   <div class="flex flex-col items-center justify-center py-12">
     <PhCircleNotch :size="48" class="text-accent animate-spin mb-4" />
-    <p class="text-text-primary font-medium mb-2">{{ t('discovering') }}</p>
+    <p class="text-text-primary font-medium mb-2">{{ t('modal.discovery.discovering') }}</p>
     <p v-if="progressMessage" class="text-sm text-text-secondary">{{ progressMessage }}</p>
     <p v-if="progressDetail" class="text-xs text-text-tertiary mt-1 font-mono">
       {{ progressDetail }}

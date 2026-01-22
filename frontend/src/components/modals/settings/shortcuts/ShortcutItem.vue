@@ -56,7 +56,7 @@ function formatKey(key: string): string {
     </div>
     <button :class="['shortcut-key', isEditing ? 'recording' : '']" @click="emit('edit')">
       <span v-if="isEditing" class="text-accent animate-pulse text-xs sm:text-sm">
-        {{ t('pressKey') }}
+        {{ t('shortcut.pressKey') }}
       </span>
       <span v-else>{{ formatKey(shortcutValue) }}</span>
     </button>

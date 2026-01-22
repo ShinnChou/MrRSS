@@ -17,21 +17,21 @@ const { t } = useI18n();
 const modes = [
   {
     key: 'url' as const,
-    label: t('rssUrl'),
+    label: t('modal.feed.rssUrl'),
     icon: PhLinkSimple,
-    description: t('rssUrlDescription'),
+    description: t('modal.feed.rssUrlDescription'),
   },
   {
     key: 'script' as const,
-    label: t('customScript'),
+    label: t('setting.customization.script'),
     icon: PhCode,
-    description: t('customScriptDescription'),
+    description: t('modal.feed.typeCustomScriptDescription'),
   },
   {
     key: 'xpath' as const,
-    label: t('xpath'),
+    label: t('modal.feed.xpath'),
     icon: PhBrowser,
-    description: t('xpathDescription'),
+    description: t('modal.feed.xpathDescription'),
   },
 ];
 
@@ -68,8 +68,8 @@ function selectMode(mode: 'url' | 'script' | 'xpath') {
             <PhLinkSimple :size="20" />
           </div>
           <div class="flex-1">
-            <div class="font-semibold text-base sm:text-lg">{{ t('rssUrl') }}</div>
-            <div class="text-sm text-text-secondary">{{ t('rssUrlDescription') }}</div>
+            <div class="font-semibold text-base sm:text-lg">{{ t('modal.feed.rssUrl') }}</div>
+            <div class="text-sm text-text-secondary">{{ t('modal.feed.rssUrlDescription') }}</div>
           </div>
           <div
             v-if="props.modelValue === 'url'"
@@ -83,7 +83,7 @@ function selectMode(mode: 'url' | 'script' | 'xpath') {
 
     <!-- Advanced options as subtle links -->
     <div class="flex items-center justify-center gap-4 text-xs">
-      <span class="text-text-secondary">{{ t('orTry') }}</span>
+      <span class="text-text-secondary">{{ t('common.text.orTry') }}</span>
       <button
         type="button"
         :class="[
@@ -93,7 +93,7 @@ function selectMode(mode: 'url' | 'script' | 'xpath') {
         @click="selectMode('script')"
       >
         <PhCode :size="14" class="inline mr-1" />
-        {{ t('customScript') }}
+        {{ t('setting.customization.script') }}
       </button>
       <span class="text-text-secondary">•</span>
       <button
@@ -105,7 +105,7 @@ function selectMode(mode: 'url' | 'script' | 'xpath') {
         @click="selectMode('xpath')"
       >
         <PhBrowser :size="14" class="inline mr-1" />
-        {{ t('xpath') }}
+        {{ t('modal.feed.xpath') }}
       </button>
     </div>
 
@@ -117,7 +117,7 @@ function selectMode(mode: 'url' | 'script' | 'xpath') {
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <div class="w-2 h-2 bg-accent rounded-full animate-pulse"></div>
-          <span class="text-accent font-medium">{{ t('currentMode') }}:</span>
+          <span class="text-accent font-medium">{{ t('setting.network.currentMode') }}:</span>
           <strong>{{ modes.find((m) => m.key === props.modelValue)?.label }}</strong>
         </div>
         <button
@@ -125,7 +125,7 @@ function selectMode(mode: 'url' | 'script' | 'xpath') {
           class="text-accent hover:text-accent-hover underline"
           @click="selectMode('url')"
         >
-          {{ t('backToRss') }}
+          {{ t('article.action.backToRss') }}
         </button>
       </div>
     </div>

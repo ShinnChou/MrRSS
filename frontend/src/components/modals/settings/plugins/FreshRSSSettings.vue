@@ -82,13 +82,16 @@ async function syncNow() {
     });
 
     if (response.ok) {
-      window.showToast(t('freshrssSyncStarted'), 'success');
+      window.showToast(t('setting.freshrss.syncStarted'), 'success');
       // Sync status polling will detect completion and refresh data automatically
     } else {
-      throw new Error(t('freshrssSyncFailed'));
+      throw new Error(t('setting.freshrss.syncFailed'));
     }
   } catch (error) {
-    window.showToast(error instanceof Error ? error.message : t('freshrssSyncFailed'), 'error');
+    window.showToast(
+      error instanceof Error ? error.message : t('setting.freshrss.syncFailed'),
+      'error'
+    );
   } finally {
     isSyncing.value = false;
   }
@@ -102,8 +105,8 @@ async function handleFreshRSSToggle(event: Event) {
   // If disabling, show confirmation dialog
   if (!newEnabled && props.settings.freshrss_enabled) {
     const confirmed = await window.showConfirm({
-      title: t('freshrssEnabled'),
-      message: t('freshrssDisableConfirm'),
+      title: t('setting.freshrss.enabled'),
+      message: t('setting.freshrss.disableConfirm'),
       isDanger: true,
     });
     if (!confirmed) {
@@ -172,18 +175,18 @@ watch(
 
 // Format sync time
 function formatSyncTime(timeStr: string | null): string {
-  if (!timeStr) return t('freshrssNever');
+  if (!timeStr) return t('setting.freshrss.never');
   const date = new Date(timeStr);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
 
-  if (diffMins < 1) return t('freshrssJustNow');
-  if (diffMins < 60) return t('freshrssMinsAgo', { n: diffMins });
+  if (diffMins < 1) return t('setting.freshrss.justNow');
+  if (diffMins < 60) return t('setting.freshrss.minsAgo', { n: diffMins });
   const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return t('freshrssHoursAgo', { n: diffHours });
+  if (diffHours < 24) return t('setting.freshrss.hoursAgo', { n: diffHours });
   const diffDays = Math.floor(diffHours / 24);
-  return t('freshrssDaysAgo', { n: diffDays });
+  return t('setting.freshrss.daysAgo', { n: diffDays });
 }
 </script>
 
@@ -198,10 +201,10 @@ function formatSyncTime(timeStr: string | null): string {
       />
       <div class="flex-1 min-w-0">
         <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-          {{ t('freshrssEnabled') }}
+          {{ t('setting.freshrss.enabled') }}
         </div>
         <div class="text-xs text-text-secondary hidden sm:block">
-          {{ t('freshrssEnabledDesc') }}
+          {{ t('setting.freshrss.enabledDesc') }}
         </div>
       </div>
     </div>
@@ -222,17 +225,17 @@ function formatSyncTime(timeStr: string | null): string {
         <PhLink :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('freshrssServerUrl') }} <span class="text-red-500">*</span>
+            {{ t('setting.freshrss.serverUrl') }} <span class="text-red-500">*</span>
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('freshrssServerUrlDesc') }}
+            {{ t('setting.freshrss.serverUrlDesc') }}
           </div>
         </div>
       </div>
       <input
         type="url"
         :value="props.settings.freshrss_server_url"
-        :placeholder="t('freshrssServerUrlPlaceholder')"
+        :placeholder="t('setting.freshrss.serverUrlPlaceholder')"
         class="input-field w-32 sm:w-48 text-xs sm:text-sm"
         @input="
           (e) =>
@@ -250,17 +253,17 @@ function formatSyncTime(timeStr: string | null): string {
         <PhUser :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('freshrssUsername') }} <span class="text-red-500">*</span>
+            {{ t('setting.freshrss.username') }} <span class="text-red-500">*</span>
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('freshrssUsernameDesc') }}
+            {{ t('setting.freshrss.usernameDesc') }}
           </div>
         </div>
       </div>
       <input
         type="text"
         :value="props.settings.freshrss_username"
-        :placeholder="t('freshrssUsernamePlaceholder')"
+        :placeholder="t('setting.freshrss.usernamePlaceholder')"
         class="input-field w-32 sm:w-48 text-xs sm:text-sm"
         @input="
           (e) =>
@@ -278,17 +281,17 @@ function formatSyncTime(timeStr: string | null): string {
         <PhKey :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('freshrssApiPassword') }}
+            {{ t('setting.freshrss.apiPassword') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('freshrssApiPasswordDesc') }}
+            {{ t('setting.freshrss.apiPasswordDesc') }}
           </div>
         </div>
       </div>
       <input
         type="password"
         :value="props.settings.freshrss_api_password"
-        :placeholder="t('freshrssApiPasswordPlaceholder')"
+        :placeholder="t('setting.freshrss.apiPasswordPlaceholder')"
         class="input-field w-32 sm:w-48 text-xs sm:text-sm"
         @input="
           (e) =>
@@ -306,20 +309,20 @@ function formatSyncTime(timeStr: string | null): string {
         <PhCloudCheck :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('freshrssSyncNow') }}
+            {{ t('setting.freshrss.syncNow') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('freshrssSyncNowDesc') }}
+            {{ t('setting.freshrss.syncNowDesc') }}
           </div>
           <div class="text-xs text-text-secondary mt-1">
-            {{ t('freshrssLastSync') }}:
+            {{ t('setting.freshrss.lastSync') }}:
             <span class="theme-number">{{ formatSyncTime(syncStatus.last_sync_time) }}</span>
           </div>
         </div>
       </div>
       <button class="btn-secondary" :disabled="isSyncing" @click="syncNow">
         <PhArrowClockwise :size="16" class="sm:w-5 sm:h-5" :class="{ 'animate-spin': isSyncing }" />
-        {{ isSyncing ? t('freshrssSyncing') : t('freshrssSync') }}
+        {{ isSyncing ? t('setting.freshrss.syncing') : t('setting.freshrss.sync') }}
       </button>
     </div>
   </div>

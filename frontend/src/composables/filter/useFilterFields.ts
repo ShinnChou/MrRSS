@@ -15,7 +15,7 @@ export function useFilterFields() {
    */
   const fieldOptions: FieldOption[] = [
     { value: 'feed_name', labelKey: 'feedName', multiSelect: true },
-    { value: 'feed_category', labelKey: 'feedCategory', multiSelect: true },
+    { value: 'feed_category', labelKey: 'modal.feed.feedCategory', multiSelect: true },
     { value: 'article_title', labelKey: 'articleTitle', multiSelect: false },
     { value: 'feed_type', labelKey: 'feedType', multiSelect: true },
     { value: 'published_after', labelKey: 'publishedAfter', multiSelect: false },

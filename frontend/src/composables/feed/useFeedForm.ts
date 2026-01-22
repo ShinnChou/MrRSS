@@ -268,7 +268,7 @@ export function useFeedForm(feed?: Feed) {
       } catch (e) {
         // Fallback for invalid URL format
         console.error('Failed to parse proxy URL:', e);
-        window.showToast(t('invalidProxyUrl'), 'error');
+        window.showToast(t('setting.network.invalidProxyUrl'), 'error');
       }
     } else if (feed.proxy_enabled) {
       proxyMode.value = 'global';
@@ -338,7 +338,7 @@ export function useFeedForm(feed?: Feed) {
   async function openScriptsFolder() {
     try {
       await fetch('/api/scripts/open', { method: 'POST' });
-      window.showToast(t('scriptsFolderOpened'), 'success');
+      window.showToast(t('setting.customization.scriptsFolderOpened'), 'success');
     } catch (e) {
       console.error('Failed to open scripts folder:', e);
     }

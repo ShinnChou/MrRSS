@@ -87,7 +87,7 @@ function openGitHubRelease() {
     <img src="/assets/logo.svg" alt="Logo" class="h-12 sm:h-16 w-auto mb-3 sm:mb-4 mx-auto" />
     <h3 class="text-lg sm:text-xl font-bold mb-2">{{ t('appName') }}</h3>
     <p class="text-text-secondary text-xs sm:text-sm">
-      {{ t('version') }}
+      {{ t('setting.about.version') }}
       <span v-if="isLoadingVersion" class="inline-block animate-pulse">Loading...</span>
       <span v-else>{{ appVersion }}</span>
     </p>
@@ -103,7 +103,7 @@ function openGitHubRelease() {
           class="sm:w-5 sm:h-5"
           :class="{ 'animate-spin': checkingUpdates }"
         />
-        {{ checkingUpdates ? t('checking') : t('checkForUpdates') }}
+        {{ checkingUpdates ? t('common.checking') : t('setting.update.checkForUpdates') }}
       </button>
     </div>
 
@@ -120,12 +120,18 @@ function openGitHubRelease() {
         <PhCheckCircle v-else :size="28" class="text-accent mt-0.5 shrink-0 sm:w-8 sm:h-8" />
         <div class="flex-1 min-w-0">
           <h4 class="font-semibold mb-1 text-sm sm:text-base">
-            {{ updateInfo.has_update ? t('updateAvailable') : t('upToDate') }}
+            {{
+              updateInfo.has_update
+                ? t('setting.update.updateAvailable')
+                : t('setting.update.upToDate')
+            }}
           </h4>
           <div class="text-xs sm:text-sm text-text-secondary space-y-1">
-            <div class="truncate">{{ t('currentVersion') }}: {{ updateInfo.current_version }}</div>
+            <div class="truncate">
+              {{ t('setting.update.currentVersion') }}: {{ updateInfo.current_version }}
+            </div>
             <div v-if="updateInfo.has_update" class="truncate">
-              {{ t('latestVersion') }}: {{ updateInfo.latest_version }}
+              {{ t('setting.update.latestVersion') }}: {{ updateInfo.latest_version }}
             </div>
           </div>
 
@@ -143,9 +149,11 @@ function openGitHubRelease() {
               />
               <PhGear v-else-if="installingUpdate" :size="18" class="animate-spin sm:w-5 sm:h-5" />
               <PhDownloadSimple v-else :size="18" class="sm:w-5 sm:h-5" />
-              <span v-if="downloadingUpdate">{{ t('downloading') }} {{ downloadProgress }}%</span>
-              <span v-else-if="installingUpdate">{{ t('installingUpdate') }}</span>
-              <span v-else>{{ t('downloadUpdate') }}</span>
+              <span v-if="downloadingUpdate"
+                >{{ t('common.action.downloading') }} {{ downloadProgress }}%</span
+              >
+              <span v-else-if="installingUpdate">{{ t('setting.update.installingUpdate') }}</span>
+              <span v-else>{{ t('modal.update.downloadUpdate') }}</span>
             </button>
 
             <!-- Progress bar -->
@@ -185,7 +193,7 @@ function openGitHubRelease() {
         @click="openGitHubRepo"
       >
         <PhGithubLogo :size="20" class="sm:w-6 sm:h-6" />
-        {{ t('viewOnGitHub') }}
+        {{ t('setting.about.viewOnGitHub') }}
       </button>
     </div>
 

@@ -29,19 +29,19 @@ export function useAppUpdates() {
         updateInfo.value = data;
 
         if (data.error) {
-          window.showToast(t('errorCheckingUpdates'), 'error');
+          window.showToast(t('common.errors.errorCheckingUpdates'), 'error');
         } else if (data.has_update) {
-          window.showToast(t('updateAvailable'), 'info');
+          window.showToast(t('setting.update.updateAvailable'), 'info');
         } else if (!silent) {
           // Only show "up to date" toast if not in silent mode
-          window.showToast(t('upToDate'), 'success');
+          window.showToast(t('setting.update.upToDate'), 'success');
         }
       } else {
-        window.showToast(t('errorCheckingUpdates'), 'error');
+        window.showToast(t('common.errors.errorCheckingUpdates'), 'error');
       }
     } catch (e) {
       console.error('Error checking updates:', e);
-      window.showToast(t('errorCheckingUpdates'), 'error');
+      window.showToast(t('common.errors.errorCheckingUpdates'), 'error');
     } finally {
       checkingUpdates.value = false;
     }
@@ -52,7 +52,7 @@ export function useAppUpdates() {
    */
   async function downloadAndInstallUpdate() {
     if (!updateInfo.value || !updateInfo.value.download_url) {
-      window.showToast(t('errorCheckingUpdates'), 'error');
+      window.showToast(t('common.errors.errorCheckingUpdates'), 'error');
       return;
     }
 
@@ -94,14 +94,14 @@ export function useAppUpdates() {
       downloadProgress.value = 100;
 
       // Show notification
-      window.showToast(t('downloadComplete'), 'success');
+      window.showToast(t('common.toast.downloadComplete'), 'success');
 
       // Wait a moment to ensure file is fully written
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Install the update
       installingUpdate.value = true;
-      window.showToast(t('installingUpdate'), 'info');
+      window.showToast(t('setting.update.installingUpdate'), 'info');
 
       const installRes = await fetch('/api/install-update', {
         method: 'POST',
@@ -123,7 +123,7 @@ export function useAppUpdates() {
       }
 
       // Show final message - app will close automatically from backend
-      window.showToast(t('updateWillRestart'), 'info');
+      window.showToast(t('setting.update.updateWillRestart'), 'info');
     } catch (e) {
       console.error('Update error:', e);
       clearInterval(progressInterval);
@@ -133,11 +133,11 @@ export function useAppUpdates() {
       // Use error codes for more reliable error classification
       const errorMessage = (e as Error).message || '';
       if (errorMessage.includes('DOWNLOAD_ERROR')) {
-        window.showToast(t('downloadFailed'), 'error');
+        window.showToast(t('common.toast.downloadFailed'), 'error');
       } else if (errorMessage.includes('INSTALL_ERROR')) {
-        window.showToast(t('installFailed'), 'error');
+        window.showToast(t('setting.update.installFailed'), 'error');
       } else {
-        window.showToast(t('errorCheckingUpdates'), 'error');
+        window.showToast(t('common.errors.errorCheckingUpdates'), 'error');
       }
     }
   }

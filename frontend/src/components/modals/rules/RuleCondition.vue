@@ -128,7 +128,7 @@ function updateOperator(operator: string): void {
       <!-- Negate button -->
       <button
         :class="['negate-btn', condition.negate ? 'active' : '']"
-        :title="t('notCondition')"
+        :title="t('modal.filter.notCondition')"
         @click="emit('toggleNegate')"
       >
         <PhProhibit :size="16" />
@@ -233,7 +233,7 @@ function updateOperator(operator: string): void {
       />
 
       <!-- Delete button -->
-      <button class="delete-btn" :title="t('delete')" @click="emit('remove')">
+      <button class="delete-btn" :title="t('common.delete')" @click="emit('remove')">
         <PhX :size="18" />
       </button>
     </div>

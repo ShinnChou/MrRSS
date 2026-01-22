@@ -40,8 +40,8 @@ async function fetchAIUsage() {
 
 async function resetAIUsage() {
   const confirmed = await window.showConfirm({
-    title: t('confirm'),
-    message: t('aiUsageResetConfirm'),
+    title: t('common.confirm'),
+    message: t('setting.ai.aiUsageResetConfirm'),
     isDanger: true,
   });
   if (!confirmed) return;
@@ -55,11 +55,11 @@ async function resetAIUsage() {
         ...props.settings,
         ai_usage_tokens: '0',
       });
-      window.showToast(t('aiUsageResetSuccess'), 'success');
+      window.showToast(t('setting.ai.aiUsageResetSuccess'), 'success');
     }
   } catch (e) {
     console.error('Failed to reset AI usage:', e);
-    window.showToast(t('aiUsageResetError'), 'error');
+    window.showToast(t('setting.ai.aiUsageResetError'), 'error');
   }
 }
 
@@ -83,7 +83,7 @@ onMounted(() => {
           class="font-semibold text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
         >
           <PhChartLine :size="14" class="sm:w-4 sm:h-4" />
-          {{ t('aiUsage') }}
+          {{ t('setting.ai.aiUsage') }}
         </label>
       </div>
 
@@ -96,13 +96,15 @@ onMounted(() => {
           <div
             class="flex flex-col gap-2 p-3 rounded-lg bg-bg-primary border border-border w-full sm:min-w-[120px]"
           >
-            <span class="text-sm text-text-secondary text-left">{{ t('aiUsageTokens') }}</span>
+            <span class="text-sm text-text-secondary text-left">{{
+              t('setting.ai.aiUsageTokens')
+            }}</span>
             <div class="flex items-baseline gap-1">
               <span class="text-xl sm:text-2xl font-bold text-text-primary"
                 >{{ aiUsage.usage.toLocaleString() }} /
                 {{ aiUsage.limit > 0 ? aiUsage.limit.toLocaleString() : '∞' }}</span
               >
-              <span class="text-sm text-text-secondary">{{ t('tokens') }}</span>
+              <span class="text-sm text-text-secondary">{{ t('setting.ai.tokens') }}</span>
             </div>
           </div>
         </div>
@@ -111,7 +113,7 @@ onMounted(() => {
           <div class="flex justify-center sm:justify-end">
             <button type="button" class="btn-secondary" @click="resetAIUsage">
               <PhArrowCounterClockwise :size="16" />
-              {{ t('aiUsageReset') }}
+              {{ t('setting.ai.aiUsageReset') }}
             </button>
           </div>
 
@@ -121,7 +123,7 @@ onMounted(() => {
             class="flex flex-row items-center justify-center sm:justify-end gap-2"
           >
             <div class="flex items-center justify-between text-xs text-text-secondary">
-              <span>{{ t('progress') }}</span>
+              <span>{{ t('common.text.progress') }}</span>
               <span class="text-accent">{{ getUsagePercentage().toFixed(2) }}%</span>
             </div>
             <div class="relative h-2 bg-bg-tertiary rounded-full overflow-hidden">
@@ -141,9 +143,9 @@ onMounted(() => {
       <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
         <PhChartLine :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
-          <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('setUsageLimit') }}</div>
+          <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('setting.ai.setUsageLimit') }}</div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('setUsageLimitDesc') }}
+            {{ t('setting.ai.setUsageLimitDesc') }}
           </div>
         </div>
       </div>
@@ -151,7 +153,7 @@ onMounted(() => {
         :value="props.settings.ai_usage_limit"
         type="number"
         min="0"
-        :placeholder="t('aiUsageLimitPlaceholder')"
+        :placeholder="t('setting.ai.aiUsageLimitPlaceholder')"
         class="input-field w-32 sm:w-48 text-xs sm:text-sm"
         @input="
           (e) =>

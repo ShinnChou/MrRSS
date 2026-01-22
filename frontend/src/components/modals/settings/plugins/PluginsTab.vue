@@ -36,7 +36,7 @@ function handleUpdateSettings(updatedSettings: SettingsData) {
   <div class="space-y-4 sm:space-y-6">
     <div class="tip-box">
       <PhInfo :size="16" class="text-accent shrink-0 sm:w-5 sm:h-5" />
-      <span class="text-xs sm:text-sm">{{ t('isInDevelopment') }}</span>
+      <span class="text-xs sm:text-sm">{{ t('common.warning.isInDevelopment') }}</span>
     </div>
 
     <ObsidianSettings :settings="settings" @update:settings="handleUpdateSettings" />

@@ -275,10 +275,10 @@ async function copyImage() {
       }),
     ]);
 
-    window.showToast(t('copiedToClipboard'), 'success');
+    window.showToast(t('common.toast.copiedToClipboard'), 'success');
   } catch (error) {
     console.error('Failed to copy image:', error);
-    window.showToast(t('failedToCopy'), 'error');
+    window.showToast(t('common.errors.failedToCopy'), 'error');
   }
 }
 
@@ -310,7 +310,7 @@ const imageStyle = computed<CSSProperties>(() => ({
       <button
         class="control-btn"
         :disabled="scale <= MIN_SCALE"
-        :title="t('zoomOut')"
+        :title="t('common.imageViewer.zoomOut')"
         @click="zoomOut"
       >
         <PhMagnifyingGlassMinus :size="20" />
@@ -319,15 +319,19 @@ const imageStyle = computed<CSSProperties>(() => ({
       <button
         class="control-btn"
         :disabled="scale >= MAX_SCALE"
-        :title="t('zoomIn')"
+        :title="t('common.imageViewer.zoomIn')"
         @click="zoomIn"
       >
         <PhMagnifyingGlassPlus :size="20" />
       </button>
-      <button class="control-btn" :title="t('copyImage')" @click="copyImage">
+      <button class="control-btn" :title="t('common.contextMenu.copyImage')" @click="copyImage">
         <PhCopy :size="20" />
       </button>
-      <button class="control-btn" :title="t('downloadImage')" @click="downloadImage">
+      <button
+        class="control-btn"
+        :title="t('common.contextMenu.downloadImage')"
+        @click="downloadImage"
+      >
         <PhDownloadSimple :size="20" />
       </button>
     </div>

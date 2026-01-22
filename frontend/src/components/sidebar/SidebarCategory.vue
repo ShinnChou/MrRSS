@@ -199,7 +199,7 @@ const isFreshRSSCategory = computed(() => {
           v-if="isFreshRSSCategory"
           src="/assets/plugin_icons/freshrss.svg"
           class="w-3.5 h-3.5 shrink-0"
-          :title="t('freshRSSSyncedFeed')"
+          :title="t('setting.freshrss.syncedFeed')"
           alt="FreshRSS"
         />
       </span>

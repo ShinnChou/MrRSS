@@ -114,10 +114,10 @@ async function copySummary() {
   isCopying.value = true;
   try {
     await navigator.clipboard.writeText(props.summaryResult.summary);
-    window.showToast(t('copiedToClipboard'), 'success');
+    window.showToast(t('common.toast.copiedToClipboard'), 'success');
   } catch (error) {
     console.error('Failed to copy summary:', error);
-    window.showToast(t('failedToCopy'), 'error');
+    window.showToast(t('common.errors.failedToCopy'), 'error');
   } finally {
     setTimeout(() => {
       isCopying.value = false;
@@ -142,7 +142,7 @@ async function handleSummaryLinkClick(event: MouseEvent) {
       });
     } catch (error) {
       console.error('Failed to open link:', error);
-      window.showToast(t('failedToOpenLink'), 'error');
+      window.showToast(t('common.errors.failedToOpenLink'), 'error');
     }
   }
 }
@@ -161,14 +161,16 @@ async function handleSummaryLinkClick(event: MouseEvent) {
     >
       <div class="flex items-center gap-2">
         <PhTextAlignLeft :size="20" class="text-accent" />
-        <span class="text-base font-medium text-text-primary">{{ t('articleSummary') }}</span>
+        <span class="text-base font-medium text-text-primary">{{
+          t('article.summary.articleSummary')
+        }}</span>
       </div>
       <div class="flex items-center gap-1">
         <!-- Copy Button (show when summary exists and expanded) -->
         <button
           v-if="summaryResult?.summary && showSummary"
           class="p-1.5 rounded hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors"
-          :title="t('copy')"
+          :title="t('common.copy')"
           @click.stop="copySummary"
         >
           <PhCopy :size="18" />
@@ -177,7 +179,7 @@ async function handleSummaryLinkClick(event: MouseEvent) {
         <button
           v-if="summaryResult || shouldShowManualTrigger"
           class="p-1.5 rounded hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          :title="t('regenerateSummary')"
+          :title="t('setting.content.regenerateSummary')"
           :disabled="isLoadingSummary"
           @click.stop="handleGenerateSummary"
         >
@@ -200,7 +202,11 @@ async function handleSummaryLinkClick(event: MouseEvent) {
         <div v-if="isLoadingSummary" class="flex flex-col items-center gap-3 py-4">
           <PhSpinnerGap :size="24" class="animate-spin text-accent" />
           <div class="text-sm text-text-primary">
-            {{ props.summaryProvider === 'ai' ? t('generatingAISummary') : t('generatingSummary') }}
+            {{
+              props.summaryProvider === 'ai'
+                ? t('setting.content.generatingAISummary')
+                : t('setting.content.generatingSummary')
+            }}
           </div>
           <div class="text-xs text-text-secondary">
             {{ t('generatingSummaryTime', { seconds: loadingTime }) }}
@@ -210,14 +216,14 @@ async function handleSummaryLinkClick(event: MouseEvent) {
         <!-- Manual Trigger Button -->
         <div v-else-if="shouldShowManualTrigger" class="flex flex-col items-center gap-2 py-4">
           <div class="text-sm text-text-secondary text-center">
-            {{ t('summaryManualTriggerDesc') }}
+            {{ t('setting.content.summaryManualTriggerDesc') }}
           </div>
           <button
             class="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
             @click.stop="handleGenerateSummary"
           >
             <PhPlay :size="16" />
-            <span class="text-sm">{{ t('generateSummary') }}</span>
+            <span class="text-sm">{{ t('setting.content.generateSummary') }}</span>
           </button>
         </div>
 
@@ -225,9 +231,9 @@ async function handleSummaryLinkClick(event: MouseEvent) {
         <div v-else-if="summaryResult?.is_too_short" class="flex flex-col items-center gap-2 py-4">
           <div class="flex items-center gap-2 text-amber-600 dark:text-amber-400">
             <PhWarning :size="18" />
-            <span class="text-sm">{{ t('summaryTooShort') }}</span>
+            <span class="text-sm">{{ t('setting.content.summaryTooShort') }}</span>
           </div>
-          <div class="text-xs text-text-secondary">{{ t('articleTooShort') }}</div>
+          <div class="text-xs text-text-secondary">{{ t('article.summary.articleTooShort') }}</div>
         </div>
 
         <!-- Summary Display -->
@@ -239,7 +245,9 @@ async function handleSummaryLinkClick(event: MouseEvent) {
             @click.stop="showThinking = !showThinking"
           >
             <PhBrain :size="12" />
-            <span>{{ showThinking ? t('hideThinking') : t('showThinking') }}</span>
+            <span>{{
+              showThinking ? t('article.chat.hideThinking') : t('article.chat.showThinking')
+            }}</span>
           </button>
 
           <!-- Thinking Section -->
@@ -264,7 +272,7 @@ async function handleSummaryLinkClick(event: MouseEvent) {
         <div v-else-if="summaryResult?.error" class="flex flex-col items-center gap-2 py-4">
           <div class="flex items-center gap-2 text-red-500">
             <PhWarning :size="18" />
-            <span class="text-sm">{{ t('summaryGenerationFailed') }}</span>
+            <span class="text-sm">{{ t('setting.content.summaryGenerationFailed') }}</span>
           </div>
           <div class="text-xs text-text-secondary text-center max-w-xs break-words">
             {{ summaryResult.error }}
@@ -273,7 +281,7 @@ async function handleSummaryLinkClick(event: MouseEvent) {
 
         <!-- No Summary Available -->
         <div v-else class="py-4 text-sm text-text-secondary text-center">
-          {{ t('noSummaryAvailable') }}
+          {{ t('setting.content.noSummaryAvailable') }}
         </div>
       </div>
     </Transition>

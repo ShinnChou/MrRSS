@@ -22,7 +22,7 @@ const emit = defineEmits<{
       class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
     >
       <PhPalette :size="14" class="sm:w-4 sm:h-4" />
-      {{ t('application') }}
+      {{ t('setting.general.application') }}
     </label>
 
     <div class="setting-item">
@@ -30,10 +30,10 @@ const emit = defineEmits<{
         <PhPower :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('startupOnBoot') }}
+            {{ t('setting.general.startupOnBoot') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('startupOnBootDesc') }}
+            {{ t('setting.general.startupOnBootDesc') }}
           </div>
         </div>
       </div>
@@ -56,10 +56,10 @@ const emit = defineEmits<{
         <PhArchiveTray :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('closeToTray') }}
+            {{ t('setting.general.closeToTray') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('closeToTrayDesc') }}
+            {{ t('setting.general.closeToTrayDesc') }}
           </div>
         </div>
       </div>
@@ -81,8 +81,12 @@ const emit = defineEmits<{
       <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
         <PhMoon :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
-          <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">{{ t('theme') }}</div>
-          <div class="text-xs text-text-secondary hidden sm:block">{{ t('themeDesc') }}</div>
+          <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
+            {{ t('setting.general.theme') }}
+          </div>
+          <div class="text-xs text-text-secondary hidden sm:block">
+            {{ t('setting.general.themeDesc') }}
+          </div>
         </div>
       </div>
       <select
@@ -94,9 +98,9 @@ const emit = defineEmits<{
             emit('update:settings', { ...settings, theme: (e.target as HTMLSelectElement).value })
         "
       >
-        <option value="light">{{ t('light') }}</option>
-        <option value="dark">{{ t('dark') }}</option>
-        <option value="auto">{{ t('auto') }}</option>
+        <option value="light">{{ t('setting.general.light') }}</option>
+        <option value="dark">{{ t('setting.general.dark') }}</option>
+        <option value="auto">{{ t('setting.general.auto') }}</option>
       </select>
     </div>
 
@@ -104,8 +108,12 @@ const emit = defineEmits<{
       <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
         <PhTranslate :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
-          <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">{{ t('language') }}</div>
-          <div class="text-xs text-text-secondary hidden sm:block">{{ t('languageDesc') }}</div>
+          <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
+            {{ t('setting.general.language') }}
+          </div>
+          <div class="text-xs text-text-secondary hidden sm:block">
+            {{ t('setting.general.languageDesc') }}
+          </div>
         </div>
       </div>
       <select
@@ -120,8 +128,8 @@ const emit = defineEmits<{
             })
         "
       >
-        <option value="en-US">{{ t('english') }}</option>
-        <option value="zh-CN">{{ t('chinese') }}</option>
+        <option value="en-US">{{ t('common.language.english') }}</option>
+        <option value="zh-CN">{{ t('common.language.chinese') }}</option>
       </select>
     </div>
   </div>

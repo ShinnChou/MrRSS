@@ -46,15 +46,15 @@ function handleUpdateSettings(updatedSettings: SettingsData) {
       <PhWarning :size="20" class="text-red-500 shrink-0 mt-0.5" :weight="'fill'" />
       <div class="flex-1">
         <div class="font-semibold text-red-500 text-sm sm:text-base mb-1">
-          {{ t('requiredField') }}
+          {{ t('common.form.requiredField') }}
         </div>
         <div class="text-xs sm:text-sm text-text-secondary">
           <span v-if="!isTranslationValid">
-            {{ t('translationCredentialsRequired') }}
+            {{ t('setting.content.translationCredentialsRequired') }}
           </span>
           <span v-if="!isTranslationValid && !isSummaryValid"> • </span>
           <span v-if="!isSummaryValid">
-            {{ t('summaryCredentialsRequired') }}
+            {{ t('setting.content.summaryCredentialsRequired') }}
           </span>
         </div>
       </div>

@@ -225,10 +225,10 @@ async function translateText(
         html: data.html || '',
       };
     } else {
-      window.showToast(t('errorTranslatingContent'), 'error');
+      window.showToast(t('common.errors.translatingContent'), 'error');
     }
   } catch {
-    window.showToast(t('errorTranslating'), 'error');
+    window.showToast(t('common.errors.translating'), 'error');
   }
   return { text: '', html: '' };
 }
@@ -265,7 +265,7 @@ async function fetchFullArticle(showErrors: boolean = true) {
 
       fullArticleContent.value = content;
       if (showErrors) {
-        window.showToast(t('fullArticleFetched'), 'success');
+        window.showToast(t('article.action.fullArticleFetched'), 'success');
       }
 
       // After fetching full content, regenerate summary and trigger translation
@@ -284,13 +284,13 @@ async function fetchFullArticle(showErrors: boolean = true) {
     } else {
       console.error('Error fetching full article:', res.status);
       if (showErrors) {
-        window.showToast(t('errorFetchingFullArticle'), 'error');
+        window.showToast(t('common.errors.fetchingFullArticle'), 'error');
       }
     }
   } catch (e) {
     console.error('Error fetching full article:', e);
     if (showErrors) {
-      window.showToast(t('errorFetchingFullArticle'), 'error');
+      window.showToast(t('common.errors.fetchingFullArticle'), 'error');
     }
   } finally {
     isFetchingFullArticle.value = false;
@@ -866,7 +866,9 @@ onBeforeUnmount(() => {
           <PhSpinnerGap v-if="isFetchingFullArticle" :size="14" class="animate-spin" />
           <PhArticleNyTimes v-else :size="14" />
           <span>{{
-            isFetchingFullArticle ? t('fetchingFullArticle') : t('fetchFullArticle')
+            isFetchingFullArticle
+              ? t('article.action.fetchingFullArticle')
+              : t('article.action.fetchFullArticle')
           }}</span>
         </button>
       </div>

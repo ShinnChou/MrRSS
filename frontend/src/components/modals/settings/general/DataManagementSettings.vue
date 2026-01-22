@@ -62,17 +62,17 @@ async function cleanMediaCache() {
     if (response.ok) {
       const data = await response.json();
       window.showToast(
-        t('mediaCacheCleanup') + ': ' + data.files_cleaned + ' files removed',
+        t('setting.database.mediaCacheCleanup') + ': ' + data.files_cleaned + ' files removed',
         'success'
       );
       // Immediately update cache size
       await fetchMediaCacheSize();
     } else {
-      window.showToast(t('errorCleaningDatabase'), 'error');
+      window.showToast(t('common.errors.cleaningDatabase'), 'error');
     }
   } catch (error) {
     console.error('Failed to clean media cache:', error);
-    window.showToast(t('errorCleaningDatabase'), 'error');
+    window.showToast(t('common.errors.cleaningDatabase'), 'error');
   } finally {
     isCleaningCache.value = false;
   }
@@ -86,17 +86,20 @@ async function cleanArticleContentCache() {
     if (response.ok) {
       const data = await response.json();
       window.showToast(
-        t('articleContentCacheCleanup') + ': ' + data.entries_cleaned + ' entries removed',
+        t('setting.database.articleContentCacheCleanup') +
+          ': ' +
+          data.entries_cleaned +
+          ' entries removed',
         'success'
       );
       // Immediately update cache count
       await fetchArticleCacheCount();
     } else {
-      window.showToast(t('errorCleaningDatabase'), 'error');
+      window.showToast(t('common.errors.cleaningDatabase'), 'error');
     }
   } catch (error) {
     console.error('Failed to clean article content cache:', error);
-    window.showToast(t('errorCleaningDatabase'), 'error');
+    window.showToast(t('common.errors.cleaningDatabase'), 'error');
   } finally {
     isCleaningArticleCache.value = false;
   }
@@ -130,7 +133,7 @@ watch(
       class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
     >
       <PhDatabase :size="14" class="sm:w-4 sm:h-4" />
-      {{ t('dataManagement') }}
+      {{ t('setting.database.dataManagement') }}
     </label>
 
     <!-- Article Cleanup -->
@@ -138,9 +141,11 @@ watch(
       <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
         <PhBroom :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
-          <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">{{ t('autoCleanup') }}</div>
+          <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
+            {{ t('setting.database.autoCleanup') }}
+          </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('autoCleanupDesc') }}
+            {{ t('setting.database.autoCleanupDesc') }}
           </div>
         </div>
       </div>
@@ -166,9 +171,11 @@ watch(
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhHardDrive :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('maxCacheSize') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.database.maxCacheSize') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('maxCacheSizeDesc') }}
+              {{ t('setting.database.maxCacheSizeDesc') }}
             </div>
           </div>
         </div>
@@ -195,9 +202,11 @@ watch(
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhCalendarX :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('maxArticleAge') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.database.maxArticleAge') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('maxArticleAgeDesc') }}
+              {{ t('setting.database.maxArticleAgeDesc') }}
             </div>
           </div>
         </div>
@@ -216,7 +225,7 @@ watch(
                 })
             "
           />
-          <span class="text-xs sm:text-sm text-text-secondary">{{ t('days') }}</span>
+          <span class="text-xs sm:text-sm text-text-secondary">{{ t('common.time.days') }}</span>
         </div>
       </div>
 
@@ -226,13 +235,13 @@ watch(
           <PhTrash :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
             <div class="font-medium mb-0 sm:mb-1 text-sm">
-              {{ t('articleContentCacheCleanup') }}
+              {{ t('setting.database.articleContentCacheCleanup') }}
             </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('articleContentCacheCleanupDesc') }}
+              {{ t('setting.database.articleContentCacheCleanupDesc') }}
             </div>
             <div class="text-xs text-text-secondary mt-1">
-              {{ t('currentCachedArticles') }}:
+              {{ t('setting.database.currentCachedArticles') }}:
               <span class="theme-number">{{ articleCacheCount }}</span>
             </div>
           </div>
@@ -243,7 +252,11 @@ watch(
           @click="cleanArticleContentCache"
         >
           <PhBroom :size="16" class="sm:w-5 sm:h-5" />
-          {{ isCleaningArticleCache ? t('cleaning') : t('cleanupArticleContentCache') }}
+          {{
+            isCleaningArticleCache
+              ? t('setting.database.cleaning')
+              : t('setting.database.cleanupArticleContentCache')
+          }}
         </button>
       </div>
     </div>
@@ -254,10 +267,10 @@ watch(
         <PhImage :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('mediaCacheEnabled') }}
+            {{ t('setting.database.mediaCacheEnabled') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('mediaCacheEnabledDesc') }}
+            {{ t('setting.database.mediaCacheEnabledDesc') }}
           </div>
         </div>
       </div>
@@ -283,9 +296,11 @@ watch(
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhHardDrive :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('mediaCacheMaxSize') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.database.mediaCacheMaxSize') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('mediaCacheMaxSizeDesc') }}
+              {{ t('setting.database.mediaCacheMaxSizeDesc') }}
             </div>
           </div>
         </div>
@@ -312,9 +327,11 @@ watch(
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhCalendarX :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('mediaCacheMaxAge') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.database.mediaCacheMaxAge') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('mediaCacheMaxAgeDesc') }}
+              {{ t('setting.database.mediaCacheMaxAgeDesc') }}
             </div>
           </div>
         </div>
@@ -333,7 +350,9 @@ watch(
                 })
             "
           />
-          <span class="text-xs sm:text-sm text-text-secondary">{{ t('days') }}</span>
+          <span class="text-xs sm:text-sm text-text-secondary">{{
+            t('setting.database.days')
+          }}</span>
         </div>
       </div>
 
@@ -341,19 +360,25 @@ watch(
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhTrash :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('mediaCacheCleanup') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.database.mediaCacheCleanup') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('mediaCacheCleanupDesc') }}
+              {{ t('setting.database.mediaCacheCleanupDesc') }}
             </div>
             <div class="text-xs text-text-secondary mt-1">
-              {{ t('currentCacheSize') }}:
+              {{ t('setting.database.currentCacheSize') }}:
               <span class="theme-number">{{ mediaCacheSize.toFixed(2) }} MB</span>
             </div>
           </div>
         </div>
         <button :disabled="isCleaningCache" class="btn-secondary" @click="cleanMediaCache">
           <PhBroom :size="16" class="sm:w-5 sm:h-5" />
-          {{ isCleaningCache ? t('cleaning') : t('cleanupMediaCache') }}
+          {{
+            isCleaningCache
+              ? t('setting.database.cleaning')
+              : t('setting.database.cleanupMediaCache')
+          }}
         </button>
       </div>
     </div>

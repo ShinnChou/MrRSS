@@ -234,8 +234,8 @@ function applyTemplate(template: (typeof customTemplates)[0]) {
 
 async function clearTranslationCache() {
   const confirmed = await window.showConfirm({
-    title: t('clearTranslationCache'),
-    message: t('clearTranslationCacheConfirm'),
+    title: t('setting.content.clearTranslationCache'),
+    message: t('setting.content.clearTranslationCacheConfirm'),
     isDanger: true,
   });
   if (!confirmed) return;
@@ -247,16 +247,16 @@ async function clearTranslationCache() {
     });
 
     if (response.ok) {
-      window.showToast(t('clearTranslationCacheSuccess'), 'success');
+      window.showToast(t('setting.content.clearTranslationCacheSuccess'), 'success');
       // Refresh article list to show updated translations
       window.dispatchEvent(new CustomEvent('refresh-articles'));
     } else {
       console.error('Server error:', response.status);
-      window.showToast(t('clearTranslationCacheFailed'), 'error');
+      window.showToast(t('setting.content.clearTranslationCacheFailed'), 'error');
     }
   } catch (error) {
     console.error('Failed to clear translation cache:', error);
-    window.showToast(t('clearTranslationCacheFailed'), 'error');
+    window.showToast(t('setting.content.clearTranslationCacheFailed'), 'error');
   } finally {
     isClearingCache.value = false;
   }
@@ -269,17 +269,17 @@ async function clearTranslationCache() {
       class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
     >
       <PhGlobe :size="14" class="sm:w-4 sm:h-4" />
-      {{ t('translation') }}
+      {{ t('setting.content.translation') }}
     </label>
     <div class="setting-item mb-2 sm:mb-4">
       <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
         <PhTranslate :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('enableTranslation') }}
+            {{ t('setting.content.enableTranslation') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('enableTranslationDesc') }}
+            {{ t('setting.content.enableTranslationDesc') }}
           </div>
         </div>
       </div>
@@ -305,9 +305,11 @@ async function clearTranslationCache() {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhTranslate :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('translationOnlyMode') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.content.translationOnlyMode') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('translationOnlyModeDesc') }}
+              {{ t('setting.content.translationOnlyModeDesc') }}
             </div>
           </div>
         </div>
@@ -329,9 +331,14 @@ async function clearTranslationCache() {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhPackage :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('translationProvider') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.content.translationProvider') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('translationProviderDesc') || 'Choose the translation service to use' }}
+              {{
+                t('setting.content.translationProviderDesc') ||
+                'Choose the translation service to use'
+              }}
             </div>
           </div>
         </div>
@@ -347,11 +354,11 @@ async function clearTranslationCache() {
             }
           "
         >
-          <option value="google">{{ t('googleTranslate') }}</option>
-          <option value="deepl">{{ t('deeplApi') }}</option>
-          <option value="baidu">{{ t('baiduTranslate') }}</option>
-          <option value="ai">{{ t('aiTranslation') }}</option>
-          <option value="custom">{{ t('customTranslation') }}</option>
+          <option value="google">{{ t('setting.content.googleTranslate') }}</option>
+          <option value="deepl">{{ t('setting.content.deeplApi') }}</option>
+          <option value="baidu">{{ t('setting.content.baiduTranslate') }}</option>
+          <option value="ai">{{ t('setting.content.aiTranslation') }}</option>
+          <option value="custom">{{ t('setting.translation.custom.title') }}</option>
         </select>
       </div>
 
@@ -360,9 +367,11 @@ async function clearTranslationCache() {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhLink :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('googleTranslateEndpoint') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.content.googleTranslateEndpoint') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('googleTranslateEndpointDesc') }}
+              {{ t('setting.content.googleTranslateEndpointDesc') }}
             </div>
           </div>
         </div>
@@ -378,9 +387,11 @@ async function clearTranslationCache() {
           "
         >
           <option value="translate.googleapis.com">
-            {{ t('googleTranslateEndpointDefault') }}
+            {{ t('setting.content.googleTranslateEndpointDefault') }}
           </option>
-          <option value="clients5.google.com">{{ t('googleTranslateEndpointAlternate') }}</option>
+          <option value="clients5.google.com">
+            {{ t('setting.content.googleTranslateEndpointAlternate') }}
+          </option>
         </select>
       </div>
 
@@ -390,18 +401,18 @@ async function clearTranslationCache() {
           <PhKey :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
             <div class="font-medium mb-0 sm:mb-1 text-sm">
-              {{ t('deeplApiKey') }}
+              {{ t('setting.content.deeplApiKey') }}
               <span v-if="!props.settings.deepl_endpoint?.trim()" class="text-red-500">*</span>
             </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('deeplApiKeyDesc') || 'Enter your DeepL API key' }}
+              {{ t('setting.content.deeplApiKeyDesc') || 'Enter your DeepL API key' }}
             </div>
           </div>
         </div>
         <input
           :value="props.settings.deepl_api_key"
           type="password"
-          :placeholder="t('deeplApiKeyPlaceholder')"
+          :placeholder="t('setting.content.deeplApiKeyPlaceholder')"
           :class="[
             'input-field w-32 sm:w-48 text-xs sm:text-sm',
             props.settings.translation_enabled &&
@@ -426,16 +437,18 @@ async function clearTranslationCache() {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhLink :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('deeplEndpoint') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.content.deeplEndpoint') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('deeplEndpointDesc') }}
+              {{ t('setting.content.deeplEndpointDesc') }}
             </div>
           </div>
         </div>
         <input
           :value="props.settings.deepl_endpoint"
           type="text"
-          :placeholder="t('deeplEndpointPlaceholder')"
+          :placeholder="t('setting.content.deeplEndpointPlaceholder')"
           class="input-field w-32 sm:w-48 text-xs sm:text-sm"
           @input="
             (e) =>
@@ -454,17 +467,17 @@ async function clearTranslationCache() {
             <PhKey :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
             <div class="flex-1 min-w-0">
               <div class="font-medium mb-0 sm:mb-1 text-sm">
-                {{ t('baiduAppId') }} <span class="text-red-500">*</span>
+                {{ t('setting.content.baiduAppId') }} <span class="text-red-500">*</span>
               </div>
               <div class="text-xs text-text-secondary hidden sm:block">
-                {{ t('baiduAppIdDesc') }}
+                {{ t('setting.content.baiduAppIdDesc') }}
               </div>
             </div>
           </div>
           <input
             :value="props.settings.baidu_app_id"
             type="text"
-            :placeholder="t('baiduAppIdPlaceholder')"
+            :placeholder="t('setting.content.baiduAppIdPlaceholder')"
             :class="[
               'input-field w-32 sm:w-48 text-xs sm:text-sm',
               props.settings.translation_enabled &&
@@ -487,17 +500,17 @@ async function clearTranslationCache() {
             <PhKey :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
             <div class="flex-1 min-w-0">
               <div class="font-medium mb-0 sm:mb-1 text-sm">
-                {{ t('baiduSecretKey') }} <span class="text-red-500">*</span>
+                {{ t('setting.content.baiduSecretKey') }} <span class="text-red-500">*</span>
               </div>
               <div class="text-xs text-text-secondary hidden sm:block">
-                {{ t('baiduSecretKeyDesc') }}
+                {{ t('setting.content.baiduSecretKeyDesc') }}
               </div>
             </div>
           </div>
           <input
             :value="props.settings.baidu_secret_key"
             type="password"
-            :placeholder="t('baiduSecretKeyPlaceholder')"
+            :placeholder="t('setting.content.baiduSecretKeyPlaceholder')"
             :class="[
               'input-field w-32 sm:w-48 text-xs sm:text-sm',
               props.settings.translation_enabled &&
@@ -520,7 +533,7 @@ async function clearTranslationCache() {
       <!-- AI Translation Prompt -->
       <div v-if="props.settings.translation_provider === 'ai'" class="tip-box">
         <PhInfo :size="16" class="text-accent shrink-0 sm:w-5 sm:h-5" />
-        <span class="text-xs sm:text-sm">{{ t('aiSettingsConfiguredInAITab') }}</span>
+        <span class="text-xs sm:text-sm">{{ t('common.aiSettingsConfiguredInAITab') }}</span>
       </div>
       <div
         v-if="props.settings.translation_provider === 'ai'"
@@ -529,9 +542,11 @@ async function clearTranslationCache() {
         <div class="flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhRobot :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('aiTranslationPrompt') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.content.aiTranslationPrompt') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('aiTranslationPromptDesc') }}
+              {{ t('setting.content.aiTranslationPromptDesc') }}
             </div>
           </div>
         </div>
@@ -539,7 +554,7 @@ async function clearTranslationCache() {
           :value="props.settings.ai_translation_prompt"
           class="input-field w-full text-xs sm:text-sm resize-none"
           rows="3"
-          :placeholder="t('aiTranslationPromptPlaceholder')"
+          :placeholder="t('setting.content.aiTranslationPromptPlaceholder')"
           @input="
             (e) =>
               emit('update:settings', {
@@ -558,13 +573,10 @@ async function clearTranslationCache() {
             <PhList :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
             <div class="flex-1 min-w-0">
               <div class="font-medium mb-0 sm:mb-1 text-sm">
-                {{ t('customTranslationTemplate') || 'Preset Templates' }}
+                {{ t('setting.translation.custom.template') }}
               </div>
               <div class="text-xs text-text-secondary hidden sm:block">
-                {{
-                  t('customTranslationTemplateDesc') ||
-                  'Quick start with pre-configured templates for popular services'
-                }}
+                {{ t('setting.translation.custom.templateDesc') }}
               </div>
             </div>
           </div>
@@ -574,7 +586,7 @@ async function clearTranslationCache() {
               class="btn-secondary"
               @click="showCustomTemplates = !showCustomTemplates"
             >
-              {{ t('selectTemplate') || 'Select Template' }}
+              {{ t('setting.content.custom.selectTemplate') || 'Select Template' }}
             </button>
             <div
               v-if="showCustomTemplates"
@@ -599,23 +611,18 @@ async function clearTranslationCache() {
             <PhLink :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
             <div class="flex-1 min-w-0">
               <div class="font-medium mb-0 sm:mb-1 text-sm">
-                {{ t('customTranslationEndpoint') || 'API Endpoint' }}
+                {{ t('setting.translation.custom.endpoint') }}
                 <span class="text-red-500">*</span>
               </div>
               <div class="text-xs text-text-secondary hidden sm:block">
-                {{
-                  t('customTranslationEndpointDesc') ||
-                  'API endpoint URL for the translation service'
-                }}
+                {{ t('setting.translation.custom.endpointDesc') }}
               </div>
             </div>
           </div>
           <input
             :value="props.settings.custom_translation_endpoint"
             type="text"
-            :placeholder="
-              t('customTranslationEndpointPlaceholder') || 'https://api.example.com/translate'
-            "
+            :placeholder="t('setting.translation.custom.endpointPlaceholder')"
             :class="[
               'input-field w-32 sm:w-48 text-xs sm:text-sm',
               props.settings.translation_enabled &&
@@ -640,10 +647,10 @@ async function clearTranslationCache() {
             <PhCode :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
             <div class="flex-1 min-w-0">
               <div class="font-medium mb-0 sm:mb-1 text-sm">
-                {{ t('customTranslationMethod') || 'HTTP Method' }}
+                {{ t('setting.translation.custom.method') }}
               </div>
               <div class="text-xs text-text-secondary hidden sm:block">
-                {{ t('customTranslationMethodDesc') || 'HTTP method for the API request' }}
+                {{ t('setting.translation.custom.methodDesc') }}
               </div>
             </div>
           </div>
@@ -669,12 +676,10 @@ async function clearTranslationCache() {
             <PhSliders :size="20" class="text-text-secondary shrink-0 sm:w-6 sm:h-6" />
             <div class="flex-1 min-w-0">
               <div class="font-medium text-sm">
-                {{ t('customTranslationHeaders') || 'HTTP Headers' }}
+                {{ t('setting.translation.custom.headers') }}
               </div>
               <div class="text-xs text-text-secondary">
-                {{
-                  t('customTranslationHeadersDesc') || 'Custom HTTP headers (e.g., Authorization)'
-                }}
+                {{ t('setting.translation.custom.headersDesc') }}
               </div>
             </div>
           </div>
@@ -689,21 +694,21 @@ async function clearTranslationCache() {
               <input
                 v-model="header.name"
                 type="text"
-                :placeholder="t('headerName') || 'Header name'"
+                :placeholder="t('setting.content.custom.headerName') || 'Header name'"
                 class="input-field text-xs sm:text-sm flex-1"
                 @input="saveCustomHeaders()"
               />
               <input
                 v-model="header.value"
                 type="text"
-                :placeholder="t('headerValue') || 'Value'"
+                :placeholder="t('setting.content.custom.headerValue') || 'Value'"
                 class="input-field text-xs sm:text-sm flex-1"
                 @input="saveCustomHeaders()"
               />
               <button
                 type="button"
                 class="p-1.5 sm:p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-text-secondary hover:text-red-500 transition-all shrink-0"
-                :title="t('remove') || 'Remove'"
+                :title="t('common.action.remove') || 'Remove'"
                 @click="removeCustomHeader(header.id)"
               >
                 <PhTrash :size="14" class="sm:w-4 sm:h-4" />
@@ -731,13 +736,11 @@ async function clearTranslationCache() {
             <PhCode :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
             <div class="flex-1 min-w-0">
               <div class="font-medium mb-0 sm:mb-1 text-sm">
-                {{ t('customTranslationBodyTemplate') || 'Request Body Template' }}
+                {{ t('setting.translation.custom.bodyTemplate') }}
                 <span class="text-red-500">*</span>
               </div>
               <div class="text-xs text-text-secondary hidden sm:block">
-                {{
-                  t('customTranslationBodyTemplateDesc') || 'Use placeholders in your request body'
-                }}
+                {{ t('setting.translation.custom.bodyTemplateDesc') }}
               </div>
             </div>
           </div>
@@ -762,21 +765,18 @@ async function clearTranslationCache() {
             <PhCode :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
             <div class="flex-1 min-w-0">
               <div class="font-medium mb-0 sm:mb-1 text-sm">
-                {{ t('customTranslationResponsePath') || 'Response Path' }}
+                {{ t('setting.translation.custom.responsePath') }}
                 <span class="text-red-500">*</span>
               </div>
               <div class="text-xs text-text-secondary hidden sm:block">
-                {{
-                  t('customTranslationResponsePathDesc') ||
-                  'JSONPath to extract translation (e.g., data.translatedText)'
-                }}
+                {{ t('setting.translation.custom.responsePathDesc') }}
               </div>
             </div>
           </div>
           <input
             :value="props.settings.custom_translation_response_path"
             type="text"
-            :placeholder="t('customTranslationResponsePathPlaceholder') || 'data'"
+            :placeholder="t('setting.translation.custom.responsePathPlaceholder')"
             :class="[
               'input-field w-32 sm:w-48 text-xs sm:text-sm font-mono',
               props.settings.translation_enabled &&
@@ -801,13 +801,10 @@ async function clearTranslationCache() {
             <PhGlobe :size="20" class="text-text-secondary shrink-0 sm:w-6 sm:h-6" />
             <div class="flex-1 min-w-0">
               <div class="font-medium text-sm">
-                {{ t('customTranslationLangMapping') || 'Language Code Mapping' }}
+                {{ t('setting.translation.custom.langMapping') }}
               </div>
               <div class="text-xs text-text-secondary">
-                {{
-                  t('customTranslationLangMappingDesc') ||
-                  'Map MrRSS language codes to API-specific codes (optional)'
-                }}
+                {{ t('setting.translation.custom.langMappingDesc') }}
               </div>
             </div>
           </div>
@@ -822,21 +819,23 @@ async function clearTranslationCache() {
               <input
                 v-model="mapping.key"
                 type="text"
-                :placeholder="t('mrssLangCode') || 'MrRSS code (en, zh, ...)'"
+                :placeholder="
+                  t('setting.content.custom.mrssLangCode') || 'MrRSS code (en, zh, ...)'
+                "
                 class="input-field text-xs sm:text-sm flex-1"
                 @input="saveCustomLangMapping()"
               />
               <input
                 v-model="mapping.value"
                 type="text"
-                :placeholder="t('apiLangCode') || 'API code'"
+                :placeholder="t('setting.content.apiLangCode') || 'API code'"
                 class="input-field text-xs sm:text-sm flex-1"
                 @input="saveCustomLangMapping()"
               />
               <button
                 type="button"
                 class="p-1.5 sm:p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-text-secondary hover:text-red-500 transition-all shrink-0"
-                :title="t('remove') || 'Remove'"
+                :title="t('common.action.remove') || 'Remove'"
                 @click="removeCustomLangMapping(mapping.id)"
               >
                 <PhTrash :size="14" class="sm:w-4 sm:h-4" />
@@ -861,10 +860,10 @@ async function clearTranslationCache() {
             <PhTimer :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
             <div class="flex-1 min-w-0">
               <div class="font-medium mb-0 sm:mb-1 text-sm">
-                {{ t('customTranslationTimeout') || 'Timeout' }}
+                {{ t('setting.translation.custom.timeout') }}
               </div>
               <div class="text-xs text-text-secondary hidden sm:block">
-                {{ t('customTranslationTimeoutDesc') || 'Maximum time to wait for API response' }}
+                {{ t('setting.translation.custom.timeoutDesc') }}
               </div>
             </div>
           </div>
@@ -884,7 +883,9 @@ async function clearTranslationCache() {
                   })
               "
             />
-            <span class="text-xs sm:text-sm text-text-secondary">{{ t('seconds') }}</span>
+            <span class="text-xs sm:text-sm text-text-secondary">{{
+              t('common.time.seconds')
+            }}</span>
           </div>
         </div>
       </template>
@@ -893,9 +894,13 @@ async function clearTranslationCache() {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhGlobe :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('targetLanguage') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.content.targetLanguage') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('targetLanguageDesc') || 'Language to translate article titles to' }}
+              {{
+                t('setting.content.targetLanguageDesc') || 'Language to translate article titles to'
+              }}
             </div>
           </div>
         </div>
@@ -910,13 +915,13 @@ async function clearTranslationCache() {
               })
           "
         >
-          <option value="en">{{ t('english') }}</option>
-          <option value="es">{{ t('spanish') }}</option>
-          <option value="fr">{{ t('french') }}</option>
-          <option value="de">{{ t('german') }}</option>
-          <option value="zh">{{ t('simplifiedChinese') }}</option>
-          <option value="zh-TW">{{ t('traditionalChinese') }}</option>
-          <option value="ja">{{ t('japanese') }}</option>
+          <option value="en">{{ t('common.language.english') }}</option>
+          <option value="es">{{ t('common.language.spanish') }}</option>
+          <option value="fr">{{ t('common.language.french') }}</option>
+          <option value="de">{{ t('common.language.german') }}</option>
+          <option value="zh">{{ t('common.language.simplifiedChinese') }}</option>
+          <option value="zh-TW">{{ t('common.language.traditionalChinese') }}</option>
+          <option value="ja">{{ t('common.language.japanese') }}</option>
         </select>
       </div>
 
@@ -925,9 +930,11 @@ async function clearTranslationCache() {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhTrash :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('clearTranslationCache') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">
+              {{ t('setting.content.clearTranslationCache') }}
+            </div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('clearTranslationCacheDesc') }}
+              {{ t('setting.content.clearTranslationCacheDesc') }}
             </div>
           </div>
         </div>
@@ -938,7 +945,11 @@ async function clearTranslationCache() {
           @click="clearTranslationCache"
         >
           <PhBroom :size="16" class="sm:w-5 sm:h-5" />
-          {{ isClearingCache ? t('cleaning') : t('clearTranslationCacheButton') }}
+          {{
+            isClearingCache
+              ? t('setting.database.cleaning')
+              : t('setting.content.clearTranslationCacheButton')
+          }}
         </button>
       </div>
     </div>

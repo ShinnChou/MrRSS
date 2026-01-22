@@ -114,10 +114,10 @@ export function useArticleTranslation() {
           window.showToast(t('article.translation.aiLimitReached'), 'warning');
         }
       } else {
-        window.showToast(t('errorTranslatingTitle'), 'error');
+        window.showToast(t('common.errors.translatingTitle'), 'error');
       }
     } catch {
-      window.showToast(t('errorTranslating'), 'error');
+      window.showToast(t('common.errors.translating'), 'error');
     } finally {
       translatingArticles.value.delete(article.id);
     }

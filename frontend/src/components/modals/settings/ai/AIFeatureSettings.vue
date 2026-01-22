@@ -20,8 +20,8 @@ const isDeleting = ref(false);
 
 async function clearAllChatSessions() {
   const confirmed = await window.showConfirm({
-    title: t('clearAllChats'),
-    message: t('clearAllChatsConfirm'),
+    title: t('setting.ai.clearAllChats'),
+    message: t('setting.ai.clearAllChatsConfirm'),
     isDanger: true,
   });
   if (!confirmed) return;
@@ -34,15 +34,15 @@ async function clearAllChatSessions() {
 
     if (response.ok) {
       const data = await response.json();
-      window.showToast(t('clearAllChatsSuccess', { count: data.count || 0 }), 'success');
+      window.showToast(t('setting.ai.clearAllChatsSuccess', { count: data.count || 0 }), 'success');
     } else {
       const errorText = await response.text();
       console.error('Server error:', response.status, errorText);
-      window.showToast(t('clearAllChatsFailed'), 'error');
+      window.showToast(t('setting.ai.clearAllChatsFailed'), 'error');
     }
   } catch (error) {
     console.error('Failed to clear chat sessions:', error);
-    window.showToast(t('clearAllChatsFailed'), 'error');
+    window.showToast(t('setting.ai.clearAllChatsFailed'), 'error');
   } finally {
     isDeleting.value = false;
   }
@@ -94,9 +94,9 @@ async function clearAllChatSessions() {
         <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
           <PhTrash :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('clearAllChats') }}</div>
+            <div class="font-medium mb-0 sm:mb-1 text-sm">{{ t('setting.ai.clearAllChats') }}</div>
             <div class="text-xs text-text-secondary hidden sm:block">
-              {{ t('clearAllChatsDesc') }}
+              {{ t('setting.ai.clearAllChatsDesc') }}
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@ async function clearAllChatSessions() {
           @click="clearAllChatSessions"
         >
           <PhBroom :size="16" class="sm:w-5 sm:h-5" />
-          {{ isDeleting ? t('cleaning') : t('clearAllChatsButton') }}
+          {{ isDeleting ? t('setting.database.cleaning') : t('setting.ai.clearAllChatsButton') }}
         </button>
       </div>
     </div>

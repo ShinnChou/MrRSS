@@ -342,7 +342,7 @@ onUnmounted(() => {
           v-if="article.is_hidden"
           :size="18"
           class="text-text-secondary flex-shrink-0 sm:w-5 sm:h-5"
-          :title="t('hideArticle')"
+          :title="t('article.action.hideArticle')"
         />
         <!-- Compact mode icons on the right -->
         <div
@@ -361,7 +361,7 @@ onUnmounted(() => {
             v-if="article.freshrss_item_id"
             src="/assets/plugin_icons/freshrss.svg"
             class="w-4 h-4 shrink-0"
-            :title="t('freshRSSSyncedFeed')"
+            :title="t('setting.freshrss.syncedFeed')"
             alt="FreshRSS"
           />
           <!-- RSSHub indicator -->
@@ -369,7 +369,7 @@ onUnmounted(() => {
             v-if="isRSSHubArticle"
             src="/assets/plugin_icons/rsshub.svg"
             class="w-4 h-4 shrink-0"
-            :title="t('rsshubFeed')"
+            :title="t('setting.rsshub.feed')"
             alt="RSSHub"
           />
         </div>
@@ -406,7 +406,7 @@ onUnmounted(() => {
               v-if="article.freshrss_item_id"
               src="/assets/plugin_icons/freshrss.svg"
               class="w-3.5 h-3.5 shrink-0 sm:w-4 sm:h-4"
-              :title="t('freshRSSSyncedFeed')"
+              :title="t('setting.freshrss.syncedFeed')"
               alt="FreshRSS"
             />
             <!-- RSSHub indicator -->
@@ -414,7 +414,7 @@ onUnmounted(() => {
               v-if="isRSSHubArticle"
               src="/assets/plugin_icons/rsshub.svg"
               class="w-3.5 h-3.5 shrink-0 sm:w-4 sm:h-4"
-              :title="t('rsshubFeed')"
+              :title="t('setting.rsshub.feed')"
               alt="RSSHub"
             />
           </template>

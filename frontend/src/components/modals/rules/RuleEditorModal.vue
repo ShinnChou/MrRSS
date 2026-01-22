@@ -159,13 +159,13 @@ const isValid: ComputedRef<boolean> = computed(() => {
 // Save handler
 function handleSave(): void {
   if (!isValid.value) {
-    window.showToast(t('noActionsSelected'), 'warning');
+    window.showToast(t('setting.rule.noActionsSelected'), 'warning');
     return;
   }
 
   const rule: Rule = {
     id: props.rule ? props.rule.id : Date.now(),
-    name: ruleName.value || t('rules'),
+    name: ruleName.value || t('modal.rule.rules'),
     enabled: props.rule ? props.rule.enabled : true,
     conditions: conditions.value.filter((c) => {
       if (isMultiSelectField(c.field)) {
@@ -183,10 +183,10 @@ async function handleClose(checkUnsaved = false): Promise<void> {
   // Check for unsaved changes if requested
   if (checkUnsaved && hasUnsavedChanges.value) {
     const confirmed = await window.showConfirm({
-      title: t('unsavedChangesTitle'),
-      message: t('unsavedChangesMessage'),
-      confirmText: t('discard'),
-      cancelText: t('cancel'),
+      title: t('modal.common.unsavedChangesTitle'),
+      message: t('modal.common.unsavedChangesMessage'),
+      confirmText: t('common.action.discard'),
+      cancelText: t('common.cancel'),
       isDanger: true,
     });
 
@@ -214,7 +214,7 @@ async function handleClose(checkUnsaved = false): Promise<void> {
       <div class="p-4 sm:p-5 border-b border-border flex justify-between items-center shrink-0">
         <h3 class="text-lg font-semibold m-0 flex items-center gap-2 text-text-primary">
           <PhLightning :size="20" />
-          {{ rule ? t('editRule') : t('modal.rule.addRule') }}
+          {{ rule ? t('modal.rule.editRule') : t('modal.rule.addRule') }}
         </h3>
         <span
           class="text-2xl cursor-pointer text-text-secondary hover:text-text-primary"
@@ -227,11 +227,11 @@ async function handleClose(checkUnsaved = false): Promise<void> {
       <div class="flex-1 overflow-y-scroll p-4 sm:p-6 space-y-6 scroll-smooth">
         <!-- Rule Name -->
         <div class="space-y-2">
-          <label class="block text-sm font-medium">{{ t('ruleName') }}</label>
+          <label class="block text-sm font-medium">{{ t('modal.rule.name') }}</label>
           <input
             v-model="ruleName"
             type="text"
-            :placeholder="t('ruleNamePlaceholder')"
+            :placeholder="t('modal.rule.namePlaceholder')"
             class="input-field w-full"
           />
         </div>
@@ -241,7 +241,7 @@ async function handleClose(checkUnsaved = false): Promise<void> {
           <div class="flex items-center justify-between">
             <label class="flex items-center gap-2 text-sm font-medium">
               <PhFunnel :size="16" />
-              {{ t('ruleCondition') }}
+              {{ t('modal.rule.condition') }}
             </label>
           </div>
 
@@ -250,7 +250,7 @@ async function handleClose(checkUnsaved = false): Promise<void> {
             v-if="conditions.length === 0"
             class="text-center text-text-secondary py-4 bg-bg-secondary rounded-lg border border-border"
           >
-            <p class="text-sm">{{ t('conditionAlways') }}</p>
+            <p class="text-sm">{{ t('modal.filter.conditionAlways') }}</p>
           </div>
 
           <!-- Condition list -->
@@ -299,7 +299,7 @@ async function handleClose(checkUnsaved = false): Promise<void> {
           <div class="flex items-center justify-between">
             <label class="flex items-center gap-2 text-sm font-medium">
               <PhListChecks :size="16" />
-              {{ t('ruleActions') }}
+              {{ t('modal.rule.actions') }}
             </label>
           </div>
 
@@ -308,7 +308,7 @@ async function handleClose(checkUnsaved = false): Promise<void> {
             v-if="actions.length === 0"
             class="text-center text-text-secondary py-4 bg-bg-secondary rounded-lg border border-border"
           >
-            <p class="text-sm">{{ t('noActionsSelected') }}</p>
+            <p class="text-sm">{{ t('setting.rule.noActionsSelected') }}</p>
           </div>
 
           <!-- Action list -->
@@ -342,10 +342,10 @@ async function handleClose(checkUnsaved = false): Promise<void> {
         class="p-4 sm:p-5 border-t border-border bg-bg-secondary flex justify-end gap-3 shrink-0"
       >
         <button class="btn-secondary" @click="handleClose(true)">
-          {{ t('cancel') }}
+          {{ t('common.cancel') }}
         </button>
         <button class="btn-primary" :disabled="!isValid" @click="handleSave">
-          {{ t('saveChanges') }}
+          {{ t('common.action.saveChanges') }}
         </button>
       </div>
     </div>

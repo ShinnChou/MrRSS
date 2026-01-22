@@ -46,7 +46,7 @@ function handleUpdate(event: Event): void {
         {{ t(opt.labelKey) }}
       </option>
     </select>
-    <button class="btn-danger-icon" :title="t('removeAction')" @click="emit('remove')">
+    <button class="btn-danger-icon" :title="t('setting.rule.removeAction')" @click="emit('remove')">
       <PhTrash :size="16" />
     </button>
   </div>

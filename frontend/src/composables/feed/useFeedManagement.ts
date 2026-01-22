@@ -73,7 +73,7 @@ export function useFeedManagement() {
 
       if (result.status === 'success') {
         console.log('OPML export successful:', result);
-        window.showToast(t('opmlExportedSuccess'), 'success');
+        window.showToast(t('modal.opml.exportSuccess'), 'success');
       } else {
         console.error('OPML export failed:', result);
         window.showToast(t('exportFailed', { error: 'Unknown error' }), 'error');
@@ -89,10 +89,10 @@ export function useFeedManagement() {
    */
   async function handleCleanupDatabase() {
     const confirmed = await window.showConfirm({
-      title: t('cleanDatabaseTitle'),
-      message: t('cleanDatabaseMessage'),
-      confirmText: t('clean'),
-      cancelText: t('cancel'),
+      title: t('setting.database.cleanDatabaseTitle'),
+      message: t('setting.database.cleanDatabaseMessage'),
+      confirmText: t('setting.database.clean'),
+      cancelText: t('common.cancel'),
       isDanger: true,
     });
     if (!confirmed) return;
@@ -104,11 +104,11 @@ export function useFeedManagement() {
         window.showToast(t('databaseCleanedSuccess', { count: result.deleted }), 'success');
         store.fetchArticles();
       } else {
-        window.showToast(t('errorCleaningDatabase'), 'error');
+        window.showToast(t('common.errors.cleaningDatabase'), 'error');
       }
     } catch (e) {
       console.error('Error cleaning database:', e);
-      window.showToast(t('errorCleaningDatabase'), 'error');
+      window.showToast(t('common.errors.cleaningDatabase'), 'error');
     }
   }
 
@@ -131,17 +131,17 @@ export function useFeedManagement() {
    */
   async function handleDeleteFeed(id: number) {
     const confirmed = await window.showConfirm({
-      title: t('deleteFeedTitle'),
-      message: t('deleteFeedMessage'),
-      confirmText: t('delete'),
-      cancelText: t('cancel'),
+      title: t('modal.feed.deleteFeedTitle'),
+      message: t('modal.feed.deleteFeedMessage'),
+      confirmText: t('common.delete'),
+      cancelText: t('common.cancel'),
       isDanger: true,
     });
     if (!confirmed) return;
 
     await fetch(`/api/feeds/delete?id=${id}`, { method: 'POST' });
     store.fetchFeeds();
-    window.showToast(t('feedDeletedSuccess'), 'success');
+    window.showToast(t('modal.feed.feedDeletedSuccess'), 'success');
   }
 
   /**
@@ -149,10 +149,10 @@ export function useFeedManagement() {
    */
   async function handleBatchDelete(selectedIds: number[]) {
     const confirmed = await window.showConfirm({
-      title: t('deleteMultipleFeedsTitle'),
-      message: t('deleteMultipleFeedsMessage', { count: selectedIds.length }),
-      confirmText: t('delete'),
-      cancelText: t('cancel'),
+      title: t('modal.feed.deleteMultipleFeedsTitle'),
+      message: t('modal.feed.deleteMultipleFeedsMessage', { count: selectedIds.length }),
+      confirmText: t('common.delete'),
+      cancelText: t('common.cancel'),
       isDanger: true,
     });
     if (!confirmed) return;
@@ -162,7 +162,7 @@ export function useFeedManagement() {
     );
     await Promise.all(promises);
     store.fetchFeeds();
-    window.showToast(t('feedsDeletedSuccess'), 'success');
+    window.showToast(t('modal.feed.feedsDeletedSuccess'), 'success');
   }
 
   /**
@@ -209,11 +209,11 @@ export function useFeedManagement() {
     const categories = getNonFreshRSSCategories();
 
     const newCategory = await window.showInput({
-      title: t('moveFeeds'),
-      message: t('enterCategoryName'),
-      placeholder: t('categoryPlaceholder'),
-      confirmText: t('move'),
-      cancelText: t('cancel'),
+      title: t('common.action.moveFeeds'),
+      message: t('modal.feed.enterCategoryName'),
+      placeholder: t('modal.feed.categoryPlaceholder'),
+      confirmText: t('common.action.move'),
+      cancelText: t('common.action.cancel'),
       suggestions: categories,
     });
     if (newCategory === null) return;
@@ -256,7 +256,7 @@ export function useFeedManagement() {
 
     await Promise.all(promises);
     store.fetchFeeds();
-    window.showToast(t('feedsMovedSuccess'), 'success');
+    window.showToast(t('modal.feed.feedsMovedSuccess'), 'success');
   }
 
   return {

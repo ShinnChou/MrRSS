@@ -28,7 +28,7 @@ function formatLastUpdate(timestamp: string): string {
       class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
     >
       <PhArrowClockwise :size="14" class="sm:w-4 sm:h-4" />
-      {{ t('updates') }}
+      {{ t('setting.update.updates') }}
     </label>
 
     <div class="setting-item">
@@ -36,14 +36,14 @@ function formatLastUpdate(timestamp: string): string {
         <PhArrowsClockwise :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('refreshMode') }}
+            {{ t('setting.feed.refreshMode') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('refreshModeDesc') }}
+            {{ t('setting.feed.refreshModeDesc') }}
           </div>
           <!-- Last update time -->
           <div class="text-xs text-text-secondary mt-1 flex items-center gap-1">
-            <span>{{ t('lastGlobalRefresh') }}:</span>
+            <span>{{ t('sidebar.activity.lastGlobalRefresh') }}:</span>
             <span class="font-medium text-accent">{{
               formatLastUpdate(settings.last_global_refresh)
             }}</span>
@@ -62,9 +62,9 @@ function formatLastUpdate(timestamp: string): string {
             })
         "
       >
-        <option value="fixed">{{ t('fixedInterval') }}</option>
-        <option value="intelligent">{{ t('intelligentInterval') }}</option>
-        <option value="never">{{ t('neverRefresh') }}</option>
+        <option value="fixed">{{ t('setting.feed.fixedInterval') }}</option>
+        <option value="intelligent">{{ t('setting.feed.intelligentInterval') }}</option>
+        <option value="never">{{ t('setting.feed.neverRefresh') }}</option>
       </select>
     </div>
 
@@ -78,10 +78,10 @@ function formatLastUpdate(timestamp: string): string {
           <PhClock :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
           <div class="flex-1 min-w-0">
             <div class="font-medium mb-0 sm:mb-1 text-xs sm:text-sm">
-              {{ t('autoUpdateInterval') }}
+              {{ t('setting.update.autoUpdateInterval') }}
             </div>
             <div class="text-[10px] sm:text-xs text-text-secondary hidden sm:block">
-              {{ t('autoUpdateIntervalDesc') }}
+              {{ t('setting.update.autoUpdateIntervalDesc') }}
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@ function formatLastUpdate(timestamp: string): string {
                 })
             "
           />
-          <span class="text-xs sm:text-sm text-text-secondary">{{ t('minutes') }}</span>
+          <span class="text-xs sm:text-sm text-text-secondary">{{ t('common.time.minutes') }}</span>
         </div>
       </div>
     </div>

@@ -168,6 +168,45 @@ def find_i18n_usage(key: str, search_dir: Path) -> List[Tuple[str, int]]:
     return usages
 
 
+def find_all_i18n_calls(search_dir: Path) -> Dict[str, List[Tuple[str, int]]]:
+    """
+    Find ALL t() calls in the codebase and extract the keys.
+    Returns dict mapping key to list of (file_path, line_number) tuples.
+    """
+    all_calls = {}
+
+    # Pattern to match t('key') or t("key") with optional whitespace
+    pattern = re.compile(r"t\(\s*['\"]([^'\"]+)['\"]\s*\)")
+
+    for ext in ["*.vue", "*.ts", "*.js"]:
+        for file_path in search_dir.rglob(ext):
+            # Skip the i18n locale files and types files
+            if "i18n/" in str(file_path):
+                continue
+
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    lines = f.readlines()
+
+                for line_num, line in enumerate(lines, start=1):
+                    matches = pattern.finditer(line)
+                    for match in matches:
+                        key = match.group(1)
+                        if key not in all_calls:
+                            all_calls[key] = []
+
+                        # Convert to relative path from search_dir
+                        try:
+                            rel_path = file_path.relative_to(search_dir)
+                            all_calls[key].append((str(rel_path), line_num))
+                        except ValueError:
+                            all_calls[key].append((str(file_path), line_num))
+            except Exception as e:
+                print(f"Warning: Could not read {file_path}: {e}")
+
+    return all_calls
+
+
 def create_file_link(file_path: str, line_num: int, is_windows: bool = False) -> str:
     """
     Create a clickable markdown link for a file location.
@@ -240,6 +279,19 @@ def main():
     all_keys = sorted(set(en_keys.keys()) | set(zh_keys.keys()) | set(types_keys.keys()))
     filtered_keys = [key for key in all_keys if key not in all_categories]
 
+    # Find ALL i18n calls in the codebase
+    all_calls = find_all_i18n_calls(FRONTEND_DIR)
+
+    # Find missing keys (used but not defined)
+    missing_keys = set(all_calls.keys()) - set(all_keys)
+
+    # Find unused keys (defined but never used)
+    unused_keys = []
+    for key in filtered_keys:
+        usages = find_i18n_usage(key, FRONTEND_DIR)
+        if len(usages) == 0:
+            unused_keys.append(key)
+
     # Group keys by nesting depth
     keys_by_depth: Dict[int, List[str]] = {}
     for key in filtered_keys:
@@ -254,15 +306,56 @@ def main():
     print(f"  - types.ts: {len(types_keys)} keys")
     print(f"  - Category keys (excluded from report): {len(all_categories)}")
     print(f"  - Leaf keys with values (included in report): {len(filtered_keys)}")
+    print(f"  - Used keys found in code: {len(all_calls)}")
+    print(f"  - Missing keys (used but not defined): {len(missing_keys)} ⚠️")
+    print(f"  - Unused keys (defined but never used): {len(unused_keys)} ⚠️")
     print(f"\nNesting depth distribution:")
     for depth in sorted(keys_by_depth.keys()):
         print(f"  - Level {depth}: {len(keys_by_depth[depth])} keys")
     print("=" * 80)
     print()
 
-    # Generate markdown table
+    # Generate markdown report
     output_lines = []
     output_lines.append("# i18n Usage Analysis Report")
+    output_lines.append("")
+
+    # Section 1: Missing Keys (used but not defined)
+    if missing_keys:
+        output_lines.append("## ⚠️ Missing Keys (Used in Code but Not Defined)")
+        output_lines.append("")
+        output_lines.append("| Key | Usage Count | Locations |")
+        output_lines.append("|-----|-------------|-----------|")
+
+        for key in sorted(missing_keys):
+            usages = all_calls[key]
+            usage_count = len(usages)
+            usage_links = create_usage_links(usages, is_windows)
+            output_lines.append(f"| {key} | {usage_count} | {usage_links} |")
+
+        output_lines.append("")
+        output_lines.append("---")
+        output_lines.append("")
+
+    # Section 2: Unused Keys (defined but never used)
+    if unused_keys:
+        output_lines.append("## ⚠️ Unused Keys (Defined but Never Used)")
+        output_lines.append("")
+        output_lines.append("| Key | en.ts | zh.ts | types.ts |")
+        output_lines.append("|-----|-------|-------|----------|")
+
+        for key in sorted(unused_keys):
+            en_line = en_keys.get(key, "")
+            zh_line = zh_keys.get(key, "")
+            types_line = types_keys.get(key, "")
+            output_lines.append(f"| {key} | {en_line} | {zh_line} | {types_line} |")
+
+        output_lines.append("")
+        output_lines.append("---")
+        output_lines.append("")
+
+    # Section 3: All Keys Analysis
+    output_lines.append("## All Keys Analysis")
     output_lines.append("")
     output_lines.append("| Key | Depth | en.ts | zh.ts | types.ts | Usage Count | Locations |")
     output_lines.append("|-----|-------|-------|-------|----------|-------------|-----------|")
@@ -294,6 +387,14 @@ def main():
 
     print(f"Report generated: {output_file}")
     print(f"Total keys analyzed: {len(filtered_keys)}")
+
+    # Print warnings
+    if missing_keys:
+        print(f"\n⚠️  WARNING: {len(missing_keys)} keys are used but not defined!")
+        print("   Check the 'Missing Keys' section in the report for details.")
+    if unused_keys:
+        print(f"\n⚠️  WARNING: {len(unused_keys)} keys are defined but never used!")
+        print("   Check the 'Unused Keys' section in the report for details.")
 
 
 if __name__ == "__main__":

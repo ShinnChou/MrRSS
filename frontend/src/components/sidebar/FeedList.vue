@@ -148,7 +148,7 @@ function handleDragStart(feedId: number, event: Event) {
   const feed = store.feeds?.find((f) => f.id === feedId);
   if (feed?.is_freshrss_source) {
     event.preventDefault();
-    window.showToast(t('freshRSSFeedLocked'), 'info');
+    window.showToast(t('setting.freshrss.feedLocked'), 'info');
     return;
   }
 
@@ -192,7 +192,7 @@ async function handleDrop(categoryName: string, feeds: any[]) {
 
   if (draggedFeed && !draggedFeed.is_freshrss_source) {
     if (hasFreshRSSFeedInTarget || isFreshRSSCategoryByName) {
-      window.showToast(t('freshRSSFeedLocked'), 'info');
+      window.showToast(t('setting.freshrss.feedLocked'), 'info');
       isDragging.value = false;
       return;
     }
@@ -200,7 +200,7 @@ async function handleDrop(categoryName: string, feeds: any[]) {
 
   if (draggedFeed && draggedFeed.is_freshrss_source) {
     if (!hasFreshRSSFeedInTarget && !isFreshRSSCategoryByName && targetCategoryFeeds.length > 0) {
-      window.showToast(t('freshRSSFeedLocked'), 'info');
+      window.showToast(t('setting.freshrss.feedLocked'), 'info');
       isDragging.value = false;
       return;
     }
@@ -211,9 +211,9 @@ async function handleDrop(categoryName: string, feeds: any[]) {
 
     if (result.success) {
       await store.fetchFeeds();
-      window.showToast(t('feedReordered'), 'success');
+      window.showToast(t('modal.feed.feedReordered'), 'success');
     } else {
-      window.showToast(t('errorReorderingFeed') + ': ' + result.error, 'error');
+      window.showToast(t('common.errors.reorderingFeed') + ': ' + result.error, 'error');
     }
   } finally {
     isDragging.value = false;
@@ -321,10 +321,10 @@ const filteredTree = computed(() => {
 const drawerTitle = computed(() => {
   // Map filters to their display names
   const filterMap: Record<string, string> = {
-    unread: t('unread'),
-    favorites: t('favorites'),
-    readLater: t('readLater'),
-    imageGallery: t('imageGallery'),
+    unread: t('sidebar.feedList.unread'),
+    favorites: t('sidebar.activity.favorites'),
+    readLater: t('sidebar.activity.readLater'),
+    imageGallery: t('sidebar.activity.imageGallery'),
   };
 
   const filterName = filterMap[store.currentFilter] || '';
@@ -335,7 +335,7 @@ const drawerTitle = computed(() => {
   }
 
   // For 'all' or any other case, just show "Feeds"
-  return t('feeds');
+  return t('sidebar.feedList.feeds');
 });
 
 function handleClose() {
@@ -346,9 +346,9 @@ function handleClose() {
 
 function handleTogglePin() {
   if (props.isPinned) {
-    emit('unpin');
+    emit('sidebar.feedList.unpin');
   } else {
-    emit('pin');
+    emit('sidebar.feedList.pin');
   }
 }
 </script>
@@ -377,7 +377,7 @@ function handleTogglePin() {
           <button
             class="text-text-secondary hover:text-text-primary hover:bg-bg-tertiary p-1 sm:p-1.5 rounded transition-colors"
             :class="isPinned ? 'text-accent' : ''"
-            :title="isPinned ? t('unpin') : t('pin')"
+            :title="isPinned ? t('sidebar.feedList.unpin') : t('sidebar.feedList.pin')"
             @click="handleTogglePin"
           >
             <PhPushPinSlash v-if="isPinned" :size="18" class="sm:w-5 sm:h-5" />
@@ -386,7 +386,7 @@ function handleTogglePin() {
           <!-- Close Button -->
           <button
             class="text-text-secondary hover:text-text-primary hover:bg-bg-tertiary p-1 sm:p-1.5 rounded transition-colors"
-            :title="t('close')"
+            :title="t('common.close')"
             @click="handleClose"
           >
             <PhX :size="18" class="sm:w-5 sm:h-5" />
@@ -405,7 +405,7 @@ function handleTogglePin() {
                 <input
                   v-model="searchQuery"
                   type="text"
-                  :placeholder="t('searchFeeds')"
+                  :placeholder="t('common.search.searchFeeds')"
                   class="w-full bg-bg-tertiary border border-border rounded-lg px-3 py-2 pl-8 text-sm focus:border-accent focus:outline-none transition-colors"
                 />
                 <PhMagnifyingGlass
@@ -424,7 +424,7 @@ function handleTogglePin() {
               <button
                 class="text-text-secondary hover:text-text-primary hover:bg-bg-tertiary p-1 sm:p-1.5 rounded transition-colors flex-shrink-0"
                 :class="isEditMode ? 'text-accent' : ''"
-                :title="isEditMode ? t('done') : t('edit')"
+                :title="isEditMode ? t('common.done') : t('common.edit')"
                 @click="toggleEditMode"
               >
                 <PhPencil v-if="!isEditMode" :size="16" class="sm:w-5 sm:h-5" />
@@ -477,7 +477,7 @@ function handleTogglePin() {
             <!-- Uncategorized -->
             <SidebarCategory
               v-if="filteredTree.uncategorized.length > 0 || isDragging"
-              :name="t('uncategorized')"
+              :name="t('sidebar.feedList.uncategorized')"
               :feeds="filteredTree.uncategorized"
               :is-open="
                 checkIsCategoryOpen('uncategorized') ||

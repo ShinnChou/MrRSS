@@ -97,7 +97,7 @@ function handleDiscoverAll() {
       <div class="p-3 sm:p-5 border-b border-border flex justify-between items-center shrink-0">
         <h3 class="text-text-secondary sm:text-lg font-semibold m-0 flex items-center gap-2">
           <PhGear :size="20" :weight="'fill'" class="sm:w-6 sm:h-6" />
-          {{ t('settingsTitle') }}
+          {{ t('setting.tab.settingsTitle') }}
         </h3>
         <span
           class="text-2xl cursor-pointer text-text-secondary hover:text-text-primary"
@@ -115,28 +115,28 @@ function handleDiscoverAll() {
               @click="activeTab = 'general'"
             >
               <PhSlidersHorizontal :size="22" />
-              <span>{{ t('general') }}</span>
+              <span>{{ t('setting.tab.general') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'reading' ? 'active' : '']"
               @click="activeTab = 'reading'"
             >
               <PhBookOpen :size="22" />
-              <span>{{ t('readingAndDisplay') }}</span>
+              <span>{{ t('setting.tab.readingAndDisplay') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'feeds' ? 'active' : '']"
               @click="activeTab = 'feeds'"
             >
               <PhRss :size="22" />
-              <span>{{ t('feeds') }}</span>
+              <span>{{ t('sidebar.feedList.feeds') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'content' ? 'active' : '']"
               @click="activeTab = 'content'"
             >
               <PhTextT :size="22" />
-              <span>{{ t('content') }}</span>
+              <span>{{ t('setting.tab.content') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'ai' ? 'active' : '']"
@@ -150,35 +150,35 @@ function handleDiscoverAll() {
               @click="activeTab = 'rules'"
             >
               <PhFunnel :size="22" />
-              <span>{{ t('rules') }}</span>
+              <span>{{ t('modal.rule.rules') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'network' ? 'active' : '']"
               @click="activeTab = 'network'"
             >
               <PhGlobe :size="22" />
-              <span>{{ t('network') }}</span>
+              <span>{{ t('setting.tab.network') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'plugins' ? 'active' : '']"
               @click="activeTab = 'plugins'"
             >
               <PhPuzzlePiece :size="22" />
-              <span>{{ t('plugins') }}</span>
+              <span>{{ t('setting.tab.plugins') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'shortcuts' ? 'active' : '']"
               @click="activeTab = 'shortcuts'"
             >
               <PhKeyboard :size="22" />
-              <span>{{ t('shortcuts') }}</span>
+              <span>{{ t('setting.shortcut.shortcuts') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'statistics' ? 'active' : '']"
               @click="activeTab = 'statistics'"
             >
               <PhChartBar :size="22" />
-              <span>{{ t('statistics') }}</span>
+              <span>{{ t('setting.statistic.statistics') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'about' ? 'active' : '']"

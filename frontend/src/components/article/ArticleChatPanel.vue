@@ -112,7 +112,7 @@ async function createNewSession() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         article_id: props.article.id,
-        title: t('newChat'),
+        title: t('article.chat.newChat'),
       }),
     });
 
@@ -132,8 +132,8 @@ async function createNewSession() {
 async function deleteSession(sessionId: number, e: Event) {
   e.stopPropagation();
   const confirmed = await window.showConfirm({
-    title: t('confirm'),
-    message: t('confirmDeleteSession'),
+    title: t('common.confirm'),
+    message: t('article.chat.confirmDeleteSession'),
     isDanger: true,
   });
   if (!confirmed) return;
@@ -356,7 +356,7 @@ const currentSessionTitle = computed(() => {
             <PhChatCircleText :size="20" class="text-accent" />
             <button
               class="flex items-center gap-1 text-sm font-medium hover:text-accent transition-colors"
-              :title="t('switchSession')"
+              :title="t('article.chat.switchSession')"
               @click="showSessions = !showSessions"
             >
               <span>{{ currentSessionTitle }}</span>
@@ -366,14 +366,14 @@ const currentSessionTitle = computed(() => {
           <div class="flex items-center gap-1">
             <button
               class="p-1 hover:bg-bg-tertiary rounded-lg transition-colors"
-              :title="t('newChat')"
+              :title="t('article.chat.newChat')"
               @click="createNewSession"
             >
               <PhPlus :size="18" class="text-text-secondary" />
             </button>
             <button
               class="p-1 hover:bg-bg-tertiary rounded-lg transition-colors"
-              :title="t('close')"
+              :title="t('common.close')"
               @click="emit('close')"
             >
               <PhX :size="18" class="text-text-secondary" />
@@ -440,7 +440,7 @@ const currentSessionTitle = computed(() => {
                 v-if="sessions.length === 0"
                 class="text-center text-text-secondary text-sm py-4"
               >
-                {{ t('noSessions') }}
+                {{ t('article.chat.noSessions') }}
               </div>
             </div>
           </div>
@@ -473,7 +473,7 @@ const currentSessionTitle = computed(() => {
               >
                 <div class="font-bold mb-1 flex items-center gap-1">
                   <PhSpinner :size="12" class="animate-spin" />
-                  {{ t('thinking') }}
+                  {{ t('article.chat.thinking') }}
                 </div>
                 <div class="whitespace-pre-wrap">{{ msg.thinking }}</div>
               </div>

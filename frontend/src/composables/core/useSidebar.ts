@@ -207,10 +207,10 @@ export function useSidebar() {
   async function handleFeedAction(action: string, feed: Feed): Promise<void> {
     if (action === 'markAllRead') {
       await store.markAllAsRead(feed.id);
-      window.showToast(t('markedAllAsRead'), 'success');
+      window.showToast(t('article.action.markedAllAsRead'), 'success');
     } else if (action === 'refreshFeed') {
       await fetch(`/api/feeds/refresh?id=${feed.id}`, { method: 'POST' });
-      window.showToast(t('feedRefreshStarted'), 'success');
+      window.showToast(t('modal.feed.feedRefreshStarted'), 'success');
       // Start polling for progress as the backend is now fetching articles for this feed
       store.pollProgress();
     } else if (action === 'syncFeed') {
@@ -218,21 +218,21 @@ export function useSidebar() {
       await fetch(`/api/freshrss/sync-feed?stream_id=${feed.freshrss_stream_id}`, {
         method: 'POST',
       });
-      window.showToast(t('syncFeedStarted'), 'success');
+      window.showToast(t('modal.feed.syncFeedStarted'), 'success');
       // Start polling for progress
       store.pollProgress();
     } else if (action === 'delete') {
       const confirmed = await window.showConfirm({
-        title: t('unsubscribeTitle'),
-        message: t('unsubscribeMessage', { name: feed.title }),
-        confirmText: t('unsubscribe'),
-        cancelText: t('cancel'),
+        title: t('modal.feed.unsubscribeTitle'),
+        message: t('modal.feed.unsubscribeMessage', { name: feed.title }),
+        confirmText: t('common.action.unsubscribe'),
+        cancelText: t('common.action.cancel'),
         isDanger: true,
       });
       if (confirmed) {
         await fetch(`/api/feeds/delete?id=${feed.id}`, { method: 'POST' });
         store.fetchFeeds();
-        window.showToast(t('unsubscribedSuccess'), 'success');
+        window.showToast(t('modal.feed.unsubscribedSuccess'), 'success');
       }
     } else if (action === 'edit') {
       window.dispatchEvent(new CustomEvent('show-edit-feed', { detail: feed }));
@@ -255,14 +255,15 @@ export function useSidebar() {
             } else {
               // Invalid transformed URL
               window.showToast(
-                t('failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL',
+                t('common.errors.failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL',
                 'error'
               );
               return;
             }
           } else {
             // Transformation failed - try to get error message from response
-            let errorMessage = t('failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL';
+            let errorMessage =
+              t('common.errors.failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL';
             try {
               const errorText = await response.text();
               if (errorText) {
@@ -276,7 +277,7 @@ export function useSidebar() {
           }
         } catch (error) {
           window.showToast(
-            t('failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL',
+            t('common.errors.failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL',
             'error'
           );
           return;
@@ -286,7 +287,7 @@ export function useSidebar() {
       if (urlToOpen.startsWith('http://') || urlToOpen.startsWith('https://')) {
         openInBrowser(urlToOpen);
       } else {
-        window.showToast(t('invalidURLScheme') || 'Invalid URL scheme', 'error');
+        window.showToast(t('common.errors.invalidURLScheme') || 'Invalid URL scheme', 'error');
       }
     } else if (action === 'discover') {
       window.dispatchEvent(new CustomEvent('show-discover-blogs', { detail: feed }));
@@ -308,25 +309,46 @@ export function useSidebar() {
 
     // For FreshRSS feeds, show "Sync Feed" instead of "Refresh Feed"
     if (feed.is_freshrss_source) {
-      items.push({ label: t('syncFeed'), action: 'syncFeed', icon: 'PhArrowsClockwise' });
+      items.push({
+        label: t('modal.feed.syncFeed'),
+        action: 'syncFeed',
+        icon: 'PhArrowsClockwise',
+      });
     } else {
-      items.push({ label: t('refreshFeed'), action: 'refreshFeed', icon: 'PhArrowsClockwise' });
+      items.push({
+        label: t('article.action.refreshFeed'),
+        action: 'refreshFeed',
+        icon: 'PhArrowsClockwise',
+      });
     }
 
-    items.push({ label: t('markAllAsReadFeed'), action: 'markAllRead', icon: 'PhCheckCircle' });
+    items.push({
+      label: t('article.action.markAllAsReadFeed'),
+      action: 'markAllRead',
+      icon: 'PhCheckCircle',
+    });
     items.push({ separator: true });
-    items.push({ label: t('openWebsite'), action: 'openWebsite', icon: 'PhGlobe' });
+    items.push({ label: t('common.action.openWebsite'), action: 'openWebsite', icon: 'PhGlobe' });
 
     // Only add discover for non-FreshRSS feeds
     if (!feed.is_freshrss_source) {
-      items.push({ label: t('discoverFeeds'), action: 'discover', icon: 'PhBinoculars' });
+      items.push({
+        label: t('modal.discovery.discoverFeeds'),
+        action: 'discover',
+        icon: 'PhBinoculars',
+      });
     }
 
     // Only add edit and delete options for non-FreshRSS feeds
     if (!feed.is_freshrss_source) {
       items.push({ separator: true });
-      items.push({ label: t('editSubscription'), action: 'edit', icon: 'PhPencil' });
-      items.push({ label: t('unsubscribe'), action: 'delete', icon: 'PhTrash', danger: true });
+      items.push({ label: t('modal.feed.editSubscription'), action: 'edit', icon: 'PhPencil' });
+      items.push({
+        label: t('common.action.unsubscribe'),
+        action: 'delete',
+        icon: 'PhTrash',
+        danger: true,
+      });
     }
 
     window.dispatchEvent(
@@ -351,14 +373,14 @@ export function useSidebar() {
         method: 'POST',
       });
       store.fetchUnreadCounts();
-      window.showToast(t('markedAllAsRead'), 'success');
+      window.showToast(t('article.action.markedAllAsRead'), 'success');
     } else if (action === 'rename') {
       const newName = await window.showInput({
-        title: t('renameCategory'),
-        message: t('enterCategoryName'),
+        title: t('modal.feed.renameCategory'),
+        message: t('modal.feed.enterCategoryName'),
         defaultValue: categoryName,
-        confirmText: t('confirm'),
-        cancelText: t('cancel'),
+        confirmText: t('common.action.confirm'),
+        cancelText: t('common.action.cancel'),
       });
       if (newName && newName !== categoryName) {
         const feedsToUpdate = store.feeds.filter(
@@ -396,12 +418,16 @@ export function useSidebar() {
     e.stopPropagation();
 
     const items: Array<{ label?: string; action?: string; icon?: string; separator?: boolean }> = [
-      { label: t('markAllAsReadFeed'), action: 'markAllRead', icon: 'ph-check-circle' },
+      {
+        label: t('article.action.markAllAsReadFeed'),
+        action: 'markAllRead',
+        icon: 'ph-check-circle',
+      },
     ];
 
     if (categoryName !== 'uncategorized') {
       items.push({ separator: true });
-      items.push({ label: t('renameCategory'), action: 'rename', icon: 'ph-pencil' });
+      items.push({ label: t('modal.feed.renameCategory'), action: 'rename', icon: 'ph-pencil' });
     }
 
     window.dispatchEvent(

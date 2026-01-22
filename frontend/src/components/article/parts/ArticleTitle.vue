@@ -43,9 +43,9 @@ const showBilingualTitle = computed(() => {
 // Computed: translation status text
 const translationStatusText = computed(() => {
   if (props.translationSkipped) {
-    return t('translationSkippedAlreadyTarget');
+    return t('setting.content.translationSkippedAlreadyTarget');
   }
-  return t('autoTranslateEnabled');
+  return t('common.toast.autoTranslateEnabled');
 });
 </script>
 
@@ -87,7 +87,7 @@ const translationStatusText = computed(() => {
         v-if="translationSkipped"
         class="flex items-center justify-center w-5 h-5 rounded hover:bg-bg-tertiary active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         :disabled="isTranslatingContent"
-        :title="t('forceTranslate')"
+        :title="t('common.text.forceTranslate')"
         @click="emit('force-translate')"
       >
         <PhSpinnerGap v-if="isTranslatingContent" :size="12" class="animate-spin" />

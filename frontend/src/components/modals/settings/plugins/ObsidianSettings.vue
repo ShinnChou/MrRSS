@@ -54,10 +54,10 @@ function handleObsidianVaultPathChange(event: Event) {
       />
       <div class="flex-1 min-w-0">
         <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-          {{ t('obsidianIntegration') }}
+          {{ t('setting.plugins.obsidian.integration') }}
         </div>
         <div class="text-xs text-text-secondary hidden sm:block">
-          {{ t('obsidianIntegrationDescription') }}
+          {{ t('setting.plugins.obsidian.integrationDescription') }}
         </div>
       </div>
     </div>
@@ -79,17 +79,17 @@ function handleObsidianVaultPathChange(event: Event) {
         <PhArchive :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('obsidianVaultName') }}
+            {{ t('setting.plugins.obsidian.vaultName') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('obsidianVaultNameDesc') }}
+            {{ t('setting.plugins.obsidian.vaultNameDesc') }}
           </div>
         </div>
       </div>
       <input
         type="text"
         :value="props.settings.obsidian_vault"
-        :placeholder="t('obsidianVaultNamePlaceholder')"
+        :placeholder="t('setting.plugins.obsidian.vaultNamePlaceholder')"
         class="input-field w-32 sm:w-48 text-xs sm:text-sm"
         @input="handleObsidianVaultChange"
       />
@@ -101,17 +101,17 @@ function handleObsidianVaultPathChange(event: Event) {
         <PhFolders :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('obsidianVaultPath') }} <span class="text-red-500">*</span>
+            {{ t('setting.plugins.obsidian.vaultPath') }} <span class="text-red-500">*</span>
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('obsidianVaultPathDesc') }}
+            {{ t('setting.plugins.obsidian.vaultPathDesc') }}
           </div>
         </div>
       </div>
       <input
         type="text"
         :value="props.settings.obsidian_vault_path"
-        :placeholder="t('obsidianVaultPathPlaceholder')"
+        :placeholder="t('setting.plugins.obsidian.vaultPathPlaceholder')"
         class="input-field w-48 sm:w-64 text-xs sm:text-sm"
         @input="handleObsidianVaultPathChange"
       />

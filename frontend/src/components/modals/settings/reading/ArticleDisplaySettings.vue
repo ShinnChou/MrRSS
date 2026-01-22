@@ -18,7 +18,7 @@ const emit = defineEmits<{
   <div class="setting-section">
     <label class="section-label">
       <PhArticle :size="16" class="w-4 h-4" />
-      {{ t('articleDisplay') }}
+      {{ t('setting.tab.articleDisplay') }}
     </label>
 
     <div class="setting-item">
@@ -26,10 +26,10 @@ const emit = defineEmits<{
         <PhArticle :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('defaultViewMode') }}
+            {{ t('setting.reading.defaultViewMode') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('defaultViewModeDesc') }}
+            {{ t('setting.reading.defaultViewModeDesc') }}
           </div>
         </div>
       </div>
@@ -44,8 +44,8 @@ const emit = defineEmits<{
             })
         "
       >
-        <option value="original">{{ t('viewModeOriginal') }}</option>
-        <option value="rendered">{{ t('viewModeRendered') }}</option>
+        <option value="original">{{ t('article.action.viewModeOriginal') }}</option>
+        <option value="rendered">{{ t('article.action.viewModeRendered') }}</option>
       </select>
     </div>
 
@@ -54,10 +54,10 @@ const emit = defineEmits<{
         <PhImage :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('showArticlePreviewImages') }}
+            {{ t('setting.reading.showArticlePreviewImages') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('showArticlePreviewImagesDesc') }}
+            {{ t('setting.reading.showArticlePreviewImagesDesc') }}
           </div>
         </div>
       </div>
@@ -80,10 +80,10 @@ const emit = defineEmits<{
         <PhListDashes :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('compactMode') }}
+            {{ t('setting.typography.compactMode') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('compactModeDesc') }}
+            {{ t('setting.typography.compactModeDesc') }}
           </div>
         </div>
       </div>

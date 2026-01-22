@@ -67,7 +67,7 @@ export function useFeedSubscription(feed: Feed, discoveredFeeds: Ref<DiscoveredF
       }
     } catch (error) {
       console.error('Subscription error:', error);
-      window.showToast(t('errorSubscribingFeeds'), 'error');
+      window.showToast(t('common.errors.subscribingFeeds'), 'error');
     } finally {
       isSubscribing.value = false;
     }

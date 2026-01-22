@@ -32,31 +32,31 @@ const navItems: NavItem[] = [
     id: 'all',
     icon: PhListDashes,
     activeIcon: PhSquaresFour,
-    label: t('allArticles'),
+    label: t('sidebar.activity.allArticles'),
     filterType: 'all',
   },
   {
     id: 'unread',
     icon: PhTray,
-    label: t('unread'),
+    label: t('sidebar.feedList.unread'),
     filterType: 'unread',
   },
   {
     id: 'favorites',
     icon: PhStar,
-    label: t('favorites'),
+    label: t('sidebar.activity.favorites'),
     filterType: 'favorites',
   },
   {
     id: 'readLater',
     icon: PhClockCountdown,
-    label: t('readLater'),
+    label: t('sidebar.activity.readLater'),
     filterType: 'readLater',
   },
   {
     id: 'imageGallery',
     icon: PhImages,
-    label: t('imageGallery'),
+    label: t('sidebar.activity.imageGallery'),
     filterType: 'imageGallery',
   },
 ];
@@ -256,8 +256,8 @@ defineExpose({
       <button
         class="relative flex items-center justify-center text-text-secondary flex-shrink-0 transition-all hover:text-accent"
         style="width: 44px; height: 44px"
-        :title="t('settings')"
-        @click="emit('settings')"
+        :title="t('setting.tab.settings')"
+        @click="emit('setting.tab.settings')"
       >
         <PhGear :size="24" weight="regular" class="transition-all" />
       </button>

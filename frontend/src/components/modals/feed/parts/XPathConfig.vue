@@ -69,12 +69,12 @@ const xpathPlaceholders = {
   <div class="mb-3 sm:mb-4">
     <div class="mb-3">
       <label class="block mb-1 sm:mb-1.5 font-semibold text-xs sm:text-sm text-text-secondary"
-        >{{ t('sourceUrl') }} <span class="text-red-500">*</span></label
+        >{{ t('modal.feed.sourceUrl') }} <span class="text-red-500">*</span></label
       >
       <input
         :value="props.url"
         type="text"
-        :placeholder="t('sourceUrlPlaceholder')"
+        :placeholder="t('modal.feed.sourceUrlPlaceholder')"
         :class="['input-field', props.mode === 'add' && props.isUrlInvalid ? 'border-red-500' : '']"
         @input="emit('update:url', ($event.target as HTMLInputElement).value)"
       />
@@ -82,21 +82,21 @@ const xpathPlaceholders = {
 
     <div class="mb-3">
       <label class="block mb-1 sm:mb-1.5 font-semibold text-xs sm:text-sm text-text-secondary">{{
-        t('xpathType')
+        t('modal.feed.xpathType')
       }}</label>
       <select
         :value="props.xpathType"
         class="input-field"
         @change="emit('update:xpath-type', ($event.target as HTMLSelectElement).value)"
       >
-        <option value="HTML+XPath">{{ t('htmlXpath') }}</option>
-        <option value="XML+XPath">{{ t('xmlXpath') }}</option>
+        <option value="HTML+XPath">{{ t('modal.feed.xpathHtml') }}</option>
+        <option value="XML+XPath">{{ t('modal.feed.xpathXml') }}</option>
       </select>
     </div>
 
     <div class="mb-3">
       <label class="block mb-1 sm:mb-1.5 font-semibold text-xs sm:text-sm text-text-secondary"
-        >{{ t('xpathItem') }} <span class="text-red-500">*</span></label
+        >{{ t('modal.feed.xpathItem') }} <span class="text-red-500">*</span></label
       >
       <input
         :value="props.xpathItem"
@@ -108,13 +108,13 @@ const xpathPlaceholders = {
         ]"
         @input="emit('update:xpath-item', ($event.target as HTMLInputElement).value)"
       />
-      <div class="text-xs text-text-secondary mt-1">{{ t('xpathItemHelp') }}</div>
+      <div class="text-xs text-text-secondary mt-1">{{ t('modal.feed.xpathItemHelp') }}</div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
       <div>
         <label class="block mb-1 font-semibold text-xs text-text-secondary">{{
-          t('xpathItemTitle')
+          t('modal.feed.xpathItemTitle')
         }}</label>
         <input
           :value="props.xpathItemTitle"
@@ -126,7 +126,7 @@ const xpathPlaceholders = {
       </div>
       <div>
         <label class="block mb-1 font-semibold text-xs text-text-secondary">{{
-          t('xpathItemUri')
+          t('modal.feed.xpathItemUri')
         }}</label>
         <input
           :value="props.xpathItemUri"
@@ -141,7 +141,7 @@ const xpathPlaceholders = {
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
       <div>
         <label class="block mb-1 font-semibold text-xs text-text-secondary">{{
-          t('xpathItemContent')
+          t('modal.feed.xpathItemContent')
         }}</label>
         <input
           :value="props.xpathItemContent"
@@ -153,7 +153,7 @@ const xpathPlaceholders = {
       </div>
       <div>
         <label class="block mb-1 font-semibold text-xs text-text-secondary">{{
-          t('xpathItemAuthor')
+          t('modal.feed.xpathItemAuthor')
         }}</label>
         <input
           :value="props.xpathItemAuthor"
@@ -168,7 +168,7 @@ const xpathPlaceholders = {
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
       <div>
         <label class="block mb-1 font-semibold text-xs text-text-secondary">{{
-          t('xpathItemTimestamp')
+          t('modal.feed.xpathItemTimestamp')
         }}</label>
         <input
           :value="props.xpathItemTimestamp"
@@ -180,7 +180,7 @@ const xpathPlaceholders = {
       </div>
       <div>
         <label class="block mb-1 font-semibold text-xs text-text-secondary">{{
-          t('xpathItemTimeFormat')
+          t('modal.feed.xpathItemTimeFormat')
         }}</label>
         <input
           :value="props.xpathItemTimeFormat"
@@ -195,7 +195,7 @@ const xpathPlaceholders = {
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
       <div>
         <label class="block mb-1 font-semibold text-xs text-text-secondary">{{
-          t('xpathItemThumbnail')
+          t('modal.feed.xpathItemThumbnail')
         }}</label>
         <input
           :value="props.xpathItemThumbnail"
@@ -207,7 +207,7 @@ const xpathPlaceholders = {
       </div>
       <div>
         <label class="block mb-1 font-semibold text-xs text-text-secondary">{{
-          t('xpathItemCategories')
+          t('modal.feed.xpathItemCategories')
         }}</label>
         <input
           :value="props.xpathItemCategories"
@@ -221,7 +221,7 @@ const xpathPlaceholders = {
 
     <div class="mb-3">
       <label class="block mb-1 font-semibold text-xs text-text-secondary">{{
-        t('xpathItemUid')
+        t('modal.feed.xpathItemUid')
       }}</label>
       <input
         :value="props.xpathItemUid"
@@ -239,7 +239,7 @@ const xpathPlaceholders = {
         @click="openDocumentation"
       >
         <PhBookOpen :size="14" />
-        {{ t('xpathDocumentation') }}
+        {{ t('modal.feed.xpathDocumentation') }}
       </button>
     </div>
   </div>

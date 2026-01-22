@@ -449,7 +449,7 @@ function formatDate(dateString: string): string {
     const hours = Math.floor(diff / (1000 * 60 * 60));
     if (hours === 0) {
       const minutes = Math.floor(diff / (1000 * 60));
-      return minutes <= 0 ? t('justNow') : t('minutesAgo', { count: minutes });
+      return minutes <= 0 ? t('common.time.justNow') : t('minutesAgo', { count: minutes });
     }
     return t('hoursAgo', { count: hours });
   } else if (days < 7) {
@@ -514,7 +514,7 @@ async function downloadImage(src: string) {
     window.URL.revokeObjectURL(url);
   } catch (e) {
     console.error('Failed to download image:', e);
-    window.showToast(t('downloadFailed'), 'error');
+    window.showToast(t('common.toast.downloadFailed'), 'error');
   }
 }
 
@@ -565,10 +565,10 @@ async function copyImage(src: string) {
       }),
     ]);
 
-    window.showToast(t('copiedToClipboard'), 'success');
+    window.showToast(t('common.toast.copiedToClipboard'), 'success');
   } catch (error) {
     console.error('Failed to copy image:', error);
-    window.showToast(t('failedToCopy'), 'error');
+    window.showToast(t('common.errors.failedToCopy'), 'error');
   }
 }
 
@@ -593,7 +593,7 @@ async function toggleReadStatus(article: Article) {
     console.error('Error toggling read status:', e);
     // Revert the state change on error
     article.is_read = !newState;
-    window.showToast(t('errorSavingSettings'), 'error');
+    window.showToast(t('common.errors.savingSettings'), 'error');
   }
 }
 
@@ -601,10 +601,10 @@ async function toggleReadStatus(article: Article) {
 async function copyArticleTitle(article: Article) {
   try {
     await navigator.clipboard.writeText(article.title);
-    window.showToast(t('copiedToClipboard'), 'success');
+    window.showToast(t('common.toast.copiedToClipboard'), 'success');
   } catch (error) {
     console.error('Failed to copy title:', error);
-    window.showToast(t('failedToCopy'), 'error');
+    window.showToast(t('common.errors.failedToCopy'), 'error');
   }
 }
 
@@ -612,10 +612,10 @@ async function copyArticleTitle(article: Article) {
 async function copyArticleLink(article: Article) {
   try {
     await navigator.clipboard.writeText(article.url);
-    window.showToast(t('copiedToClipboard'), 'success');
+    window.showToast(t('common.toast.copiedToClipboard'), 'success');
   } catch (error) {
     console.error('Failed to copy link:', error);
-    window.showToast(t('failedToCopy'), 'error');
+    window.showToast(t('common.errors.failedToCopy'), 'error');
   }
 }
 
@@ -812,19 +812,19 @@ onUnmounted(() => {
     >
       <button
         class="p-2 rounded-lg hover:bg-bg-tertiary text-text-primary transition-colors md:hidden"
-        :title="t('toggleSidebar')"
+        :title="t('shortcut.toggle.sidebar')"
         @click="emit('toggleSidebar')"
       >
         <PhList :size="24" />
       </button>
       <div class="flex items-center gap-2 sm:gap-2 flex-1">
         <h1 class="text-base sm:text-lg font-bold text-text-primary line-height-fixed-32">
-          {{ t('imageGallery') }}
+          {{ t('sidebar.activity.imageGallery') }}
         </h1>
       </div>
       <button
         class="p-1 sm:p-1.5 rounded hover:bg-bg-tertiary text-text-primary transition-colors"
-        :title="showTextOverlay ? t('hideText') : t('showText')"
+        :title="showTextOverlay ? t('setting.reading.hideText') : t('setting.reading.showText')"
         @click="showTextOverlay = !showTextOverlay"
       >
         <PhTextTSlash v-if="showTextOverlay" :size="20" />
@@ -912,7 +912,7 @@ onUnmounted(() => {
         class="flex flex-col items-center justify-center h-full w-full gap-4"
       >
         <PhImage :size="64" class="text-text-secondary opacity-50" />
-        <p class="text-text-secondary">{{ t('noArticles') }}</p>
+        <p class="text-text-secondary">{{ t('article.content.noArticles') }}</p>
       </div>
 
       <!-- Loading Indicator -->
@@ -947,7 +947,7 @@ onUnmounted(() => {
           <button
             class="px-2 py-1.5 rounded bg-black/50 hover:bg-black/70 text-white transition-colors"
             :disabled="scale <= MIN_SCALE"
-            :title="t('zoomOut')"
+            :title="t('common.imageViewer.zoomOut')"
             @click="zoomOut"
           >
             <PhMagnifyingGlassMinus :size="20" />
@@ -960,7 +960,7 @@ onUnmounted(() => {
           <button
             class="px-2 py-1.5 rounded bg-black/50 hover:bg-black/70 text-white transition-colors"
             :disabled="scale >= MAX_SCALE"
-            :title="t('zoomIn')"
+            :title="t('common.imageViewer.zoomIn')"
             @click="zoomIn"
           >
             <PhMagnifyingGlassPlus :size="20" />
@@ -969,14 +969,14 @@ onUnmounted(() => {
           <!-- Action buttons -->
           <button
             class="px-2 py-1.5 rounded bg-black/50 hover:bg-black/70 text-white transition-colors"
-            :title="t('copyImage')"
+            :title="t('common.contextMenu.copyImage')"
             @click="copyImage(currentImageUrl)"
           >
             <PhCopy :size="20" />
           </button>
           <button
             class="px-2 py-1.5 rounded bg-black/50 hover:bg-black/70 text-white transition-colors"
-            :title="t('downloadImage')"
+            :title="t('common.contextMenu.downloadImage')"
             @click="downloadImage(currentImageUrl)"
           >
             <PhDownloadSimple :size="20" />
@@ -1098,7 +1098,7 @@ onUnmounted(() => {
             >
               <img
                 :src="image"
-                :alt="`${t('image')} ${index + 1}`"
+                :alt="`${t('common.text.image')} ${index + 1}`"
                 class="w-full h-full object-cover"
                 loading="lazy"
               />
@@ -1126,14 +1126,14 @@ onUnmounted(() => {
               rel="noopener noreferrer"
               class="px-3 py-1.5 bg-accent hover:bg-accent-hover text-white rounded-md text-sm whitespace-nowrap transition-colors duration-200"
             >
-              {{ t('viewOriginal') }}
+              {{ t('article.action.viewOriginal') }}
             </a>
             <button
               class="px-3 py-1.5 bg-black/50 hover:bg-black/70 text-white rounded-md text-sm whitespace-nowrap transition-colors duration-200"
-              :title="t('viewArticle')"
+              :title="t('article.action.viewArticle')"
               @click="openArticleDetail"
             >
-              {{ t('viewArticle') }}
+              {{ t('article.action.viewArticle') }}
             </button>
           </div>
         </div>
@@ -1160,7 +1160,11 @@ onUnmounted(() => {
       >
         <PhEnvelope v-if="!contextMenu.article.is_read" :size="16" />
         <PhEnvelopeOpen v-else :size="16" />
-        <span>{{ contextMenu.article.is_read ? t('markAsUnread') : t('markAsRead') }}</span>
+        <span>{{
+          contextMenu.article.is_read
+            ? t('article.action.markAsUnread')
+            : t('article.action.markAsRead')
+        }}</span>
       </button>
       <button
         class="w-full px-4 py-2 flex items-center gap-3 text-sm text-text-primary hover:bg-bg-tertiary active:bg-bg-secondary transition-colors cursor-pointer"
@@ -1176,7 +1180,7 @@ onUnmounted(() => {
         />
         <span>{{
           contextMenu.article.is_favorite
-            ? t('removeFromFavorites')
+            ? t('article.action.removeFromFavorites')
             : t('article.imageGallery.addToFavorite')
         }}</span>
       </button>
@@ -1189,7 +1193,7 @@ onUnmounted(() => {
         "
       >
         <PhTextT :size="16" />
-        <span>{{ t('copyTitle') }}</span>
+        <span>{{ t('common.contextMenu.copyTitle') }}</span>
       </button>
       <button
         class="w-full px-4 py-2 flex items-center gap-3 text-sm text-text-primary hover:bg-bg-tertiary active:bg-bg-secondary transition-colors cursor-pointer"
@@ -1199,7 +1203,7 @@ onUnmounted(() => {
         "
       >
         <PhCopy :size="16" />
-        <span>{{ t('copyLink') }}</span>
+        <span>{{ t('common.contextMenu.copyLink') }}</span>
       </button>
       <div class="h-px bg-border my-1"></div>
       <button
@@ -1210,14 +1214,14 @@ onUnmounted(() => {
         "
       >
         <PhDownloadSimple :size="16" />
-        <span>{{ t('downloadImage') }}</span>
+        <span>{{ t('common.contextMenu.downloadImage') }}</span>
       </button>
       <button
         class="w-full px-4 py-2 flex items-center gap-3 text-sm text-text-primary hover:bg-bg-tertiary active:bg-bg-secondary transition-colors cursor-pointer"
         @click="openOriginal(contextMenu.article)"
       >
         <PhGlobe :size="16" />
-        <span>{{ t('openInBrowser') }}</span>
+        <span>{{ t('article.action.openInBrowser') }}</span>
       </button>
     </div>
   </div>

@@ -36,7 +36,7 @@ function selectAll() {
       class="text-sm text-accent hover:text-accent-hover font-medium px-3 py-1 rounded hover:bg-accent/10 transition-colors"
       @click="selectAll"
     >
-      {{ allSelected ? t('deselectAll') : t('selectAll') }}
+      {{ allSelected ? t('common.action.deselectAll') : t('common.search.selectAll') }}
     </button>
   </div>
 

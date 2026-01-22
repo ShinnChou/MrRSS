@@ -82,7 +82,7 @@ export function formatRelativeTime(
   locale: string,
   t: (key: string, params?: Record<string, unknown>) => string
 ): string {
-  if (!timestamp) return t('never');
+  if (!timestamp) return t('common.time.never');
   try {
     const date = new Date(timestamp);
 
@@ -98,6 +98,6 @@ export function formatRelativeTime(
       return date.toLocaleDateString('en-US');
     }
   } catch {
-    return t('never');
+    return t('common.time.never');
   }
 }

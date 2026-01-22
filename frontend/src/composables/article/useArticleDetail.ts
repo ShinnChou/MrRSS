@@ -447,17 +447,17 @@ export function useArticleDetail() {
                     y: e.clientY,
                     items: [
                       {
-                        label: t('copyImage'),
+                        label: t('common.contextMenu.copyImage'),
                         action: 'copy',
                         icon: 'PhCopy',
                       },
                       {
-                        label: t('viewImage'),
+                        label: t('article.action.viewImage'),
                         action: 'view',
                         icon: 'PhMagnifyingGlassPlus',
                       },
                       {
-                        label: t('downloadImage'),
+                        label: t('common.contextMenu.downloadImage'),
                         action: 'download',
                         icon: 'PhDownloadSimple',
                       },
@@ -622,10 +622,10 @@ export function useArticleDetail() {
         }),
       ]);
 
-      window.showToast(t('copiedToClipboard'), 'success');
+      window.showToast(t('common.toast.copiedToClipboard'), 'success');
     } catch (error) {
       console.error('Failed to copy image:', error);
-      window.showToast(t('failedToCopy'), 'error');
+      window.showToast(t('common.errors.failedToCopy'), 'error');
     }
   }
 
@@ -679,7 +679,7 @@ export function useArticleDetail() {
     if (!article.value) return;
 
     try {
-      window.showToast(t('exportingToObsidian'), 'info');
+      window.showToast(t('setting.plugins.obsidian.exporting'), 'info');
 
       const response = await fetch('/api/articles/export/obsidian', {
         method: 'POST',
@@ -697,12 +697,13 @@ export function useArticleDetail() {
       const data = await response.json();
 
       // Show success message with file path
-      const message = data.message || t('exportedToObsidian');
+      const message = data.message || t('setting.plugins.obsidian.exported');
       const filePath = data.file_path ? ` (${data.file_path})` : '';
       window.showToast(message + filePath, 'success');
     } catch (error) {
       console.error('Failed to export to Obsidian:', error);
-      const message = error instanceof Error ? error.message : t('obsidianExportFailed');
+      const message =
+        error instanceof Error ? error.message : t('setting.plugins.obsidian.exportFailed');
       window.showToast(message, 'error');
     }
   }

@@ -117,7 +117,7 @@ export function useArticleSummary() {
         return data;
       } else {
         // Handle API errors properly
-        let errorMessage = `${t('summaryGenerationFailed')}: ${res.status} ${res.statusText}`;
+        let errorMessage = `${t('setting.content.summaryGenerationFailed')}: ${res.status} ${res.statusText}`;
 
         try {
           const errorData = await res.json();
@@ -148,7 +148,7 @@ export function useArticleSummary() {
         return null;
       }
 
-      const errorMessage = `${t('summaryGenerationFailed')}: ${e instanceof Error ? e.message : t('unknownError')}`;
+      const errorMessage = `${t('setting.content.summaryGenerationFailed')}: ${e instanceof Error ? e.message : t('common.errors.unknownError')}`;
       console.error('Error generating summary:', e);
 
       // Cache the error to show in UI

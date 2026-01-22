@@ -18,7 +18,7 @@ const emit = defineEmits<{
   <div class="setting-section">
     <label class="section-label">
       <PhArticleNyTimes :size="16" class="w-4 h-4" />
-      {{ t('contentSettings') }}
+      {{ t('setting.tab.contentSettings') }}
     </label>
 
     <div class="setting-item">
@@ -26,10 +26,10 @@ const emit = defineEmits<{
         <PhArticleNyTimes :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('enableFullTextFetch') }}
+            {{ t('setting.feed.enableFullTextFetch') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('enableFullTextFetchDesc') }}
+            {{ t('setting.feed.enableFullTextFetchDesc') }}
           </div>
         </div>
       </div>
@@ -57,10 +57,10 @@ const emit = defineEmits<{
           <PhPlayCircle :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-5 sm:h-5" />
           <div class="flex-1 min-w-0">
             <div class="font-medium mb-0 sm:mb-1 text-xs sm:text-sm">
-              {{ t('autoShowAllContent') }}
+              {{ t('setting.reading.autoShowAllContent') }}
             </div>
             <div class="text-[10px] sm:text-xs text-text-secondary hidden sm:block">
-              {{ t('autoShowAllContentDesc') }}
+              {{ t('setting.reading.autoShowAllContentDesc') }}
             </div>
           </div>
         </div>
@@ -84,10 +84,10 @@ const emit = defineEmits<{
         <PhImages :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('imageGalleryEnabled') }}
+            {{ t('setting.reading.imageGalleryEnabled') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('imageGalleryEnabledDesc') }}
+            {{ t('setting.reading.imageGalleryEnabledDesc') }}
           </div>
         </div>
       </div>

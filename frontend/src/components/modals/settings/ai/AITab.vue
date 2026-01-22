@@ -37,7 +37,7 @@ function handleUpdateSettings(updatedSettings: SettingsData) {
   <div class="space-y-4 sm:space-y-6">
     <div class="tip-box">
       <PhInfo :size="16" class="text-accent shrink-0 sm:w-5 sm:h-5" />
-      <span class="text-xs sm:text-sm">{{ t('aiIsDanger') }}</span>
+      <span class="text-xs sm:text-sm">{{ t('setting.ai.isDanger') }}</span>
     </div>
     <AISettings :settings="settings" @update:settings="handleUpdateSettings" />
     <AITestSettings :settings="settings" @update:settings="handleUpdateSettings" />

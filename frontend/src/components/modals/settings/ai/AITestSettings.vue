@@ -69,7 +69,7 @@ function formatTime(timeStr: string): string {
   } else if (minutes > 0) {
     return t('minutesAgo', { count: minutes });
   } else {
-    return t('justNow');
+    return t('common.time.justNow');
   }
 }
 
@@ -104,7 +104,9 @@ function openDocumentation() {
             'border-red-500/30': testInfo.test_time && !testInfo.config_valid,
           }"
         >
-          <span class="text-sm text-text-secondary text-left">{{ t('configValid') }}</span>
+          <span class="text-sm text-text-secondary text-left">{{
+            t('setting.ai.configValid')
+          }}</span>
           <div class="flex items-center gap-2">
             <PhCheckCircle v-if="testInfo.config_valid" :size="20" class="text-green-500" />
             <PhWarningCircle v-else-if="testInfo.test_time" :size="20" class="text-red-500" />
@@ -116,7 +118,13 @@ function openDocumentation() {
                 'text-text-primary': !testInfo.test_time,
               }"
             >
-              {{ testInfo.test_time ? (testInfo.config_valid ? t('yes') : t('no')) : '-' }}
+              {{
+                testInfo.test_time
+                  ? testInfo.config_valid
+                    ? t('common.action.yes')
+                    : t('common.action.no')
+                  : '-'
+              }}
             </span>
           </div>
         </div>
@@ -129,7 +137,9 @@ function openDocumentation() {
             'border-red-500/30': testInfo.test_time && !testInfo.connection_success,
           }"
         >
-          <span class="text-sm text-text-secondary text-left">{{ t('connectionSuccess') }}</span>
+          <span class="text-sm text-text-secondary text-left">{{
+            t('setting.ai.connectionSuccess')
+          }}</span>
           <div class="flex items-center gap-2">
             <PhCheckCircle v-if="testInfo.connection_success" :size="20" class="text-green-500" />
             <PhWarningCircle v-else-if="testInfo.test_time" :size="20" class="text-red-500" />
@@ -141,7 +151,13 @@ function openDocumentation() {
                 'text-text-primary': !testInfo.test_time,
               }"
             >
-              {{ testInfo.test_time ? (testInfo.connection_success ? t('yes') : t('no')) : '-' }}
+              {{
+                testInfo.test_time
+                  ? testInfo.connection_success
+                    ? t('common.action.yes')
+                    : t('common.action.no')
+                  : '-'
+              }}
             </span>
           </div>
         </div>
@@ -150,12 +166,14 @@ function openDocumentation() {
         <div
           class="flex flex-col gap-2 p-3 rounded-lg bg-bg-primary border border-border w-full sm:min-w-[120px]"
         >
-          <span class="text-sm text-text-secondary text-left">{{ t('responseTime') }}</span>
+          <span class="text-sm text-text-secondary text-left">{{
+            t('setting.ai.responseTime')
+          }}</span>
           <div class="flex items-baseline gap-1">
             <span class="text-xl sm:text-2xl font-bold text-text-primary">{{
               testInfo.response_time_ms > 0 ? testInfo.response_time_ms : '-'
             }}</span>
-            <span class="text-sm text-text-secondary">{{ t('ms') }}</span>
+            <span class="text-sm text-text-secondary">{{ t('common.time.ms') }}</span>
           </div>
         </div>
       </div>
@@ -168,7 +186,7 @@ function openDocumentation() {
               :size="16"
               :class="{ 'animate-spin': isTesting, 'sm:w-5 sm:h-5': true }"
             />
-            <span>{{ isTesting ? t('testing') : t('testAIConfig') }}</span>
+            <span>{{ isTesting ? t('setting.ai.testing') : t('setting.ai.testAIConfig') }}</span>
           </button>
         </div>
 
@@ -176,7 +194,7 @@ function openDocumentation() {
           v-if="testInfo.test_time"
           class="flex items-center justify-center sm:justify-end gap-2"
         >
-          <span class="text-xs text-text-secondary">{{ t('lastTest') }}:</span>
+          <span class="text-xs text-text-secondary">{{ t('setting.ai.lastTest') }}:</span>
           <span class="text-xs text-accent font-medium">{{ formatTime(testInfo.test_time) }}</span>
         </div>
       </div>

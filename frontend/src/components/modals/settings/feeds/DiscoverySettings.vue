@@ -19,12 +19,12 @@ function handleDiscoverAll() {
       class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
     >
       <PhBinoculars :size="14" class="sm:w-4 sm:h-4" />
-      {{ t('feedDiscovery') }}
+      {{ t('modal.feed.feedDiscovery') }}
     </label>
 
     <div class="tip-box">
       <PhInfo :size="16" class="text-accent shrink-0 sm:w-5 sm:h-5" />
-      <span class="text-xs sm:text-sm">{{ t('discoveryLongRunningWarning') }}</span>
+      <span class="text-xs sm:text-sm">{{ t('modal.discovery.discoveryLongRunningWarning') }}</span>
     </div>
 
     <!-- Discover All Feeds -->
@@ -33,16 +33,16 @@ function handleDiscoverAll() {
         <PhBinoculars :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('discoverAllFeeds') }}
+            {{ t('modal.discovery.discoverAllFeeds') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('discoverAllFeedsDesc') }}
+            {{ t('modal.discovery.discoverAllFeedsDesc') }}
           </div>
         </div>
       </div>
       <button class="btn-secondary" @click="handleDiscoverAll">
         <PhPlay :size="16" class="sm:w-5 sm:h-5" />
-        <span class="hidden sm:inline">{{ t('startDiscovery') }}</span>
+        <span class="hidden sm:inline">{{ t('modal.discovery.startDiscovery') }}</span>
       </button>
     </div>
   </div>

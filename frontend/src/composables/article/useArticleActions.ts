@@ -17,7 +17,9 @@ export function useArticleActions(
 
     // Determine context menu text based on default view mode
     const contentActionLabel =
-      defaultViewMode.value === 'rendered' ? t('showOriginal') : t('renderContent');
+      defaultViewMode.value === 'rendered'
+        ? t('setting.reading.showOriginal')
+        : t('article.content.renderContent');
     const contentActionIcon = defaultViewMode.value === 'rendered' ? 'ph-globe' : 'ph-article';
 
     window.dispatchEvent(
@@ -27,23 +29,25 @@ export function useArticleActions(
           y: e.clientY,
           items: [
             {
-              label: article.is_read ? t('markAsUnread') : t('markAsRead'),
+              label: article.is_read
+                ? t('article.action.markAsUnread')
+                : t('article.action.markAsRead'),
               action: 'toggleRead',
               icon: article.is_read ? 'ph-envelope' : 'ph-envelope-open',
             },
             {
-              label: t('markAboveAsRead'),
+              label: t('article.action.markAboveAsRead'),
               action: 'markAboveAsRead',
               icon: 'ph-arrow-bend-right-up',
             },
             {
-              label: t('markBelowAsRead'),
+              label: t('article.action.markBelowAsRead'),
               action: 'markBelowAsRead',
               icon: 'ph-arrow-bend-left-down',
             },
             {
               label: article.is_favorite
-                ? t('removeFromFavorites')
+                ? t('article.action.removeFromFavorites')
                 : t('article.action.addToFavorite'),
               action: 'toggleFavorite',
               icon: 'ph-star',
@@ -52,7 +56,7 @@ export function useArticleActions(
             },
             {
               label: article.is_read_later
-                ? t('removeFromReadLater')
+                ? t('article.action.removeFromReadLater')
                 : t('article.action.addToReadLater'),
               action: 'toggleReadLater',
               icon: 'ph-clock-countdown',
@@ -66,25 +70,27 @@ export function useArticleActions(
               icon: contentActionIcon,
             },
             {
-              label: article.is_hidden ? t('unhideArticle') : t('hideArticle'),
+              label: article.is_hidden
+                ? t('article.action.unhideArticle')
+                : t('article.action.hideArticle'),
               action: 'toggleHide',
               icon: article.is_hidden ? 'ph-eye' : 'ph-eye-slash',
               danger: !article.is_hidden,
             },
             { separator: true },
             {
-              label: t('copyLink'),
+              label: t('common.contextMenu.copyLink'),
               action: 'copyLink',
               icon: 'ph-link',
             },
             {
-              label: t('copyTitle'),
+              label: t('common.contextMenu.copyTitle'),
               action: 'copyTitle',
               icon: 'ph-text-t',
             },
             { separator: true },
             {
-              label: t('openInBrowser'),
+              label: t('article.action.openInBrowser'),
               action: 'openBrowser',
               icon: 'ph-arrow-square-out',
             },
@@ -118,7 +124,7 @@ export function useArticleActions(
         console.error('Error toggling read status:', e);
         // Revert the state change on error
         article.is_read = !newState;
-        window.showToast(t('errorSavingSettings'), 'error');
+        window.showToast(t('common.errors.savingSettings'), 'error');
       }
     } else if (action === 'markAboveAsRead' || action === 'markBelowAsRead') {
       try {
@@ -158,7 +164,7 @@ export function useArticleActions(
         window.showToast(t('markedNArticlesAsRead', { count: data.count || 0 }), 'success');
       } catch (e) {
         console.error('Error marking articles as read:', e);
-        window.showToast(t('errorSavingSettings'), 'error');
+        window.showToast(t('common.errors.savingSettings'), 'error');
       }
     } else if (action === 'toggleFavorite') {
       const newState = !article.is_favorite;
@@ -173,7 +179,7 @@ export function useArticleActions(
         console.error('Error toggling favorite:', e);
         // Revert the state change on error
         article.is_favorite = !newState;
-        window.showToast(t('errorSavingSettings'), 'error');
+        window.showToast(t('common.errors.savingSettings'), 'error');
       }
     } else if (action === 'toggleReadLater') {
       const newState = !article.is_read_later;
@@ -192,7 +198,7 @@ export function useArticleActions(
         console.error('Error toggling read later:', e);
         // Revert the state change on error
         article.is_read_later = !newState;
-        window.showToast(t('errorSavingSettings'), 'error');
+        window.showToast(t('common.errors.savingSettings'), 'error');
       }
     } else if (action === 'toggleHide') {
       try {
@@ -201,7 +207,7 @@ export function useArticleActions(
         window.dispatchEvent(new CustomEvent('refresh-articles'));
       } catch (e) {
         console.error('Error toggling hide:', e);
-        window.showToast(t('errorSavingSettings'), 'error');
+        window.showToast(t('common.errors.savingSettings'), 'error');
       }
     } else if (action === 'renderContent') {
       // Determine the action based on default view mode
@@ -241,16 +247,16 @@ export function useArticleActions(
     } else if (action === 'copyLink') {
       const success = await copyArticleLink(article.url);
       if (success) {
-        window.showToast(t('copiedToClipboard'), 'success');
+        window.showToast(t('common.toast.copiedToClipboard'), 'success');
       } else {
-        window.showToast(t('failedToCopy'), 'error');
+        window.showToast(t('common.errors.failedToCopy'), 'error');
       }
     } else if (action === 'copyTitle') {
       const success = await copyArticleTitle(article.title);
       if (success) {
-        window.showToast(t('copiedToClipboard'), 'success');
+        window.showToast(t('common.toast.copiedToClipboard'), 'success');
       } else {
-        window.showToast(t('failedToCopy'), 'error');
+        window.showToast(t('common.errors.failedToCopy'), 'error');
       }
     } else if (action === 'openBrowser') {
       openInBrowser(article.url);

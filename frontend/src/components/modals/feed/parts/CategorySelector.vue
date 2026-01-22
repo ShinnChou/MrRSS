@@ -27,7 +27,7 @@ function handleCategoryChange(value: string) {
 <template>
   <div class="mb-3 sm:mb-4">
     <label class="block mb-1 sm:mb-1.5 font-semibold text-xs sm:text-sm text-text-secondary">{{
-      t('category')
+      t('common.form.category')
     }}</label>
     <select
       v-if="!props.showCustomCategory"
@@ -35,15 +35,15 @@ function handleCategoryChange(value: string) {
       class="input-field w-full"
       @change="handleCategoryChange(($event.target as HTMLSelectElement).value)"
     >
-      <option value="">{{ t('uncategorized') }}</option>
+      <option value="">{{ t('sidebar.feedList.uncategorized') }}</option>
       <option v-for="cat in props.existingCategories" :key="cat" :value="cat">{{ cat }}</option>
-      <option value="__custom__">{{ t('customCategory') }}</option>
+      <option value="__custom__">{{ t('modal.feed.customCategory') }}</option>
     </select>
     <div v-else class="flex gap-2">
       <input
         :value="props.category"
         type="text"
-        :placeholder="t('enterCategoryName')"
+        :placeholder="t('modal.feed.enterCategoryName')"
         class="input-field flex-1"
         autofocus
         @input="emit('update:category', ($event.target as HTMLInputElement).value)"
@@ -56,7 +56,7 @@ function handleCategoryChange(value: string) {
           emit('update:categorySelection', '');
         "
       >
-        {{ t('cancel') }}
+        {{ t('common.cancel') }}
       </button>
     </div>
   </div>

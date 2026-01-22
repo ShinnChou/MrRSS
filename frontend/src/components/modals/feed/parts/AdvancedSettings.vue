@@ -50,10 +50,10 @@ const { t } = useI18n();
       <label class="flex items-center justify-between cursor-pointer">
         <div>
           <span class="font-semibold text-xs sm:text-sm text-text-primary">{{
-            t('imageMode')
+            t('setting.feed.imageMode')
           }}</span>
           <p class="text-[10px] sm:text-xs text-text-secondary mt-0.5">
-            {{ t('imageModeDesc') }}
+            {{ t('setting.feed.imageModeDesc') }}
           </p>
         </div>
         <input
@@ -70,10 +70,10 @@ const { t } = useI18n();
       <label class="flex items-center justify-between cursor-pointer">
         <div>
           <span class="font-semibold text-xs sm:text-sm text-text-primary">{{
-            t('hideFromTimeline')
+            t('setting.reading.hideFromTimeline')
           }}</span>
           <p class="text-[10px] sm:text-xs text-text-secondary mt-0.5">
-            {{ t('hideFromTimelineDesc') }}
+            {{ t('setting.reading.hideFromTimelineDesc') }}
           </p>
         </div>
         <input
@@ -88,10 +88,10 @@ const { t } = useI18n();
     <!-- Article View Mode -->
     <div class="p-3 rounded-lg bg-bg-secondary border border-border">
       <label class="block mb-1.5 font-semibold text-xs sm:text-sm text-text-primary">
-        {{ t('articleViewMode') }}
+        {{ t('setting.feed.articleViewMode') }}
       </label>
       <p class="text-[10px] sm:text-xs text-text-secondary mb-2">
-        {{ t('articleViewModeDesc') }}
+        {{ t('setting.feed.articleViewModeDesc') }}
       </p>
       <select
         :value="props.articleViewMode"
@@ -103,19 +103,19 @@ const { t } = useI18n();
           )
         "
       >
-        <option value="global">{{ t('useGlobalSettings') }}</option>
-        <option value="webpage">{{ t('viewAsWebpage') }}</option>
-        <option value="rendered">{{ t('viewAsRendered') }}</option>
+        <option value="global">{{ t('setting.feed.useGlobalSettings') }}</option>
+        <option value="webpage">{{ t('setting.reading.viewAsWebpage') }}</option>
+        <option value="rendered">{{ t('setting.reading.viewAsRendered') }}</option>
       </select>
     </div>
 
     <!-- Auto Expand Content -->
     <div class="p-3 rounded-lg bg-bg-secondary border border-border">
       <label class="block mb-1.5 font-semibold text-xs sm:text-sm text-text-primary">
-        {{ t('autoExpandContent') }}
+        {{ t('setting.feed.autoExpandContent') }}
       </label>
       <p class="text-[10px] sm:text-xs text-text-secondary mb-2">
-        {{ t('autoExpandContentDesc') }}
+        {{ t('setting.feed.autoExpandContentDesc') }}
       </p>
       <select
         :value="props.autoExpandContent"
@@ -127,9 +127,9 @@ const { t } = useI18n();
           )
         "
       >
-        <option value="global">{{ t('useGlobalSettings') }}</option>
-        <option value="enabled">{{ t('enabled') }}</option>
-        <option value="disabled">{{ t('disabled') }}</option>
+        <option value="global">{{ t('setting.feed.useGlobalSettings') }}</option>
+        <option value="enabled">{{ t('common.form.enabled') }}</option>
+        <option value="disabled">{{ t('common.form.disabled') }}</option>
       </select>
     </div>
 
@@ -137,19 +137,19 @@ const { t } = useI18n();
     <div class="p-3 rounded-lg bg-bg-secondary border border-border space-y-3">
       <div>
         <label class="block mb-1.5 font-semibold text-xs sm:text-sm text-text-primary">
-          {{ t('feedProxy') }}
+          {{ t('modal.feed.proxy') }}
         </label>
         <p class="text-[10px] sm:text-xs text-text-secondary mb-2">
-          {{ t('feedProxyDesc') }}
+          {{ t('modal.feed.proxyDesc') }}
         </p>
         <select
           :value="props.proxyMode"
           class="input-field w-full"
           @change="emit('update:proxyMode', ($event.target as HTMLSelectElement).value)"
         >
-          <option value="global">{{ t('useGlobalProxy') }}</option>
-          <option value="custom">{{ t('useCustomProxy') }}</option>
-          <option value="none">{{ t('noProxy') }}</option>
+          <option value="global">{{ t('setting.network.useGlobalProxy') }}</option>
+          <option value="custom">{{ t('setting.network.useCustomProxy') }}</option>
+          <option value="none">{{ t('setting.network.noProxy') }}</option>
         </select>
       </div>
 
@@ -158,16 +158,16 @@ const { t } = useI18n();
         <!-- Proxy Type -->
         <div>
           <label class="block mb-1 text-[10px] sm:text-xs font-medium text-text-secondary">
-            {{ t('feedProxyType') }}
+            {{ t('modal.feed.proxyType') }}
           </label>
           <select
             :value="props.proxyType"
             class="input-field w-full text-xs sm:text-sm"
             @change="emit('update:proxyType', ($event.target as HTMLSelectElement).value)"
           >
-            <option value="http">{{ t('httpProxy') }}</option>
-            <option value="https">{{ t('httpsProxy') }}</option>
-            <option value="socks5">{{ t('socks5Proxy') }}</option>
+            <option value="http">{{ t('setting.network.httpProxy') }}</option>
+            <option value="https">{{ t('setting.network.httpsProxy') }}</option>
+            <option value="socks5">{{ t('setting.network.socks5Proxy') }}</option>
           </select>
         </div>
 
@@ -175,12 +175,12 @@ const { t } = useI18n();
         <div class="grid grid-cols-3 gap-2">
           <div class="col-span-2">
             <label class="block mb-1 text-[10px] sm:text-xs font-medium text-text-secondary">
-              {{ t('feedProxyHost') }} <span class="text-red-500">*</span>
+              {{ t('modal.feed.proxyHost') }} <span class="text-red-500">*</span>
             </label>
             <input
               :value="props.proxyHost"
               type="text"
-              :placeholder="t('proxyHostPlaceholder')"
+              :placeholder="t('setting.network.proxyHostPlaceholder')"
               :class="[
                 'input-field text-xs sm:text-sm',
                 props.proxyMode === 'custom' && !props.proxyHost.trim() ? 'border-red-500' : '',
@@ -190,7 +190,7 @@ const { t } = useI18n();
           </div>
           <div>
             <label class="block mb-1 text-[10px] sm:text-xs font-medium text-text-secondary">
-              {{ t('feedProxyPort') }} <span class="text-red-500">*</span>
+              {{ t('modal.feed.proxyPort') }} <span class="text-red-500">*</span>
             </label>
             <input
               :value="props.proxyPort"
@@ -209,24 +209,24 @@ const { t } = useI18n();
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block mb-1 text-[10px] sm:text-xs font-medium text-text-secondary">
-              {{ t('feedProxyUsername') }}
+              {{ t('modal.feed.proxyUsername') }}
             </label>
             <input
               :value="props.proxyUsername"
               type="text"
-              :placeholder="t('proxyUsernamePlaceholder')"
+              :placeholder="t('setting.network.proxyUsernamePlaceholder')"
               class="input-field text-xs sm:text-sm"
               @input="emit('update:proxyUsername', ($event.target as HTMLInputElement).value)"
             />
           </div>
           <div>
             <label class="block mb-1 text-[10px] sm:text-xs font-medium text-text-secondary">
-              {{ t('feedProxyPassword') }}
+              {{ t('modal.feed.proxyPassword') }}
             </label>
             <input
               :value="props.proxyPassword"
               type="password"
-              :placeholder="t('proxyPasswordPlaceholder')"
+              :placeholder="t('setting.network.proxyPasswordPlaceholder')"
               class="input-field text-xs sm:text-sm"
               @input="emit('update:proxyPassword', ($event.target as HTMLInputElement).value)"
             />
@@ -239,27 +239,27 @@ const { t } = useI18n();
     <div class="p-3 rounded-lg bg-bg-secondary border border-border space-y-3">
       <div>
         <label class="block mb-1.5 font-semibold text-xs sm:text-sm text-text-primary">
-          {{ t('feedRefreshMode') }}
+          {{ t('modal.feed.refreshMode') }}
         </label>
         <p class="text-[10px] sm:text-xs text-text-secondary mb-2">
-          {{ t('feedRefreshModeDesc') }}
+          {{ t('modal.feed.refreshModeDesc') }}
         </p>
         <select
           :value="props.refreshMode"
           class="input-field w-full"
           @change="emit('update:refreshMode', ($event.target as HTMLSelectElement).value)"
         >
-          <option value="global">{{ t('useGlobalRefresh') }}</option>
-          <option value="intelligent">{{ t('useIntelligentInterval') }}</option>
-          <option value="custom">{{ t('useCustomInterval') }}</option>
-          <option value="never">{{ t('neverRefresh') }}</option>
+          <option value="global">{{ t('setting.feed.useGlobalRefresh') }}</option>
+          <option value="intelligent">{{ t('setting.feed.useIntelligentInterval') }}</option>
+          <option value="custom">{{ t('setting.feed.useCustomInterval') }}</option>
+          <option value="never">{{ t('setting.feed.neverRefresh') }}</option>
         </select>
       </div>
 
       <!-- Custom Refresh Interval -->
       <div v-if="props.refreshMode === 'custom'" class="pl-3 border-l-2 border-accent/30">
         <label class="block mb-1 text-[10px] sm:text-xs font-medium text-text-secondary">
-          {{ t('feedRefreshInterval') }}
+          {{ t('modal.feed.refreshInterval') }}
         </label>
         <div class="flex items-center gap-2">
           <input
@@ -267,7 +267,7 @@ const { t } = useI18n();
             type="number"
             min="5"
             max="1440"
-            :placeholder="t('feedRefreshIntervalPlaceholder')"
+            :placeholder="t('modal.feed.refreshIntervalPlaceholder')"
             class="input-field flex-1 text-xs sm:text-sm"
             @input="
               emit(
@@ -276,10 +276,12 @@ const { t } = useI18n();
               )
             "
           />
-          <span class="text-xs text-text-secondary shrink-0">{{ t('minutesShort') }}</span>
+          <span class="text-xs text-text-secondary shrink-0">{{
+            t('common.time.minutesShort')
+          }}</span>
         </div>
         <p class="text-[10px] text-text-secondary mt-1">
-          {{ t('feedRefreshIntervalDesc') }}
+          {{ t('modal.feed.refreshIntervalDesc') }}
         </p>
       </div>
     </div>

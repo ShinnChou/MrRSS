@@ -32,7 +32,7 @@ function handleToggleRSSHub(e: Event) {
 
   // Prevent disabling if there are RSSHub feeds
   if (!newValue && hasRSSHubFeeds.value) {
-    window.showToast(t('rsshubCannotDisableWithFeeds'), 'error');
+    window.showToast(t('setting.rsshub.cannotDisableWithFeeds'), 'error');
     // Reset checkbox to enabled
     target.checked = true;
     return;
@@ -63,12 +63,15 @@ async function testConnection() {
     const result = await response.json();
 
     if (result.success) {
-      window.showToast(t('rsshubConnectionSuccessful'), 'success');
+      window.showToast(t('setting.rsshub.connectionSuccessful'), 'success');
     } else {
-      window.showToast(result.error || t('rsshubConnectionFailed'), 'error');
+      window.showToast(result.error || t('setting.rsshub.connectionFailed'), 'error');
     }
   } catch (error) {
-    window.showToast(error instanceof Error ? error.message : t('rsshubConnectionFailed'), 'error');
+    window.showToast(
+      error instanceof Error ? error.message : t('setting.rsshub.connectionFailed'),
+      'error'
+    );
   } finally {
     isTesting.value = false;
   }
@@ -85,9 +88,11 @@ async function testConnection() {
         class="w-5 h-5 sm:w-6 sm:h-6 mt-0.5 shrink-0"
       />
       <div class="flex-1 min-w-0">
-        <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">{{ t('rsshubEnabled') }}</div>
+        <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
+          {{ t('setting.rsshub.enabled') }}
+        </div>
         <div class="text-xs text-text-secondary hidden sm:block">
-          {{ t('rsshubEnabledDesc') }}
+          {{ t('setting.rsshub.enabledDesc') }}
         </div>
       </div>
     </div>
@@ -105,7 +110,7 @@ async function testConnection() {
   >
     <div class="tip-box">
       <PhInfo :size="16" class="text-accent shrink-0 sm:w-5 sm:h-5" />
-      <span class="text-xs sm:text-sm">{{ t('rsshubNotSuggestOfficial') }}</span>
+      <span class="text-xs sm:text-sm">{{ t('setting.rsshub.notSuggestOfficial') }}</span>
     </div>
 
     <!-- Endpoint -->
@@ -114,10 +119,10 @@ async function testConnection() {
         <PhLink :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('rsshubEndpoint') }} <span class="text-red-500">*</span>
+            {{ t('setting.rsshub.endpoint') }} <span class="text-red-500">*</span>
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('rsshubEndpointDesc') }}
+            {{ t('setting.rsshub.endpointDesc') }}
           </div>
         </div>
       </div>
@@ -142,17 +147,17 @@ async function testConnection() {
         <PhKey :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('rsshubAPIKey') }}
+            {{ t('setting.rsshub.apiKey') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('rsshubAPIKeyDesc') }}
+            {{ t('setting.rsshub.apiKeyDesc') }}
           </div>
         </div>
       </div>
       <input
         type="password"
         :value="props.settings.rsshub_api_key"
-        :placeholder="t('rsshubOptional')"
+        :placeholder="t('setting.rsshub.optional')"
         class="input-field w-32 sm:w-48 text-xs sm:text-sm"
         @input="
           (e) =>
@@ -170,16 +175,16 @@ async function testConnection() {
         <PhTestTube :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
         <div class="flex-1 min-w-0">
           <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">
-            {{ t('rsshubTestConnection') }}
+            {{ t('setting.rsshub.testConnection') }}
           </div>
           <div class="text-xs text-text-secondary hidden sm:block">
-            {{ t('rsshubTestConnectionDesc') }}
+            {{ t('setting.rsshub.testConnectionDesc') }}
           </div>
         </div>
       </div>
       <div class="flex items-center gap-2 shrink-0">
         <button :disabled="isTesting" class="btn-secondary" @click="testConnection">
-          {{ isTesting ? t('rsshubTesting') : t('rsshubTestConnection') }}
+          {{ isTesting ? t('setting.rsshub.testing') : t('setting.rsshub.testConnection') }}
         </button>
       </div>
     </div>

@@ -23,10 +23,10 @@ const { t } = useI18n();
       </div>
     </div>
     <p class="text-base sm:text-lg font-medium text-text-primary mb-1 sm:mb-2">
-      {{ t('loadingContent') }}
+      {{ t('article.content.loadingContent') }}
     </p>
     <p class="text-xs sm:text-sm text-text-secondary px-4 text-center">
-      {{ t('fetchingArticleContent') }}
+      {{ t('article.content.fetchingArticleContent') }}
     </p>
   </div>
 </template>

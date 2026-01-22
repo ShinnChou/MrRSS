@@ -31,7 +31,7 @@ watch(
 
 // Dynamic placeholder
 const inputPlaceholder = computed(() => {
-  return t('rsshubUrlPlaceholder');
+  return t('setting.rsshub.urlPlaceholder');
 });
 
 // Handle input event - just update local value
@@ -45,7 +45,8 @@ function handleInput(event: Event) {
 <template>
   <div class="mb-3 sm:mb-4">
     <label class="block mb-1 sm:mb-1.5 font-semibold text-xs sm:text-sm text-text-secondary"
-      >{{ t('rssUrl') }} <span v-if="props.mode === 'add'" class="text-red-500">*</span></label
+      >{{ t('modal.feed.rssUrl') }}
+      <span v-if="props.mode === 'add'" class="text-red-500">*</span></label
     >
     <input
       v-model="localValue"

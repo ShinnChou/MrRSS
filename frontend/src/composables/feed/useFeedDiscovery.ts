@@ -82,7 +82,7 @@ export function useFeedDiscovery() {
             if (state.feeds.length > 0) {
               window.showToast(t('discoveredFeeds', { count: state.feeds.length }), 'success');
             } else {
-              window.showToast(t('noFeedsDiscovered'), 'info');
+              window.showToast(t('modal.discovery.noFeedsDiscovered'), 'info');
             }
           }
         }
@@ -93,7 +93,7 @@ export function useFeedDiscovery() {
           pollInterval = null;
         }
         isDiscovering.value = false;
-        errorMessage.value = t('errorPollingStatus');
+        errorMessage.value = t('common.errors.pollingStatus');
       }
     }, 500); // Poll every 500ms
   }
@@ -106,7 +106,7 @@ export function useFeedDiscovery() {
     errorMessage.value = '';
     discoveredFeeds.value = [];
     selectedFeeds.value.clear();
-    progressMessage.value = t('fetchingHomepage');
+    progressMessage.value = t('modal.discovery.fetchingHomepage');
     progressDetail.value = '';
     progressCounts.value = { current: 0, total: 0, found: 0 };
 
@@ -145,7 +145,7 @@ export function useFeedDiscovery() {
       console.error('Error starting discovery:', error);
       isDiscovering.value = false;
       errorMessage.value = error instanceof Error ? error.message : String(error);
-      window.showToast(t('errorDiscoveringFeeds'), 'error');
+      window.showToast(t('common.errors.discoveringFeeds'), 'error');
     }
   }
 
@@ -157,7 +157,7 @@ export function useFeedDiscovery() {
     errorMessage.value = '';
     discoveredFeeds.value = [];
     selectedFeeds.value.clear();
-    progressMessage.value = t('preparingDiscovery');
+    progressMessage.value = t('modal.discovery.preparingDiscovery');
     progressDetail.value = '';
     progressCounts.value = { current: 0, total: 0, found: 0 };
 
@@ -191,7 +191,7 @@ export function useFeedDiscovery() {
       console.error('Error starting batch discovery:', error);
       isDiscovering.value = false;
       errorMessage.value = error instanceof Error ? error.message : String(error);
-      window.showToast(t('errorDiscoveringFeeds'), 'error');
+      window.showToast(t('common.errors.discoveringFeeds'), 'error');
     }
   }
 
@@ -222,7 +222,7 @@ export function useFeedDiscovery() {
    */
   async function subscribeToFeeds() {
     if (selectedFeeds.value.size === 0) {
-      window.showToast(t('pleaseSelectFeeds'), 'warning');
+      window.showToast(t('modal.discovery.pleaseSelectFeeds'), 'warning');
       return;
     }
 

@@ -157,21 +157,21 @@ onUnmounted(() => {
     <!-- Translation loading indicator -->
     <div v-if="isTranslatingContent" class="flex items-center gap-2 mt-4 text-text-secondary">
       <PhSpinnerGap :size="16" class="animate-spin" />
-      <span class="text-sm">{{ t('translatingContent') }}</span>
+      <span class="text-sm">{{ t('setting.content.translatingContent') }}</span>
     </div>
   </div>
 
   <!-- No content available with retry option -->
   <div v-else-if="!hasMediaContent" class="text-center text-text-secondary py-6 sm:py-8">
     <PhArticle :size="48" class="mb-2 sm:mb-3 opacity-50 mx-auto sm:w-16 sm:h-16" />
-    <p class="text-sm sm:text-base mb-4">{{ t('noContentAvailable') }}</p>
+    <p class="text-sm sm:text-base mb-4">{{ t('article.content.noContentAvailable') }}</p>
     <button
       v-if="!props.isLoadingContent"
       class="btn-secondary-compact flex items-center gap-1.5 mx-auto"
       @click="emit('retryLoad')"
     >
       <PhArrowClockwise :size="12" />
-      <span class="text-xs">{{ t('retrySummary') }}</span>
+      <span class="text-xs">{{ t('setting.content.retrySummary') }}</span>
     </button>
   </div>
 </template>

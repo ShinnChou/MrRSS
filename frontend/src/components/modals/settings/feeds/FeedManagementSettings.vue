@@ -195,7 +195,7 @@ function isRSSHubFeed(feed: Feed): boolean {
       class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
     >
       <PhRss :size="14" class="sm:w-4 sm:h-4" />
-      {{ t('manageFeeds') }}
+      {{ t('modal.feed.manageFeeds') }}
     </label>
 
     <div class="flex flex-wrap gap-1.5 sm:gap-2 mb-2 text-xs sm:text-sm">
@@ -210,8 +210,8 @@ function isRSSHubFeed(feed: Feed): boolean {
         @click="handleBatchDelete"
       >
         <PhTrash :size="14" class="sm:w-4 sm:h-4" />
-        <span class="hidden sm:inline">{{ t('deleteSelected') }}</span
-        ><span class="sm:hidden">{{ t('delete') }}</span>
+        <span class="hidden sm:inline">{{ t('common.action.deleteSelected') }}</span
+        ><span class="sm:hidden">{{ t('common.delete') }}</span>
       </button>
       <button
         class="btn-secondary py-1.5 px-2.5 sm:px-3"
@@ -219,8 +219,8 @@ function isRSSHubFeed(feed: Feed): boolean {
         @click="handleBatchMove"
       >
         <PhFolder :size="14" class="sm:w-4 sm:h-4" />
-        <span class="hidden sm:inline">{{ t('moveSelected') }}</span
-        ><span class="sm:hidden">{{ t('move') }}</span>
+        <span class="hidden sm:inline">{{ t('common.action.moveSelected') }}</span
+        ><span class="sm:hidden">{{ t('common.action.move') }}</span>
       </button>
     </div>
 
@@ -237,7 +237,9 @@ function isRSSHubFeed(feed: Feed): boolean {
               class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded border-border text-accent focus:ring-2 focus:ring-accent cursor-pointer"
               @change="toggleSelectAll"
             />
-            <span class="hidden sm:inline text-xs sm:text-sm">{{ t('selectAll') }}</span>
+            <span class="hidden sm:inline text-xs sm:text-sm">{{
+              t('common.search.selectAll')
+            }}</span>
             <span class="text-xs text-text-tertiary"
               >({{ t('totalAndSelected', { total: totalFeeds, selected: selectedCount }) }})</span
             >
@@ -255,7 +257,7 @@ function isRSSHubFeed(feed: Feed): boolean {
               ]"
               @click="toggleSort('name')"
             >
-              {{ t('sortByName') }}
+              {{ t('sidebar.sort.byName') }}
               <span v-if="sortField === 'name'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
             </button>
             <button
@@ -267,7 +269,7 @@ function isRSSHubFeed(feed: Feed): boolean {
               ]"
               @click="toggleSort('category')"
             >
-              {{ t('sortByCategory') }}
+              {{ t('sidebar.sort.byCategory') }}
               <span v-if="sortField === 'category'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
             </button>
             <button
@@ -277,10 +279,10 @@ function isRSSHubFeed(feed: Feed): boolean {
                   ? 'bg-accent text-white'
                   : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
               ]"
-              :title="t('sortByLatestArticle')"
+              :title="t('sidebar.sort.byLatestArticle')"
               @click="toggleSort('latest_article')"
             >
-              {{ t('latest') }}
+              {{ t('sidebar.sort.latest') }}
               <span v-if="sortField === 'latest_article'">{{
                 sortDirection === 'asc' ? '↑' : '↓'
               }}</span>
@@ -292,10 +294,10 @@ function isRSSHubFeed(feed: Feed): boolean {
                   ? 'bg-accent text-white'
                   : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
               ]"
-              :title="t('sortByArticlesPerMonth')"
+              :title="t('sidebar.sort.byArticlesPerMonth')"
               @click="toggleSort('articles_per_month')"
             >
-              {{ t('frequency') }}
+              {{ t('sidebar.sort.frequency') }}
               <span v-if="sortField === 'articles_per_month'">{{
                 sortDirection === 'asc' ? '↑' : '↓'
               }}</span>
@@ -307,10 +309,10 @@ function isRSSHubFeed(feed: Feed): boolean {
                   ? 'bg-accent text-white'
                   : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
               ]"
-              :title="t('sortByUpdateStatus')"
+              :title="t('sidebar.sort.byUpdateStatus')"
               @click="toggleSort('update_status')"
             >
-              {{ t('status') }}
+              {{ t('common.form.status') }}
               <span v-if="sortField === 'update_status'">{{
                 sortDirection === 'asc' ? '↑' : '↓'
               }}</span>
@@ -325,7 +327,7 @@ function isRSSHubFeed(feed: Feed): boolean {
             <input
               v-model="searchQuery"
               type="text"
-              :placeholder="t('searchFeeds')"
+              :placeholder="t('common.search.searchFeeds')"
               class="w-full pl-7 pr-7 py-1 text-xs sm:text-sm bg-bg-secondary border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
             />
             <PhX
@@ -346,11 +348,11 @@ function isRSSHubFeed(feed: Feed): boolean {
         >
           <div></div>
           <div></div>
-          <div>{{ t('title') }}</div>
-          <div>{{ t('category') }}</div>
-          <div class="text-center">{{ t('latest') }}</div>
-          <div class="text-center">{{ t('frequency') }}</div>
-          <div class="text-center">{{ t('status') }}</div>
+          <div>{{ t('common.form.title') }}</div>
+          <div>{{ t('common.form.category') }}</div>
+          <div class="text-center">{{ t('sidebar.sort.latest') }}</div>
+          <div class="text-center">{{ t('sidebar.sort.frequency') }}</div>
+          <div class="text-center">{{ t('common.form.status') }}</div>
           <div></div>
         </div>
 
@@ -360,11 +362,11 @@ function isRSSHubFeed(feed: Feed): boolean {
         >
           <div></div>
           <div></div>
-          <div>{{ t('title') }}</div>
-          <div>{{ t('category') }}</div>
-          <div class="text-center">{{ t('latest') }}</div>
-          <div class="text-center">{{ t('frequency') }}</div>
-          <div class="text-center">{{ t('status') }}</div>
+          <div>{{ t('common.form.title') }}</div>
+          <div>{{ t('common.form.category') }}</div>
+          <div class="text-center">{{ t('sidebar.sort.latest') }}</div>
+          <div class="text-center">{{ t('sidebar.sort.frequency') }}</div>
+          <div class="text-center">{{ t('common.form.status') }}</div>
           <div></div>
         </div>
 
@@ -412,41 +414,49 @@ function isRSSHubFeed(feed: Feed): boolean {
                 v-if="feed.is_freshrss_source"
                 src="/assets/plugin_icons/freshrss.svg"
                 class="w-4 h-4 sm:w-4 sm:h-4 shrink-0 inline"
-                :title="t('freshRSSSyncedFeed')"
+                :title="t('setting.freshrss.syncedFeed')"
                 alt="FreshRSS"
               />
               <img
                 v-if="isRSSHubFeed(feed)"
                 src="/assets/plugin_icons/rsshub.svg"
                 class="w-4 h-4 sm:w-4 sm:h-4 shrink-0 inline"
-                :title="t('rsshubFeed')"
+                :title="t('setting.rsshub.feed')"
                 alt="RSSHub"
               />
               <PhImage
                 v-if="feed.is_image_mode"
                 :size="14"
                 class="text-accent shrink-0 inline"
-                :title="t('imageMode')"
+                :title="t('setting.feed.imageMode')"
               />
               <PhEyeSlash
                 v-if="feed.hide_from_timeline"
                 :size="14"
                 class="text-text-secondary shrink-0"
-                :title="t('hideFromTimeline')"
+                :title="t('setting.reading.hideFromTimeline')"
               />
             </div>
             <!-- Mobile-only URL display -->
             <div class="text-xs text-text-secondary truncate sm:hidden">
-              <span v-if="isFreshRSSFeed(feed)" class="text-info" :title="t('freshRSSSyncedFeed')">
+              <span
+                v-if="isFreshRSSFeed(feed)"
+                class="text-info"
+                :title="t('setting.freshrss.syncedFeed')"
+              >
                 {{ feed.url }}
               </span>
-              <span v-else-if="isRSSHubFeed(feed)" class="text-info" :title="t('rsshubFeed')">
+              <span
+                v-else-if="isRSSHubFeed(feed)"
+                class="text-info"
+                :title="t('setting.rsshub.feed')"
+              >
                 {{ feed.url }}
               </span>
               <span
                 v-else-if="isScriptFeed(feed)"
                 class="flex items-center gap-1"
-                :title="t('customScript')"
+                :title="t('setting.customization.script')"
               >
                 <PhCode :size="12" class="inline text-accent" />
                 {{ feed.script_path }}
@@ -454,8 +464,12 @@ function isRSSHubFeed(feed: Feed): boolean {
               <span v-else-if="isXPathFeed(feed)" class="text-accent" :title="feed.type">
                 [{{ feed.type }}] {{ feed.url }}
               </span>
-              <span v-else-if="isEmailFeed(feed)" class="text-accent" :title="t('emailNewsletter')">
-                [{{ t('emailNewsletter') }}]
+              <span
+                v-else-if="isEmailFeed(feed)"
+                class="text-accent"
+                :title="t('modal.feed.email')"
+              >
+                [{{ t('modal.feed.email') }}]
                 <span v-if="feed.email_address">{{ feed.email_address }}</span>
               </span>
               <span v-else>{{ feed.url }}</span>
@@ -472,7 +486,7 @@ function isRSSHubFeed(feed: Feed): boolean {
 
           <!-- Latest Article Time (Desktop) -->
           <div class="hidden sm:block min-w-0 text-sm text-text-secondary truncate text-center">
-            <span v-if="feed.latest_article_time" :title="t('latest')">
+            <span v-if="feed.latest_article_time" :title="t('sidebar.sort.latest')">
               {{ formatRelativeTime(feed.latest_article_time, locale, t) }}
             </span>
             <span v-else class="text-text-tertiary">-</span>
@@ -480,7 +494,7 @@ function isRSSHubFeed(feed: Feed): boolean {
 
           <!-- Articles Per Month (Desktop) -->
           <div class="hidden sm:block min-w-0 text-sm text-text-secondary truncate text-center">
-            <span :title="t('frequency')">
+            <span :title="t('sidebar.sort.frequency')">
               {{
                 feed.articles_per_month !== null && feed.articles_per_month !== undefined
                   ? feed.articles_per_month
@@ -495,13 +509,13 @@ function isRSSHubFeed(feed: Feed): boolean {
               v-if="feed.last_update_status === 'success'"
               :size="18"
               class="text-green-500"
-              :title="t('updateSuccess')"
+              :title="t('setting.update.updateSuccess')"
             />
             <PhXCircle
               v-else-if="feed.last_update_status === 'failed'"
               :size="18"
               class="text-red-500"
-              :title="feed.last_error || t('updateFailed')"
+              :title="feed.last_error || t('setting.update.updateFailed')"
             />
             <span v-else class="text-text-tertiary text-sm">?</span>
           </div>
@@ -510,7 +524,7 @@ function isRSSHubFeed(feed: Feed): boolean {
           <div class="flex gap-0.5 sm:gap-1 shrink-0">
             <button
               class="text-accent hover:bg-bg-tertiary p-1 rounded text-sm"
-              :title="feed.is_freshrss_source ? t('freshRSSFeedLocked') : t('edit')"
+              :title="feed.is_freshrss_source ? t('setting.freshrss.feedLocked') : t('common.edit')"
               :disabled="feed.is_freshrss_source"
               :class="{
                 'cursor-not-allowed opacity-50': feed.is_freshrss_source,
@@ -521,7 +535,9 @@ function isRSSHubFeed(feed: Feed): boolean {
             </button>
             <button
               class="text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded text-sm"
-              :title="feed.is_freshrss_source ? t('freshRSSFeedLocked') : t('delete')"
+              :title="
+                feed.is_freshrss_source ? t('setting.freshrss.feedLocked') : t('common.delete')
+              "
               :disabled="feed.is_freshrss_source"
               :class="{
                 'cursor-not-allowed opacity-50': feed.is_freshrss_source,
@@ -539,7 +555,9 @@ function isRSSHubFeed(feed: Feed): boolean {
           class="flex flex-col items-center justify-center py-8 text-text-secondary"
         >
           <PhRss :size="32" class="mb-2" />
-          <p class="text-sm">{{ searchQuery ? t('noSearchResults') : t('noFeeds') }}</p>
+          <p class="text-sm">
+            {{ searchQuery ? t('common.search.noSearchResults') : t('modal.feed.noFeeds') }}
+          </p>
         </div>
       </div>
     </div>
