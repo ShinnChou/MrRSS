@@ -19,8 +19,6 @@ const emit = defineEmits<{
   collapse: [];
   pin: [];
   unpin: [];
-  'sidebar.feedList.unpin': [];
-  'sidebar.feedList.pin': [];
 }>();
 
 const store = useAppStore();
@@ -348,9 +346,9 @@ function handleClose() {
 
 function handleTogglePin() {
   if (props.isPinned) {
-    emit('sidebar.feedList.unpin');
+    emit('unpin');
   } else {
-    emit('sidebar.feedList.pin');
+    emit('pin');
   }
 }
 </script>
