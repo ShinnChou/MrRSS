@@ -14,12 +14,12 @@ const { t } = useI18n();
 // Helper function to translate feed type code to display text
 function getFeedTypeLabel(typeCode: string): string {
   const mapping: Record<string, string> = {
-    regular: t('feedTypeRegular'),
-    freshrss: t('feedTypeFreshRSS'),
-    rsshub: t('feedTypeRSSHub'),
-    script: t('feedTypeCustomScript'),
-    xpath: t('feedTypeXPath'),
-    email: t('feedTypeEmail'),
+    regular: t('modal.feed.typeRegular'),
+    freshrss: t('modal.feed.typeFreshRSS'),
+    rsshub: t('modal.feed.typeRSSHub'),
+    script: t('modal.feed.typeCustomScript'),
+    xpath: t('modal.feed.typeXPath'),
+    email: t('modal.feed.typeEmail'),
   };
   return mapping[typeCode] || typeCode;
 }
@@ -70,17 +70,17 @@ function handleToggleMultiSelectValue(value: string): void {
 
 function getMultiSelectDisplayText(): string {
   const values = props.condition.values || [];
-  if (values.length === 0) return t('selectItems');
+  if (values.length === 0) return t('common.search.selectItems');
 
   // For feed_type, translate the type codes to display text
   if (props.condition.field === 'feed_type') {
     if (values.length === 1) return getFeedTypeLabel(values[0]);
-    return t('itemsSelected', { count: values.length });
+    return t('common.search.itemsSelected', { count: values.length });
   }
 
   // For other fields, use the values directly
   if (values.length === 1) return values[0];
-  return t('itemsSelected', { count: values.length });
+  return t('common.search.itemsSelected', { count: values.length });
 }
 </script>
 
@@ -92,18 +92,18 @@ function getMultiSelectDisplayText(): string {
         <label class="block text-[10px] sm:text-xs text-text-secondary mb-1">&nbsp;</label>
         <button
           :class="['not-btn', condition.negate ? 'active' : '']"
-          :title="t('not')"
+          :title="t('modal.filter.not')"
           @click="emit('update:negate')"
         >
           <PhProhibit :size="14" class="sm:w-4 sm:h-4" />
-          <span class="text-[10px] sm:text-xs font-medium">{{ t('not') }}</span>
+          <span class="text-[10px] sm:text-xs font-medium">{{ t('modal.filter.not') }}</span>
         </button>
       </div>
 
       <!-- Field selector -->
       <div class="flex-1 min-w-[100px] sm:min-w-[130px]">
         <label class="block text-[10px] sm:text-xs text-text-secondary mb-1">{{
-          t('filterField')
+          t('modal.filter.filterField')
         }}</label>
         <select
           :value="condition.field"
@@ -119,7 +119,7 @@ function getMultiSelectDisplayText(): string {
       <!-- Operator selector (only for article_title) -->
       <div v-if="needsOperator(condition.field)" class="w-24 sm:w-28">
         <label class="block text-[10px] sm:text-xs text-text-secondary mb-1">{{
-          t('filterOperator')
+          t('modal.filter.filterOperator')
         }}</label>
         <select
           :value="condition.operator"
@@ -135,7 +135,7 @@ function getMultiSelectDisplayText(): string {
       <!-- Value input -->
       <div class="flex-1 min-w-[100px] sm:min-w-[140px]">
         <label class="block text-[10px] sm:text-xs text-text-secondary mb-1">{{
-          t('filterValue')
+          t('modal.filter.filterValue')
         }}</label>
 
         <!-- Date input -->
@@ -188,7 +188,7 @@ function getMultiSelectDisplayText(): string {
               <span class="truncate">{{ name }}</span>
             </div>
             <div v-if="feedNames.length === 0" class="text-text-secondary text-xs sm:text-sm p-2">
-              {{ t('noArticles') }}
+              {{ t('article.content.noArticles') }}
             </div>
           </div>
         </div>
@@ -225,7 +225,7 @@ function getMultiSelectDisplayText(): string {
               v-if="feedCategories.length === 0"
               class="text-text-secondary text-xs sm:text-sm p-2"
             >
-              {{ t('noArticles') }}
+              {{ t('article.content.noArticles') }}
             </div>
           </div>
         </div>
@@ -259,7 +259,7 @@ function getMultiSelectDisplayText(): string {
               <span class="truncate">{{ getFeedTypeLabel(type as string) }}</span>
             </div>
             <div v-if="feedTypes.length === 0" class="text-text-secondary text-xs sm:text-sm p-2">
-              {{ t('noArticles') }}
+              {{ t('article.content.noArticles') }}
             </div>
           </div>
         </div>
@@ -270,7 +270,7 @@ function getMultiSelectDisplayText(): string {
           type="text"
           :value="condition.value"
           class="input-field w-full text-xs sm:text-sm"
-          :placeholder="t('filterValue')"
+          :placeholder="t('modal.filter.filterValue')"
           @input="handleValueChange"
         />
       </div>
@@ -278,7 +278,11 @@ function getMultiSelectDisplayText(): string {
       <!-- Remove button -->
       <div class="flex-shrink-0">
         <label class="block text-[10px] sm:text-xs text-text-secondary mb-1">&nbsp;</label>
-        <button class="btn-danger-icon" :title="t('removeCondition')" @click="emit('remove')">
+        <button
+          class="btn-danger-icon"
+          :title="t('setting.rule.removeCondition')"
+          @click="emit('remove')"
+        >
           <PhTrash :size="16" class="sm:w-[18px] sm:h-[18px]" />
         </button>
       </div>

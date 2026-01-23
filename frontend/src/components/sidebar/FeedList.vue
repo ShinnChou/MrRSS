@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useAppStore } from '@/stores/app';
 import { useI18n } from 'vue-i18n';
 import { useDragDrop } from '@/composables/ui/useDragDrop';
 import { useSidebar } from '@/composables/core/useSidebar';
+import { useSettings } from '@/composables/core/useSettings';
 import SidebarCategory from './SidebarCategory.vue';
 import { PhMagnifyingGlass, PhX, PhPencil, PhCheck, PhPushPin } from '@phosphor-icons/vue';
 import type { Feed } from '@/types/models';
@@ -22,6 +23,35 @@ const emit = defineEmits<{
 
 const store = useAppStore();
 const { t } = useI18n();
+const { settings, fetchSettings } = useSettings();
+
+// Compact mode setting
+const compactMode = computed(() => {
+  return settings.value.compact_mode === true;
+});
+
+// Initialize settings on mount
+onMounted(async () => {
+  try {
+    await fetchSettings();
+  } catch (e) {
+    console.error('Error loading settings in FeedList:', e);
+  }
+
+  // Listen for compact mode changes
+  window.addEventListener('compact-mode-changed', handleCompactModeChange);
+});
+
+// Handle compact mode changes
+function handleCompactModeChange() {
+  fetchSettings().catch((e) => {
+    console.error('Error re-fetching settings after compact mode change:', e);
+  });
+}
+
+onUnmounted(() => {
+  window.removeEventListener('compact-mode-changed', handleCompactModeChange);
+});
 
 // Edit mode for drag reordering
 const isEditMode = ref(false);
@@ -37,6 +67,7 @@ function toggleEditMode() {
 const {
   tree,
   categoryUnreadCounts,
+  feedUnreadCounts,
   toggleCategory,
   isCategoryOpen: checkIsCategoryOpen,
   searchQuery,
@@ -117,7 +148,7 @@ function handleDragStart(feedId: number, event: Event) {
   const feed = store.feeds?.find((f) => f.id === feedId);
   if (feed?.is_freshrss_source) {
     event.preventDefault();
-    window.showToast(t('freshRSSFeedLocked'), 'info');
+    window.showToast(t('setting.freshrss.feedLocked'), 'info');
     return;
   }
 
@@ -161,7 +192,7 @@ async function handleDrop(categoryName: string, feeds: any[]) {
 
   if (draggedFeed && !draggedFeed.is_freshrss_source) {
     if (hasFreshRSSFeedInTarget || isFreshRSSCategoryByName) {
-      window.showToast(t('freshRSSFeedLocked'), 'info');
+      window.showToast(t('setting.freshrss.feedLocked'), 'info');
       isDragging.value = false;
       return;
     }
@@ -169,7 +200,7 @@ async function handleDrop(categoryName: string, feeds: any[]) {
 
   if (draggedFeed && draggedFeed.is_freshrss_source) {
     if (!hasFreshRSSFeedInTarget && !isFreshRSSCategoryByName && targetCategoryFeeds.length > 0) {
-      window.showToast(t('freshRSSFeedLocked'), 'info');
+      window.showToast(t('setting.freshrss.feedLocked'), 'info');
       isDragging.value = false;
       return;
     }
@@ -180,9 +211,9 @@ async function handleDrop(categoryName: string, feeds: any[]) {
 
     if (result.success) {
       await store.fetchFeeds();
-      window.showToast(t('feedReordered'), 'success');
+      window.showToast(t('modal.feed.feedReordered'), 'success');
     } else {
-      window.showToast(t('errorReorderingFeed') + ': ' + result.error, 'error');
+      window.showToast(t('common.errors.reorderingFeed') + ': ' + result.error, 'error');
     }
   } finally {
     isDragging.value = false;
@@ -288,23 +319,8 @@ const filteredTree = computed(() => {
 
 // Get drawer title
 const drawerTitle = computed(() => {
-  // Map filters to their display names
-  const filterMap: Record<string, string> = {
-    unread: t('unread'),
-    favorites: t('favorites'),
-    readLater: t('readLater'),
-    imageGallery: t('imageGallery'),
-  };
-
-  const filterName = filterMap[store.currentFilter] || '';
-
-  // If there's a filter, return "{filter} - Feeds"
-  if (filterName) {
-    return t('feedsWithFilter', { filter: filterName });
-  }
-
-  // For 'all' or any other case, just show "Feeds"
-  return t('feeds');
+  // Always show "Feeds" regardless of filter
+  return t('sidebar.feedList.feeds');
 });
 
 function handleClose() {
@@ -333,7 +349,7 @@ function handleTogglePin() {
   >
     <div
       v-if="isExpanded || isPinned"
-      class="w-[280px] min-w-[280px] max-w-[80vw] md:w-[280px] md:min-w-[280px] flex flex-col h-full flex-shrink-0 relative border-r border-border"
+      class="w-[280px] min-w-[280px] max-w-[80vw] md:w-[280px] md:min-w-[280px] flex flex-col h-full flex-shrink-0 relative border-r border-border feed-drawer-width"
       :class="[isPinned ? 'bg-bg-primary' : 'bg-bg-secondary shadow-2xl']"
     >
       <!-- Drawer Header -->
@@ -346,7 +362,7 @@ function handleTogglePin() {
           <button
             class="text-text-secondary hover:text-text-primary hover:bg-bg-tertiary p-1 sm:p-1.5 rounded transition-colors"
             :class="isPinned ? 'text-accent' : ''"
-            :title="isPinned ? t('unpin') : t('pin')"
+            :title="isPinned ? t('sidebar.feedList.unpin') : t('sidebar.feedList.pin')"
             @click="handleTogglePin"
           >
             <PhPushPinSlash v-if="isPinned" :size="18" class="sm:w-5 sm:h-5" />
@@ -355,7 +371,7 @@ function handleTogglePin() {
           <!-- Close Button -->
           <button
             class="text-text-secondary hover:text-text-primary hover:bg-bg-tertiary p-1 sm:p-1.5 rounded transition-colors"
-            :title="t('close')"
+            :title="t('common.close')"
             @click="handleClose"
           >
             <PhX :size="18" class="sm:w-5 sm:h-5" />
@@ -374,7 +390,7 @@ function handleTogglePin() {
                 <input
                   v-model="searchQuery"
                   type="text"
-                  :placeholder="t('searchFeeds')"
+                  :placeholder="t('common.search.searchFeeds')"
                   class="w-full bg-bg-tertiary border border-border rounded-lg px-3 py-2 pl-8 text-sm focus:border-accent focus:outline-none transition-colors"
                 />
                 <PhMagnifyingGlass
@@ -393,7 +409,7 @@ function handleTogglePin() {
               <button
                 class="text-text-secondary hover:text-text-primary hover:bg-bg-tertiary p-1 sm:p-1.5 rounded transition-colors flex-shrink-0"
                 :class="isEditMode ? 'text-accent' : ''"
-                :title="isEditMode ? t('done') : t('edit')"
+                :title="isEditMode ? t('common.done') : t('common.edit')"
                 @click="toggleEditMode"
               >
                 <PhPencil v-if="!isEditMode" :size="16" class="sm:w-5 sm:h-5" />
@@ -403,7 +419,7 @@ function handleTogglePin() {
           </div>
 
           <!-- Categories List -->
-          <div class="flex-1 overflow-y-auto overflow-x-hidden p-2">
+          <div class="categories-list flex-1 overflow-y-auto overflow-x-hidden">
             <SidebarCategory
               v-for="(data, name) in filteredTree.tree"
               :key="name"
@@ -415,12 +431,13 @@ function handleTogglePin() {
               :is-active="store.currentCategory === name"
               :unread-count="categoryUnreadCounts[name] || 0"
               :current-feed-id="store.currentFeedId"
-              :feed-unread-counts="store.unreadCounts.feedCounts"
+              :feed-unread-counts="feedUnreadCounts"
               :is-drag-over="dragOverCategory === name"
               :is-edit-mode="isEditMode"
               :drop-preview="dropPreview"
               :dragging-feed-id="draggingFeedId"
               :is-category-open="checkIsCategoryOpen"
+              :compact-mode="compactMode"
               @toggle="() => toggleCategory(name)"
               @select-category="() => handleSelectCategory(name)"
               @select-feed="(feedId: number) => handleSelectFeed(feedId)"
@@ -442,23 +459,25 @@ function handleTogglePin() {
             <!-- Uncategorized -->
             <SidebarCategory
               v-if="filteredTree.uncategorized.length > 0 || isDragging"
-              :name="t('uncategorized')"
+              :name="t('sidebar.feedList.uncategorized')"
               :feeds="filteredTree.uncategorized"
               :is-open="
                 checkIsCategoryOpen('uncategorized') ||
                 (filteredTree.uncategorized.length === 0 && isDragging)
               "
-              :is-active="false"
+              :is-active="store.currentCategory === ''"
               :is-uncategorized="true"
               :unread-count="categoryUnreadCounts['uncategorized'] || 0"
               :current-feed-id="store.currentFeedId"
-              :feed-unread-counts="store.unreadCounts.feedCounts"
+              :feed-unread-counts="feedUnreadCounts"
               :is-drag-over="dragOverCategory === 'uncategorized'"
               :is-edit-mode="isEditMode"
               :drop-preview="dropPreview"
               :dragging-feed-id="draggingFeedId"
               :is-category-open="checkIsCategoryOpen"
+              :compact-mode="compactMode"
               @toggle="toggleCategory('uncategorized')"
+              @select-category="(path: string) => handleSelectCategory(path)"
               @select-feed="(feedId: number) => handleSelectFeed(feedId)"
               @category-context-menu="(e: MouseEvent) => onCategoryContextMenu(e, 'uncategorized')"
               @feed-context-menu="onFeedContextMenu"
@@ -479,3 +498,45 @@ function handleTogglePin() {
     </div>
   </Transition>
 </template>
+
+<style scoped>
+.categories-list {
+  /* Force scrollbar to always be visible */
+  scrollbar-gutter: stable;
+}
+
+.categories-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.categories-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.categories-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.categories-list::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Responsive width for feed drawer on medium screens */
+@media (max-width: 1400px) {
+  .feed-drawer-width {
+    width: 240px !important;
+    min-width: 240px !important;
+  }
+}
+</style>
+
+<style>
+.dark-mode .categories-list::-webkit-scrollbar-thumb {
+  background: #444;
+}
+
+.dark-mode .categories-list::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+</style>

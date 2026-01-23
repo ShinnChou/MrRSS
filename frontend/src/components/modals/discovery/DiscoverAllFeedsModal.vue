@@ -79,9 +79,11 @@ watch(
       >
         <div class="min-w-0 flex-1">
           <h2 class="text-base sm:text-xl font-bold text-text-primary">
-            {{ t('discoverAllFeeds') }}
+            {{ t('modal.discovery.discoverAllFeeds') }}
           </h2>
-          <p class="text-xs sm:text-sm text-text-secondary mt-1">{{ t('discoverAllFeedsDesc') }}</p>
+          <p class="text-xs sm:text-sm text-text-secondary mt-1">
+            {{ t('modal.discovery.discoverAllFeedsDesc') }}
+          </p>
         </div>
         <button
           class="p-1.5 sm:p-2 hover:bg-bg-tertiary rounded-lg transition-colors shrink-0 ml-2"
@@ -125,7 +127,9 @@ watch(
             :size="48"
             class="sm:w-16 sm:h-16 text-accent mx-auto mb-3 sm:mb-4 animate-spin"
           />
-          <p class="text-text-secondary text-base sm:text-lg">{{ t('preparing') }}...</p>
+          <p class="text-text-secondary text-base sm:text-lg">
+            {{ t('common.pagination.preparing') }}...
+          </p>
         </div>
       </div>
 
@@ -134,7 +138,7 @@ watch(
         class="flex flex-col-reverse sm:flex-row sm:justify-between items-stretch sm:items-center gap-2 sm:gap-3 p-4 sm:p-6 border-t border-border bg-bg-secondary/50 shrink-0"
       >
         <button class="btn-secondary text-sm sm:text-base" :disabled="isSubscribing" @click="close">
-          {{ t('cancel') }}
+          {{ t('common.cancel') }}
         </button>
         <button
           :disabled="!hasSelection || isSubscribing"
@@ -145,7 +149,7 @@ watch(
           @click="subscribeSelected"
         >
           <PhCircleNotch v-if="isSubscribing" :size="16" class="animate-spin" />
-          {{ isSubscribing ? t('subscribing') : t('subscribeSelected') }}
+          {{ isSubscribing ? t('modal.feed.subscribing') : t('modal.feed.subscribeSelected') }}
           <span
             v-if="hasSelection && !isSubscribing"
             class="bg-white/20 px-1.5 sm:px-2 py-0.5 rounded-full text-xs sm:text-sm"

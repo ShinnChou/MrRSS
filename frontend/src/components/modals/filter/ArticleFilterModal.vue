@@ -94,9 +94,9 @@ function close() {
     >
       <!-- Header -->
       <div class="p-4 sm:p-5 border-b border-border flex justify-between items-center shrink-0">
-        <h3 class="text-lg font-semibold m-0 flex items-center gap-2">
+        <h3 class="text-lg font-semibold m-0 flex items-center gap-2 text-text-primary">
           <PhFunnel :size="20" />
-          {{ t('filterArticles') }}
+          {{ t('modal.filter.filterArticles') }}
         </h3>
         <span
           class="text-2xl cursor-pointer text-text-secondary hover:text-text-primary"
@@ -110,7 +110,7 @@ function close() {
         <!-- Empty state -->
         <div v-if="conditions.length === 0" class="text-center text-text-secondary py-8">
           <PhFunnel :size="48" class="mx-auto mb-3 opacity-50" />
-          <p>{{ t('noFiltersApplied') }}</p>
+          <p>{{ t('modal.filter.noFiltersApplied') }}</p>
         </div>
 
         <!-- Condition list -->
@@ -159,7 +159,7 @@ function close() {
           @click="addCondition"
         >
           <PhPlus :size="18" />
-          {{ t('addCondition') }}
+          {{ t('modal.filter.addCondition') }}
         </button>
       </div>
 
@@ -168,10 +168,10 @@ function close() {
         class="p-4 sm:p-5 border-t border-border bg-bg-secondary flex justify-between gap-3 shrink-0"
       >
         <button class="btn-secondary" :disabled="conditions.length === 0" @click="clearFilters">
-          {{ t('clearFilters') }}
+          {{ t('modal.filter.clearFilters') }}
         </button>
         <button class="btn-primary" @click="applyFilters">
-          {{ t('applyFilters') }}
+          {{ t('modal.filter.applyFilters') }}
         </button>
       </div>
     </div>

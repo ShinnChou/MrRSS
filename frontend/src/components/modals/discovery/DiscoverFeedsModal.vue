@@ -92,9 +92,11 @@ onUnmounted(() => {
         class="flex justify-between items-center p-4 sm:p-6 border-b border-border bg-gradient-to-r from-accent/5 to-transparent shrink-0"
       >
         <div class="min-w-0 flex-1">
-          <h2 class="text-base sm:text-xl font-bold text-text-primary">{{ t('discoverFeeds') }}</h2>
+          <h2 class="text-base sm:text-xl font-bold text-text-primary">
+            {{ t('modal.discovery.discoverFeeds') }}
+          </h2>
           <p class="text-xs sm:text-sm text-text-secondary mt-1 truncate">
-            {{ t('fromFeed') }}: {{ feed.title }}
+            {{ t('modal.filter.fromFeed') }}: {{ feed.title }}
           </p>
         </div>
         <button
@@ -129,13 +131,13 @@ onUnmounted(() => {
             class="mb-3 sm:mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-bg-secondary rounded-lg p-2 sm:p-3"
           >
             <p class="text-xs sm:text-sm font-medium text-text-primary">
-              {{ t('foundFeeds', { count: discoveredFeeds.length }) }}
+              {{ t('modal.discovery.foundFeeds', { count: discoveredFeeds.length }) }}
             </p>
             <button
               class="text-xs sm:text-sm text-accent hover:text-accent-hover font-medium px-2 sm:px-3 py-1 rounded hover:bg-accent/10 transition-colors"
               @click="selectAll"
             >
-              {{ allSelected ? t('deselectAll') : t('selectAll') }}
+              {{ allSelected ? t('common.action.deselectAll') : t('common.search.selectAll') }}
             </button>
           </div>
 
@@ -155,7 +157,9 @@ onUnmounted(() => {
           <div
             class="w-12 h-12 sm:w-16 sm:h-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-3 sm:mb-4"
           ></div>
-          <p class="text-text-secondary text-base sm:text-lg">{{ t('preparing') }}...</p>
+          <p class="text-text-secondary text-base sm:text-lg">
+            {{ t('common.pagination.preparing') }}...
+          </p>
         </div>
       </div>
 
@@ -164,7 +168,7 @@ onUnmounted(() => {
         class="flex flex-col-reverse sm:flex-row sm:justify-between items-stretch sm:items-center gap-2 sm:gap-3 p-4 sm:p-6 border-t border-border bg-bg-secondary/50 shrink-0"
       >
         <button class="btn-secondary text-sm sm:text-base" :disabled="isSubscribing" @click="close">
-          {{ t('cancel') }}
+          {{ t('common.cancel') }}
         </button>
         <button
           :disabled="!hasSelection || isSubscribing"
@@ -178,7 +182,7 @@ onUnmounted(() => {
             v-if="isSubscribing"
             class="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
           ></div>
-          {{ isSubscribing ? t('subscribing') : t('subscribeSelected') }}
+          {{ isSubscribing ? t('modal.feed.subscribing') : t('modal.feed.subscribeSelected') }}
           <span
             v-if="hasSelection && !isSubscribing"
             class="bg-white/20 px-1.5 sm:px-2 py-0.5 rounded-full text-xs sm:text-sm"

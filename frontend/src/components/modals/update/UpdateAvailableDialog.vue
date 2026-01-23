@@ -50,7 +50,7 @@ function handleUpdate() {
           <div class="bg-green-500/20 rounded-full p-2">
             <PhArrowCircleUp :size="28" class="text-green-500" />
           </div>
-          <h3 class="text-lg sm:text-xl font-bold">{{ t('updateAvailable') }}</h3>
+          <h3 class="text-lg sm:text-xl font-bold">{{ t('setting.update.updateAvailable') }}</h3>
         </div>
         <button
           class="text-text-secondary hover:text-text-primary transition-colors p-1 rounded-md hover:bg-bg-secondary"
@@ -63,16 +63,16 @@ function handleUpdate() {
       <!-- Content -->
       <div class="p-4 sm:p-6">
         <p class="text-text-secondary text-sm mb-4">
-          {{ t('newVersionAvailable', { version: updateInfo.latest_version }) }}
+          {{ t('modal.update.newVersionAvailable', { version: updateInfo.latest_version }) }}
         </p>
 
         <div class="bg-bg-secondary rounded-lg p-3 sm:p-4 space-y-2 text-sm">
           <div class="flex justify-between items-center">
-            <span class="text-text-secondary">{{ t('currentVersion') }}:</span>
+            <span class="text-text-secondary">{{ t('setting.update.currentVersion') }}:</span>
             <span class="font-mono font-medium">{{ updateInfo.current_version }}</span>
           </div>
           <div class="flex justify-between items-center">
-            <span class="text-text-secondary">{{ t('latestVersion') }}:</span>
+            <span class="text-text-secondary">{{ t('setting.update.latestVersion') }}:</span>
             <span class="font-mono font-medium text-green-500">{{
               updateInfo.latest_version
             }}</span>
@@ -80,13 +80,13 @@ function handleUpdate() {
         </div>
 
         <p v-if="!updateInfo.download_url" class="text-text-secondary text-xs mt-4">
-          {{ t('noInstallerAvailable') }}
+          {{ t('setting.update.noInstallerAvailable') }}
           <a
             href="https://github.com/WCY-dt/MrRSS/releases/latest"
             target="_blank"
             class="text-accent hover:underline"
           >
-            {{ t('viewOnGitHub') }}
+            {{ t('setting.about.viewOnGitHub') }}
           </a>
         </p>
       </div>
@@ -100,7 +100,7 @@ function handleUpdate() {
           :disabled="downloadingUpdate || installingUpdate"
           @click="handleClose"
         >
-          {{ t('notNow') }}
+          {{ t('setting.update.notNow') }}
         </button>
         <button
           v-if="updateInfo.download_url"
@@ -111,9 +111,11 @@ function handleUpdate() {
           <PhCircleNotch v-if="downloadingUpdate" :size="20" class="animate-spin" />
           <PhGear v-else-if="installingUpdate" :size="20" class="animate-spin" />
           <PhDownloadSimple v-else :size="20" />
-          <span v-if="downloadingUpdate">{{ t('downloading') }} {{ downloadProgress }}%</span>
-          <span v-else-if="installingUpdate">{{ t('installingUpdate') }}</span>
-          <span v-else>{{ t('updateNow') }}</span>
+          <span v-if="downloadingUpdate"
+            >{{ t('common.action.downloading') }} {{ downloadProgress }}%</span
+          >
+          <span v-else-if="installingUpdate">{{ t('setting.update.installingUpdate') }}</span>
+          <span v-else>{{ t('setting.update.updateNow') }}</span>
         </button>
       </div>
 

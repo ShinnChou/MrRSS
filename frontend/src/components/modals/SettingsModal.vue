@@ -3,6 +3,7 @@ import { useAppStore } from '@/stores/app';
 import { useI18n } from 'vue-i18n';
 import { ref, onMounted, type Ref } from 'vue';
 import GeneralTab from './settings/general/GeneralTab.vue';
+import ReadingDisplayTab from './settings/reading/ReadingDisplayTab.vue';
 import FeedsTab from './settings/feeds/FeedsTab.vue';
 import ContentTab from './settings/content/ContentTab.vue';
 import AITab from './settings/ai/AITab.vue';
@@ -16,6 +17,7 @@ import DiscoverAllFeedsModal from './discovery/DiscoverAllFeedsModal.vue';
 import {
   PhGear,
   PhSlidersHorizontal,
+  PhBookOpen,
   PhRss,
   PhTextT,
   PhBrain,
@@ -95,7 +97,7 @@ function handleDiscoverAll() {
       <div class="p-3 sm:p-5 border-b border-border flex justify-between items-center shrink-0">
         <h3 class="text-text-secondary sm:text-lg font-semibold m-0 flex items-center gap-2">
           <PhGear :size="20" :weight="'fill'" class="sm:w-6 sm:h-6" />
-          {{ t('settingsTitle') }}
+          {{ t('setting.tab.settingsTitle') }}
         </h3>
         <span
           class="text-2xl cursor-pointer text-text-secondary hover:text-text-primary"
@@ -113,70 +115,77 @@ function handleDiscoverAll() {
               @click="activeTab = 'general'"
             >
               <PhSlidersHorizontal :size="22" />
-              <span>{{ t('general') }}</span>
+              <span>{{ t('setting.tab.general') }}</span>
+            </button>
+            <button
+              :class="['sidebar-tab-btn', activeTab === 'reading' ? 'active' : '']"
+              @click="activeTab = 'reading'"
+            >
+              <PhBookOpen :size="22" />
+              <span>{{ t('setting.tab.readingAndDisplay') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'feeds' ? 'active' : '']"
               @click="activeTab = 'feeds'"
             >
               <PhRss :size="22" />
-              <span>{{ t('feeds') }}</span>
+              <span>{{ t('sidebar.feedList.feeds') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'content' ? 'active' : '']"
               @click="activeTab = 'content'"
             >
               <PhTextT :size="22" />
-              <span>{{ t('content') }}</span>
+              <span>{{ t('setting.tab.content') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'ai' ? 'active' : '']"
               @click="activeTab = 'ai'"
             >
               <PhBrain :size="22" />
-              <span>{{ t('ai') }}</span>
+              <span>{{ t('setting.tab.ai') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'rules' ? 'active' : '']"
               @click="activeTab = 'rules'"
             >
               <PhFunnel :size="22" />
-              <span>{{ t('rules') }}</span>
+              <span>{{ t('modal.rule.rules') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'network' ? 'active' : '']"
               @click="activeTab = 'network'"
             >
               <PhGlobe :size="22" />
-              <span>{{ t('network') }}</span>
+              <span>{{ t('setting.tab.network') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'plugins' ? 'active' : '']"
               @click="activeTab = 'plugins'"
             >
               <PhPuzzlePiece :size="22" />
-              <span>{{ t('plugins') }}</span>
+              <span>{{ t('setting.tab.plugins') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'shortcuts' ? 'active' : '']"
               @click="activeTab = 'shortcuts'"
             >
               <PhKeyboard :size="22" />
-              <span>{{ t('shortcuts') }}</span>
+              <span>{{ t('setting.shortcut.shortcuts') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'statistics' ? 'active' : '']"
               @click="activeTab = 'statistics'"
             >
               <PhChartBar :size="22" />
-              <span>{{ t('statistics') }}</span>
+              <span>{{ t('setting.statistic.statistics') }}</span>
             </button>
             <button
               :class="['sidebar-tab-btn', activeTab === 'about' ? 'active' : '']"
               @click="activeTab = 'about'"
             >
               <PhInfo :size="22" />
-              <span>{{ t('about') }}</span>
+              <span>{{ t('setting.tab.about') }}</span>
             </button>
           </nav>
         </div>
@@ -185,6 +194,12 @@ function handleDiscoverAll() {
         <div class="flex-1 overflow-y-auto p-3 sm:p-6 min-h-0 scroll-smooth">
           <GeneralTab
             v-if="activeTab === 'general'"
+            :settings="settings"
+            @update:settings="settings = $event"
+          />
+
+          <ReadingDisplayTab
+            v-if="activeTab === 'reading'"
             :settings="settings"
             @update:settings="settings = $event"
           />
@@ -201,6 +216,7 @@ function handleDiscoverAll() {
             @batch-delete="handleBatchDelete"
             @batch-move="handleBatchMove"
             @discover-all="handleDiscoverAll"
+            @select-feed="emit('close')"
             @update:settings="settings = $event"
           />
 

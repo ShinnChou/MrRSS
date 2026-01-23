@@ -23,6 +23,7 @@ import { useArticleActions } from '@/composables/article/useArticleActions';
 import { useShowPreviewImages } from '@/composables/ui/useShowPreviewImages';
 import { useSettings } from '@/composables/core/useSettings';
 import { parseSettingsData } from '@/composables/core/useSettings.generated';
+import { openInBrowser } from '@/utils/browser';
 import type { Article } from '@/types/models';
 
 const store = useAppStore();
@@ -30,7 +31,7 @@ const { t } = useI18n();
 const { settings } = useSettings();
 
 const listRef: Ref<HTMLDivElement | null> = ref(null);
-const defaultViewMode = ref<'original' | 'rendered'>('original');
+const defaultViewMode = ref<'original' | 'rendered' | 'external'>('original');
 const showFilterModal = ref(false);
 const isRefreshing = ref(false);
 const savedScrollTop = ref(0);
@@ -69,11 +70,6 @@ const {
   loadMoreFilteredArticles,
 } = useArticleFilter();
 
-const { showArticleContextMenu } = useArticleActions(t, defaultViewMode, async () => {
-  await store.fetchUnreadCounts();
-  await store.fetchFilterCounts();
-});
-
 // Computed filtered articles - optimized to avoid excessive recomputation
 const filteredArticles = computed(() => {
   let articles = activeFilters.value.length > 0 ? filteredArticlesFromServer.value : store.articles;
@@ -90,6 +86,11 @@ const filteredArticles = computed(() => {
   }
 
   return articles;
+});
+
+const { showArticleContextMenu } = useArticleActions(t, defaultViewMode, async () => {
+  await store.fetchUnreadCounts();
+  await store.fetchFilterCounts();
 });
 
 // Virtual rendering: only render visible articles + buffer
@@ -132,22 +133,22 @@ const articleListTitle = computed(() => {
   }
 
   // No temporary selection, show filter only
-  return getFilterText() || t('articles');
+  return getFilterText() || t('sidebar.feedList.articles');
 });
 
 // Helper to get filter text
 function getFilterText(): string {
   switch (store.currentFilter) {
     case 'all':
-      return t('allArticles');
+      return t('sidebar.activity.allArticles');
     case 'unread':
-      return t('unreadArticles');
+      return t('sidebar.activity.unreadArticles');
     case 'favorites':
-      return t('favorites');
+      return t('sidebar.activity.favorites');
     case 'readLater':
-      return t('readLater');
+      return t('sidebar.activity.readLater');
     case 'imageGallery':
-      return t('imageGallery');
+      return t('sidebar.activity.imageGallery');
     default:
       return '';
   }
@@ -350,6 +351,39 @@ function onRefreshTooltipHide(): void {
 
 // Article selection and interaction
 function selectArticle(article: Article): void {
+  // Check if we should open in browser based on feed or global settings
+  const feed = store.feeds.find((f) => f.id === article.feed_id);
+  let openInBrowserMode = false;
+
+  if (feed?.article_view_mode === 'external') {
+    openInBrowserMode = true;
+  } else if (feed?.article_view_mode === 'global' || !feed?.article_view_mode) {
+    // Check global setting
+    if (defaultViewMode.value === 'external') {
+      openInBrowserMode = true;
+    }
+  }
+
+  // If external mode is selected, open in browser and mark as read
+  if (openInBrowserMode) {
+    // Mark as read if not already read
+    if (!article.is_read) {
+      article.is_read = true;
+      fetch(`/api/articles/read?id=${article.id}&read=true`, { method: 'POST' })
+        .then(async () => {
+          await store.fetchUnreadCounts();
+          await store.fetchFilterCounts();
+        })
+        .catch((e) => {
+          console.error('Error marking as read:', e);
+        });
+    }
+    // Open article URL in browser
+    openInBrowser(article.url);
+    return;
+  }
+
+  // Normal article selection - show in app
   // If switching from one article to another, remove the previous one from temp list
   if (store.currentArticleId) {
     temporarilyKeepArticles.value.delete(store.currentArticleId);
@@ -431,7 +465,7 @@ async function markAllAsRead(): Promise<void> {
       // Get IDs of filtered articles
       const articleIds = filteredArticlesFromServer.value.map((a) => a.id);
       if (articleIds.length === 0) {
-        window.showToast(t('noArticlesToMark'), 'info');
+        window.showToast(t('article.action.noArticlesToMark'), 'info');
         return;
       }
 
@@ -444,7 +478,7 @@ async function markAllAsRead(): Promise<void> {
       await store.fetchArticles();
       await store.fetchUnreadCounts();
       await store.fetchFilterCounts();
-      window.showToast(t('markedAllAsRead'), 'success');
+      window.showToast(t('article.action.markedAllAsRead'), 'success');
     } catch (e) {
       console.error('Error marking filtered articles as read:', e);
     }
@@ -459,7 +493,7 @@ async function markAllAsRead(): Promise<void> {
     }
 
     await store.markAllAsRead(params.feed_id, params.category);
-    window.showToast(t('markedAllAsRead'), 'success');
+    window.showToast(t('article.action.markedAllAsRead'), 'success');
   }
 }
 
@@ -469,7 +503,7 @@ async function clearReadLater(): Promise<void> {
     if (res.ok) {
       await store.fetchArticles();
       await store.fetchFilterCounts();
-      window.showToast(t('clearedReadLater'), 'success');
+      window.showToast(t('common.toast.clearedReadLater'), 'success');
     }
   } catch (e) {
     console.error('Error clearing read later:', e);
@@ -508,14 +542,14 @@ function handleHoverMarkAsRead(articleId: number): void {
           <button
             v-if="store.currentFilter === 'readLater'"
             class="text-text-secondary hover:text-red-500 hover:bg-bg-tertiary p-1 sm:p-1.5 rounded transition-colors"
-            :title="t('clearReadLater')"
+            :title="t('common.clearReadLater')"
             @click="clearReadLater"
           >
             <PhTrash :size="18" class="sm:w-5 sm:h-5" />
           </button>
           <button
             class="text-text-secondary hover:text-text-primary hover:bg-bg-tertiary p-1 sm:p-1.5 rounded transition-colors"
-            :title="t('markAllRead')"
+            :title="t('article.action.markAllRead')"
             @click="markAllAsRead"
           >
             <PhCheckCircle :size="18" class="sm:w-5 sm:h-5" />
@@ -523,7 +557,7 @@ function handleHoverMarkAsRead(articleId: number): void {
           <button
             class="text-text-secondary hover:text-text-primary hover:bg-bg-tertiary p-1 sm:p-1.5 rounded transition-colors"
             :class="store.showOnlyUnread ? 'text-accent' : ''"
-            :title="t('showOnlyUnread')"
+            :title="t('setting.reading.showOnlyUnread')"
             @click="store.toggleShowOnlyUnread()"
           >
             <component
@@ -536,7 +570,7 @@ function handleHoverMarkAsRead(articleId: number): void {
             <button
               class="text-text-secondary hover:text-text-primary hover:bg-bg-tertiary p-1 sm:p-1.5 rounded transition-colors"
               :class="activeFilters.length > 0 ? 'filter-active' : ''"
-              :title="t('filter')"
+              :title="t('modal.filter.filter')"
               @click="showFilterModal = true"
             >
               <PhFunnel :size="18" class="sm:w-5 sm:h-5" />
@@ -555,7 +589,7 @@ function handleHoverMarkAsRead(articleId: number): void {
           >
             <button
               class="text-text-secondary hover:text-text-primary hover:bg-bg-tertiary p-1 sm:p-1.5 rounded transition-colors"
-              :title="t('refresh')"
+              :title="t('article.action.refresh')"
               @click="refreshArticles"
             >
               <PhArrowClockwise
@@ -600,7 +634,7 @@ function handleHoverMarkAsRead(articleId: number): void {
                 <div class="px-3 py-2">
                   <div class="text-xs font-semibold text-text-primary mb-2 flex items-center gap-2">
                     <PhArrowClockwise :size="12" class="animate-spin-slow" />
-                    {{ t('refreshing') }}
+                    {{ t('article.action.refreshing') }}
                   </div>
 
                   <!-- Pool Tasks - Show all tasks sorted alphabetically -->
@@ -609,7 +643,9 @@ function handleHoverMarkAsRead(articleId: number): void {
                       class="text-[10px] text-text-secondary mb-1.5 font-medium flex items-center gap-1"
                     >
                       <PhCircle :size="10" class="text-accent" />
-                      {{ t('activeTasks') }} ({{ store.refreshProgress.pool_task_count || 0 }})
+                      {{ t('article.progress.activeTasks') }} ({{
+                        store.refreshProgress.pool_task_count || 0
+                      }})
                     </div>
                     <div class="space-y-0.5">
                       <div
@@ -632,7 +668,9 @@ function handleHoverMarkAsRead(articleId: number): void {
                       class="text-[10px] text-text-secondary mb-1.5 font-medium flex items-center gap-1"
                     >
                       <PhClock :size="10" />
-                      {{ t('queuedTasks') }} ({{ store.refreshProgress.queue_task_count || 0 }})
+                      {{ t('sidebar.activity.queuedTasks') }} ({{
+                        store.refreshProgress.queue_task_count || 0
+                      }})
                     </div>
                     <div class="space-y-0.5">
                       <div
@@ -658,14 +696,16 @@ function handleHoverMarkAsRead(articleId: number): void {
                       class="text-[10px] text-text-secondary mb-1.5 font-medium flex items-center gap-1"
                     >
                       <PhLightning :size="10" class="text-accent" />
-                      {{ t('immediateTasks') }} ({{
+                      {{ t('sidebar.activity.immediateTasks') }} ({{
                         store.refreshProgress.article_click_count || 0
                       }})
                     </div>
                     <div class="text-xs text-accent bg-accent/10 px-2.5 py-1.5 rounded truncate">
                       <div class="flex items-center gap-2">
                         <PhLightning :size="10" class="flex-shrink-0" />
-                        <span class="truncate">{{ t('fetchingArticleContent') }}</span>
+                        <span class="truncate">{{
+                          t('article.content.fetchingArticleContent')
+                        }}</span>
                       </div>
                     </div>
                   </div>
@@ -685,7 +725,7 @@ function handleHoverMarkAsRead(articleId: number): void {
         v-if="filteredArticles.length === 0 && !store.isLoading && !isFilterLoading"
         class="p-4 sm:p-5 text-center text-text-secondary text-sm sm:text-base"
       >
-        {{ t('noArticles') }}
+        {{ t('article.content.noArticles') }}
       </div>
 
       <!-- Article list with content-visibility for performance -->
@@ -728,6 +768,13 @@ function handleHoverMarkAsRead(articleId: number): void {
 @media (min-width: 768px) {
   .article-list {
     width: var(--article-list-width, 400px);
+  }
+}
+
+/* Responsive width for article list on medium screens */
+@media (max-width: 1400px) and (min-width: 768px) {
+  .article-list {
+    width: min(var(--article-list-width, 400px), 320px) !important;
   }
 }
 

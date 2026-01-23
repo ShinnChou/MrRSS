@@ -3,7 +3,6 @@ import { computed } from 'vue';
 import type { SettingsData } from '@/types/settings';
 import { useSettingsAutoSave } from '@/composables/core/useSettingsAutoSave';
 import ApplicationSettings from './ApplicationSettings.vue';
-import ReadingSettings from './ReadingSettings.vue';
 import UpdateSettings from './UpdateSettings.vue';
 import DataManagementSettings from './DataManagementSettings.vue';
 
@@ -34,8 +33,6 @@ function handleUpdateSettings(updatedSettings: SettingsData) {
 <template>
   <div class="space-y-4 sm:space-y-6">
     <ApplicationSettings :settings="settings" @update:settings="handleUpdateSettings" />
-
-    <ReadingSettings :settings="settings" @update:settings="handleUpdateSettings" />
 
     <UpdateSettings :settings="settings" @update:settings="handleUpdateSettings" />
 

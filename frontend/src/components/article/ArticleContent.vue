@@ -176,6 +176,7 @@ const translatedTitle = ref('');
 const isTranslatingTitle = ref(false);
 const isTranslatingContent = ref(false);
 const lastTranslatedArticleId = ref<number | null>(null);
+const lastTranslatedContentHash = ref<string>(''); // Track translated content by hash
 const translationSkipped = ref(false);
 
 // Load settings using composables
@@ -224,12 +225,10 @@ async function translateText(
         html: data.html || '',
       };
     } else {
-      console.error('Translation API error:', res.status);
-      window.showToast(t('errorTranslatingContent'), 'error');
+      window.showToast(t('common.errors.translatingContent'), 'error');
     }
-  } catch (e) {
-    console.error('Translation network error:', e);
-    window.showToast(t('errorTranslating'), 'error');
+  } catch {
+    window.showToast(t('common.errors.translating'), 'error');
   }
   return { text: '', html: '' };
 }
@@ -242,7 +241,8 @@ async function forceTranslateContent() {
 }
 
 // Fetch full article content from the original URL
-async function fetchFullArticle() {
+// @param showErrors - whether to show error toasts (default: true for manual clicks, false for auto-fetch)
+async function fetchFullArticle(showErrors: boolean = true) {
   if (!props.article?.id) return;
 
   isFetchingFullArticle.value = true;
@@ -264,7 +264,9 @@ async function fetchFullArticle() {
       }
 
       fullArticleContent.value = content;
-      window.showToast(t('fullArticleFetched'), 'success');
+      if (showErrors) {
+        window.showToast(t('article.action.fullArticleFetched'), 'success');
+      }
 
       // After fetching full content, regenerate summary and trigger translation
       if (props.article) {
@@ -272,10 +274,8 @@ async function fetchFullArticle() {
           setTimeout(() => generateSummary(props.article), 100);
         }
         if (translationEnabled.value) {
-          // Reset translation tracking to allow re-translation with full content
-          lastTranslatedArticleId.value = null;
-          translationSkipped.value = false; // Reset skip status
-          translateTitle(props.article);
+          // Only translate content, not title (title translation is cached in DB)
+          // Content hash will automatically detect new content and trigger translation
           // Wait for DOM to update with new content before translating
           await nextTick();
           await translateContentParagraphs(fullArticleContent.value);
@@ -283,11 +283,15 @@ async function fetchFullArticle() {
       }
     } else {
       console.error('Error fetching full article:', res.status);
-      window.showToast(t('errorFetchingFullArticle'), 'error');
+      if (showErrors) {
+        window.showToast(t('common.errors.fetchingFullArticle'), 'error');
+      }
     }
   } catch (e) {
     console.error('Error fetching full article:', e);
-    window.showToast(t('errorFetchingFullArticle'), 'error');
+    if (showErrors) {
+      window.showToast(t('common.errors.fetchingFullArticle'), 'error');
+    }
   } finally {
     isFetchingFullArticle.value = false;
   }
@@ -340,19 +344,38 @@ async function translateTitle(article: Article) {
   isTranslatingTitle.value = false;
 }
 
+// Simple hash function for content (for detecting content changes)
+function simpleHash(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash.toString(36);
+}
+
 // Translate content paragraphs while preserving inline elements (formulas, code, images)
 async function translateContentParagraphs(content: string) {
   if (!translationEnabled.value || !content) {
     return;
   }
 
-  // Prevent duplicate translations for the same article
-  if (lastTranslatedArticleId.value === props.article?.id) {
+  // Calculate content hash to detect if content has changed
+  const contentHash = simpleHash(content);
+
+  // Prevent duplicate translations for the same content
+  // Check both article ID and content hash to handle RSS content vs full content
+  if (
+    lastTranslatedArticleId.value === props.article?.id &&
+    lastTranslatedContentHash.value === contentHash
+  ) {
     return;
   }
 
   isTranslatingContent.value = true;
   lastTranslatedArticleId.value = props.article?.id || null;
+  lastTranslatedContentHash.value = contentHash;
 
   // Wait for content to render
   await nextTick();
@@ -367,6 +390,14 @@ async function translateContentParagraphs(content: string) {
   // Remove any existing translations first
   const existingTranslations = proseContainer.querySelectorAll('.translation-text');
   existingTranslations.forEach((el) => el.remove());
+
+  // Check if content is plain text (no HTML tags) and wrap it in <p> tags
+  // This handles cases where article content is stored as plain text without HTML structure
+  const hasHTMLTags = /<[^>]+>/.test(proseContainer.innerHTML);
+  if (!hasHTMLTags && proseContainer.textContent && proseContainer.textContent.trim().length > 0) {
+    const textContent = proseContainer.innerHTML;
+    proseContainer.innerHTML = `<p>${textContent}</p>`;
+  }
 
   // Find all translatable elements
   // For lists: translate individual li items, translation stays inside the same li
@@ -487,7 +518,9 @@ async function translateContentParagraphs(content: string) {
     const translatedText = translation.text;
 
     // Skip if translation is same as original or empty
-    if (!translatedText || translatedText === textWithPlaceholders) continue;
+    if (!translatedText || translatedText === textWithPlaceholders) {
+      continue;
+    }
 
     // Restore preserved elements and hyperlinks in the translated text
     const translatedHTML = restorePreservedElements(translatedText, preservedElements, hyperlinks);
@@ -668,7 +701,7 @@ watch(
 
       // Auto-fetch full article if setting is enabled
       if (shouldAutoExpandContent.value && !fullArticleContent.value) {
-        setTimeout(() => fetchFullArticle(), 200);
+        setTimeout(() => fetchFullArticle(false), 200);
       }
 
       // Generate summary if needed
@@ -722,7 +755,7 @@ onMounted(async () => {
         !fullArticleContent.value &&
         !isFetchingFullArticle.value
       ) {
-        setTimeout(() => fetchFullArticle(), 200);
+        setTimeout(() => fetchFullArticle(false), 200);
       }
     }
   }
@@ -828,12 +861,14 @@ onBeforeUnmount(() => {
         <button
           :disabled="isFetchingFullArticle"
           class="btn-secondary-compact flex items-center gap-2"
-          @click="fetchFullArticle"
+          @click="() => fetchFullArticle()"
         >
           <PhSpinnerGap v-if="isFetchingFullArticle" :size="14" class="animate-spin" />
           <PhArticleNyTimes v-else :size="14" />
           <span>{{
-            isFetchingFullArticle ? t('fetchingFullArticle') : t('fetchFullArticle')
+            isFetchingFullArticle
+              ? t('article.action.fetchingFullArticle')
+              : t('article.action.fetchFullArticle')
           }}</span>
         </button>
       </div>

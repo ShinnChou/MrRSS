@@ -17,6 +17,7 @@ export interface Article {
   is_favorite: boolean;
   is_hidden: boolean;
   is_read_later: boolean;
+  author?: string; // Article author
   summary?: string; // Cached AI-generated summary
   freshrss_item_id?: string; // FreshRSS/Google Reader item ID
 }
@@ -50,7 +51,7 @@ export interface Feed {
   xpath_item_thumbnail?: string;
   xpath_item_categories?: string;
   xpath_item_uid?: string;
-  article_view_mode?: string; // Article view mode override ('global', 'webpage', 'rendered')
+  article_view_mode?: string; // Article view mode override ('global', 'webpage', 'rendered', 'external')
   auto_expand_content?: string; // Auto expand content mode ('global', 'enabled', 'disabled')
   // Email/Newsletter support
   email_address?: string;

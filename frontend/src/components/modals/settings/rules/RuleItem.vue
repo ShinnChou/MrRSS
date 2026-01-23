@@ -46,7 +46,7 @@ const emit = defineEmits<{
 // Format condition for display
 function formatCondition(rule: Rule): string {
   if (!rule.conditions || rule.conditions.length === 0) {
-    return t('conditionAlways');
+    return t('modal.filter.conditionAlways');
   }
 
   // Simplified display - show first condition
@@ -54,7 +54,7 @@ function formatCondition(rule: Rule): string {
   let text = formatSingleCondition(first);
 
   if (rule.conditions.length > 1) {
-    text += ` ${t('andNMore', { count: rule.conditions.length - 1 })}`;
+    text += ` ${t('common.text.andNMore', { count: rule.conditions.length - 1 })}`;
   }
 
   return text;
@@ -62,14 +62,14 @@ function formatCondition(rule: Rule): string {
 
 function formatSingleCondition(condition: Condition): string {
   const fieldLabels: Record<string, string> = {
-    feed_name: t('feedName'),
-    feed_category: t('feedCategory'),
-    article_title: t('articleTitle'),
-    published_after: t('publishedAfter'),
-    published_before: t('publishedBefore'),
-    is_read: t('readStatus'),
-    is_favorite: t('favoriteStatus'),
-    is_hidden: t('hiddenStatus'),
+    feed_name: t('modal.feed.feedName'),
+    feed_category: t('modal.feed.feedCategory'),
+    article_title: t('article.parts.articleTitle'),
+    published_after: t('modal.filter.publishedAfter'),
+    published_before: t('modal.filter.publishedBefore'),
+    is_read: t('modal.filter.readStatus'),
+    is_favorite: t('modal.filter.favoriteStatus'),
+    is_hidden: t('modal.filter.hiddenStatus'),
   };
 
   const field = fieldLabels[condition.field] || condition.field;
@@ -77,7 +77,7 @@ function formatSingleCondition(condition: Condition): string {
     condition.value || (condition.values && condition.values.length > 0 ? condition.values[0] : '');
 
   if (condition.negate) {
-    return `${t('not')} ${field}: ${value}`;
+    return `${t('modal.filter.not')} ${field}: ${value}`;
   }
 
   return `${field}: ${value}`;
@@ -90,12 +90,12 @@ function formatActions(rule: Rule): string {
   }
 
   const actionLabels: Record<string, string> = {
-    favorite: t('actionFavorite'),
-    unfavorite: t('actionUnfavorite'),
-    hide: t('actionHide'),
-    unhide: t('actionUnhide'),
-    mark_read: t('actionMarkRead'),
-    mark_unread: t('actionMarkUnread'),
+    favorite: t('setting.rule.actionFavorite'),
+    unfavorite: t('setting.rule.actionUnfavorite'),
+    hide: t('setting.rule.actionHide'),
+    unhide: t('setting.rule.actionUnhide'),
+    mark_read: t('setting.rule.actionMarkRead'),
+    mark_unread: t('setting.rule.actionMarkUnread'),
   };
 
   return rule.actions.map((a: string) => actionLabels[a] || a).join(', ');
@@ -150,7 +150,7 @@ function formatActions(rule: Rule): string {
               class="font-medium mb-1 text-sm sm:text-base truncate"
               :class="{ 'text-text-secondary': !rule.enabled }"
             >
-              {{ rule.name || t('rules') + ' #' + rule.id }}
+              {{ rule.name || t('modal.rule.rules') + ' #' + rule.id }}
             </div>
             <div class="text-xs text-text-secondary flex flex-wrap items-center gap-1 sm:gap-2">
               <span class="condition-badge">
@@ -171,16 +171,20 @@ function formatActions(rule: Rule): string {
           <button
             class="action-btn"
             :disabled="isApplying"
-            :title="t('applyRuleNow')"
+            :title="t('setting.rule.applyRuleNow')"
             @click="emit('apply')"
           >
             <PhPlay v-if="!isApplying" :size="18" class="sm:w-5 sm:h-5" />
             <span v-else class="animate-spin text-sm">⟳</span>
           </button>
-          <button class="action-btn" :title="t('editRule')" @click="emit('edit')">
+          <button class="action-btn" :title="t('modal.rule.editRule')" @click="emit('edit')">
             <PhPencil :size="18" class="sm:w-5 sm:h-5" />
           </button>
-          <button class="action-btn danger" :title="t('deleteRule')" @click="emit('delete')">
+          <button
+            class="action-btn danger"
+            :title="t('modal.rule.deleteRule')"
+            @click="emit('delete')"
+          >
             <PhTrash :size="18" class="sm:w-5 sm:h-5" />
           </button>
         </div>

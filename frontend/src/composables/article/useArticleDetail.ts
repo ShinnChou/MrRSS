@@ -5,7 +5,7 @@ import { openInBrowser } from '@/utils/browser';
 import type { Article } from '@/types/models';
 import { proxyImagesInHtml, isMediaCacheEnabled } from '@/utils/mediaProxy';
 
-type ViewMode = 'original' | 'rendered';
+type ViewMode = 'original' | 'rendered' | 'external';
 type RenderAction = 'showContent' | 'showOriginal' | null;
 
 interface ViewModeChangeEvent extends Event {
@@ -73,12 +73,17 @@ export function useArticleDetail() {
   }
 
   // Mark article as read if it's not already read
-  function markAsReadIfNeeded(article: Article) {
+  async function markAsReadIfNeeded(article: Article) {
     if (!article.is_read) {
       article.is_read = true;
-      fetch(`/api/articles/read?id=${article.id}&read=true`, {
-        method: 'POST',
-      });
+      try {
+        await fetch(`/api/articles/read?id=${article.id}&read=true`, {
+          method: 'POST',
+        });
+        store.fetchUnreadCounts();
+      } catch (e) {
+        console.error('Error marking as read:', e);
+      }
     }
   }
 
@@ -99,6 +104,8 @@ export function useArticleDetail() {
       return 'original';
     } else if (feed.article_view_mode === 'rendered') {
       return 'rendered';
+    } else if (feed.article_view_mode === 'external') {
+      return 'external';
     } else {
       // 'global' or undefined - use global setting
       return defaultViewMode.value;
@@ -442,19 +449,26 @@ export function useArticleDetail() {
                     y: e.clientY,
                     items: [
                       {
-                        label: t('viewImage'),
+                        label: t('common.contextMenu.copyImage'),
+                        action: 'copy',
+                        icon: 'PhCopy',
+                      },
+                      {
+                        label: t('article.action.viewImage'),
                         action: 'view',
                         icon: 'PhMagnifyingGlassPlus',
                       },
                       {
-                        label: t('downloadImage'),
+                        label: t('common.contextMenu.downloadImage'),
                         action: 'download',
                         icon: 'PhDownloadSimple',
                       },
                     ],
                     data: { src: newImg.src },
                     callback: (action: string, data: { src: string }) => {
-                      if (action === 'view') {
+                      if (action === 'copy') {
+                        copyImage(data.src);
+                      } else if (action === 'view') {
                         imageViewerSrc.value = data.src;
                         imageViewerAlt.value = '';
                       } else if (action === 'download') {
@@ -563,6 +577,60 @@ export function useArticleDetail() {
     imageViewerInitialIndex.value = 0;
   }
 
+  // Copy image to clipboard
+  async function copyImage(src: string) {
+    try {
+      const response = await fetch(src);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const blob = await response.blob();
+
+      // Convert to PNG for maximum clipboard compatibility
+      const pngBlob = await new Promise<Blob>((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0);
+            canvas.toBlob((convertedBlob) => {
+              if (convertedBlob) {
+                resolve(convertedBlob);
+              } else {
+                reject(new Error('Failed to convert image to PNG'));
+              }
+            }, 'image/png');
+          } else {
+            reject(new Error('Failed to get canvas context'));
+          }
+        };
+
+        img.onerror = () => {
+          reject(new Error('Failed to load image for conversion'));
+        };
+
+        img.src = URL.createObjectURL(blob);
+      });
+
+      // Copy to clipboard using only PNG format (widely supported)
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          'image/png': pngBlob,
+        }),
+      ]);
+
+      window.showToast(t('common.toast.copiedToClipboard'), 'success');
+    } catch (error) {
+      console.error('Failed to copy image:', error);
+      window.showToast(t('common.errors.failedToCopy'), 'error');
+    }
+  }
+
   // Download image from URL
   async function downloadImage(src: string) {
     try {
@@ -613,7 +681,7 @@ export function useArticleDetail() {
     if (!article.value) return;
 
     try {
-      window.showToast(t('exportingToObsidian'), 'info');
+      window.showToast(t('setting.plugins.obsidian.exporting'), 'info');
 
       const response = await fetch('/api/articles/export/obsidian', {
         method: 'POST',
@@ -631,12 +699,13 @@ export function useArticleDetail() {
       const data = await response.json();
 
       // Show success message with file path
-      const message = data.message || t('exportedToObsidian');
+      const message = data.message || t('setting.plugins.obsidian.exported');
       const filePath = data.file_path ? ` (${data.file_path})` : '';
       window.showToast(message + filePath, 'success');
     } catch (error) {
       console.error('Failed to export to Obsidian:', error);
-      const message = error instanceof Error ? error.message : t('obsidianExportFailed');
+      const message =
+        error instanceof Error ? error.message : t('setting.plugins.obsidian.exportFailed');
       window.showToast(message, 'error');
     }
   }
@@ -754,6 +823,7 @@ export function useArticleDetail() {
     openOriginal,
     toggleContentView,
     closeImageViewer,
+    copyImage,
     downloadImage,
     exportToObsidian,
     attachImageEventListeners, // Expose for re-attaching after content modifications

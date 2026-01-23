@@ -37,7 +37,7 @@ function openDocumentation() {
 <template>
   <div class="mb-3 sm:mb-4">
     <label class="block mb-1 sm:mb-1.5 font-semibold text-xs sm:text-sm text-text-secondary"
-      >{{ t('selectScript') }}
+      >{{ t('setting.customization.selectScript') }}
       <span v-if="props.mode === 'add'" class="text-red-500">*</span></label
     >
     <div v-if="props.availableScripts.length > 0" class="mb-2">
@@ -46,7 +46,7 @@ function openDocumentation() {
         :class="['input-field', props.mode === 'add' && props.isInvalid ? 'border-red-500' : '']"
         @change="emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
       >
-        <option value="">{{ t('selectScriptPlaceholder') }}</option>
+        <option value="">{{ t('setting.customization.selectScriptPlaceholder') }}</option>
         <option v-for="script in props.availableScripts" :key="script.path" :value="script.path">
           {{ script.name }} ({{ script.type }})
         </option>
@@ -56,7 +56,7 @@ function openDocumentation() {
       v-else
       class="text-xs sm:text-sm text-text-secondary bg-bg-secondary rounded-md p-2 sm:p-3 border border-border"
     >
-      <p class="mb-2">{{ t('noScriptsFound') }}</p>
+      <p class="mb-2">{{ t('setting.customization.scriptsNotFound') }}</p>
     </div>
     <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-3">
       <button
@@ -65,7 +65,7 @@ function openDocumentation() {
         @click="openDocumentation"
       >
         <PhBookOpen :size="14" />
-        {{ t('scriptDocumentation') }}
+        {{ t('setting.customization.scriptDoc') }}
       </button>
       <button
         type="button"
@@ -73,7 +73,7 @@ function openDocumentation() {
         @click="openScriptsFolder"
       >
         <PhCode :size="14" />
-        {{ t('openScriptsFolder') }}
+        {{ t('setting.customization.scriptsFolder') }}
       </button>
     </div>
   </div>

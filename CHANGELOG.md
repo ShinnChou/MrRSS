@@ -5,6 +5,44 @@ All notable changes to MrRSS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.17] - 2026-01-24
+
+**Known Issues**: [wailsapp/wails/issues/4900](https://github.com/wailsapp/wails/issues/4900) reported that the UI on Windows may display unexpected borders due to a bug in Microsoft WebView2. This issue can only be resolved by Microsoft in future system updates.
+
+### Refactored
+
+- Refactored the settings page and i18n system for improved maintainability and extensibility.
+- Upgraded the Wails version and corresponding Go dependencies.
+
+### Added
+
+- Added support for thumbnail images in the gallery view for easier navigation. (#495)
+- Added the ability to filter images by category in the gallery view. (#487, #490)
+- Added support for translation between Traditional and Simplified Chinese. (#511)
+- Added the ability to copy images to the clipboard. (#515)
+- Enhanced the styling and user experience of the gallery mode. (#520)
+- Added support for customizing typography styles. (#488)
+- Added the ability to mark items above or below as read. (#390, #524)
+- Changed the default behavior to open links in an external browser. (#551)
+- Added the ability to jump to a specific feed by clicking on it in the settings page. (#548)
+- Added support for displaying multiple authors in a single feed. (#554)
+
+### Changed
+
+- Changed the checkbox checked indicator from an asterisk to a checkmark. (#507)
+- Improved the feed list in the settings page for better usability. (#498)
+- Made the protocol optional when adding or editing feeds. (#502)
+- Improved the performance of article content search. (#509)
+- Optimized the styling of compact mode. (#488, #504)
+
+### Fixed
+
+- Fixed multiple minor styling issues. (#492, #493, #494, #496, #503, #505, #506, #510, #516, #517, #519, #521, #522, #523, #550)
+- Fixed an issue where plain text could not be translated correctly. (#511, #514)
+- Fixed an issue where the reading status did not update correctly in gallery mode.
+- Fixed an issue where translation occurred even when the feature was disabled. (#541)
+- Fixed an issue where custom headers could accept non-ASCII characters. (#549)
+
 ## [1.3.16] - 2026-01-15
 
 ### Added

@@ -18,9 +18,14 @@ interface Props {
   unreadCount: number;
   isEditMode?: boolean;
   level?: number;
+  compactMode?: boolean;
 }
 
-defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  isEditMode: false,
+  level: 0,
+  compactMode: false,
+});
 
 const emit = defineEmits<{
   click: [];
@@ -36,32 +41,32 @@ function getFriendlyErrorMessage(error: string): string {
 
   // Network related errors
   if (error.includes('timeout') || error.includes('Timeout')) {
-    return t('feedErrorTimeout');
+    return t('modal.feed.errorTimeout');
   }
   if (error.includes('connection') || error.includes('Connection')) {
-    return t('feedErrorConnection');
+    return t('modal.feed.errorConnection');
   }
   if (error.includes('dns') || error.includes('DNS')) {
-    return t('feedErrorDNS');
+    return t('modal.feed.errorDNS');
   }
   if (error.includes('certificate') || error.includes('SSL') || error.includes('TLS')) {
-    return t('feedErrorCertificate');
+    return t('modal.feed.errorCertificate');
   }
 
   // HTTP errors
   if (error.includes('404')) {
-    return t('feedErrorNotFound');
+    return t('modal.feed.errorNotFound');
   }
   if (error.includes('401') || error.includes('403')) {
-    return t('feedErrorUnauthorized');
+    return t('modal.feed.errorUnauthorized');
   }
   if (error.includes('500') || error.includes('502') || error.includes('503')) {
-    return t('feedErrorServer');
+    return t('modal.feed.errorServer');
   }
 
   // Feed format errors
   if (error.includes('XML') || error.includes('parse') || error.includes('invalid')) {
-    return t('feedErrorInvalidFormat');
+    return t('modal.feed.errorInvalidFormat');
   }
 
   // Return original error if no specific message found
@@ -91,7 +96,7 @@ function handleDragEnd() {
 
 <template>
   <div
-    :class="['feed-item', isActive ? 'active' : '']"
+    :class="['feed-item', isActive ? 'active' : '', props.compactMode ? 'compact' : '']"
     :data-feed-id="feed.id"
     :data-level="level || 0"
     @click="emit('click')"
@@ -102,7 +107,7 @@ function handleDragEnd() {
       v-if="isEditMode && !feed.is_freshrss_source"
       class="drag-handle"
       draggable="true"
-      :title="t('dragToReorder')"
+      :title="t('modal.feed.dragToReorder')"
       @dragstart="handleDragStart"
       @dragend="handleDragEnd"
     >
@@ -113,7 +118,7 @@ function handleDragEnd() {
     <div
       v-if="isEditMode && feed.is_freshrss_source"
       class="freshrss-lock"
-      :title="t('freshRSSFeedLocked')"
+      :title="t('setting.freshrss.feedLocked')"
     >
       <PhLock :size="14" />
     </div>
@@ -132,20 +137,20 @@ function handleDragEnd() {
       v-if="isRSSHubFeed(feed)"
       src="/assets/plugin_icons/rsshub.svg"
       class="w-3.5 h-3.5 shrink-0"
-      :title="t('rsshubFeed')"
+      :title="t('setting.rsshub.feed')"
       alt="RSSHub"
     />
     <PhImage
       v-if="feed.is_image_mode"
       :size="16"
       class="text-accent shrink-0"
-      :title="t('imageMode')"
+      :title="t('setting.feed.imageMode')"
     />
     <PhEyeSlash
       v-if="feed.hide_from_timeline"
       :size="16"
       class="text-text-secondary shrink-0"
-      :title="t('hideFromTimeline')"
+      :title="t('setting.reading.hideFromTimeline')"
     />
 
     <!-- Warning icon with tooltip -->
@@ -175,7 +180,7 @@ function handleDragEnd() {
               <PhWarningCircle :size="14" class="text-yellow-500 shrink-0 mt-0.5" />
               <div class="flex-1 min-w-0">
                 <div class="text-xs font-semibold text-text-primary mb-1">
-                  {{ t('updateFailed') }}
+                  {{ t('setting.update.updateFailed') }}
                 </div>
                 <div class="text-xs text-text-secondary break-words leading-relaxed">
                   {{ getFriendlyErrorMessage(feed.last_error) }}
@@ -196,6 +201,11 @@ function handleDragEnd() {
 
 .feed-item {
   @apply px-2 sm:px-3 py-1.5 sm:py-2 cursor-pointer rounded-md text-xs sm:text-sm text-text-primary flex items-center gap-1.5 sm:gap-2.5 hover:bg-bg-tertiary transition-colors;
+}
+
+/* Compact mode: reduce padding and gap */
+.feed-item.compact {
+  @apply px-1 sm:px-1.5 py-0.5 sm:py-1 gap-0.5 sm:gap-1;
 }
 
 /* Indentation for nested feeds */
@@ -230,6 +240,41 @@ function handleDragEnd() {
 
   .feed-item[data-level='4'] {
     padding-left: calc(0.75rem + 4rem);
+  }
+}
+
+/* Compact mode indentation */
+.feed-item.compact[data-level='1'] {
+  padding-left: calc(0.375rem + 1rem);
+}
+
+.feed-item.compact[data-level='2'] {
+  padding-left: calc(0.375rem + 2rem);
+}
+
+.feed-item.compact[data-level='3'] {
+  padding-left: calc(0.375rem + 3rem);
+}
+
+.feed-item.compact[data-level='4'] {
+  padding-left: calc(0.375rem + 4rem);
+}
+
+@media (min-width: 640px) {
+  .feed-item.compact[data-level='1'] {
+    padding-left: calc(0.5rem + 1rem);
+  }
+
+  .feed-item.compact[data-level='2'] {
+    padding-left: calc(0.5rem + 2rem);
+  }
+
+  .feed-item.compact[data-level='3'] {
+    padding-left: calc(0.5rem + 3rem);
+  }
+
+  .feed-item.compact[data-level='4'] {
+    padding-left: calc(0.5rem + 4rem);
   }
 }
 .feed-item.active {

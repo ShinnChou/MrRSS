@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import {
   PhMusicNotes,
   PhSpeakerHigh,
@@ -32,6 +32,14 @@ const hasLoadedMetadata = ref(false); // Metadata loaded state
 // Local audio controls (not global settings)
 const playbackSpeed = ref(1.0);
 const volume = ref(1.0);
+
+// Load metadata on mount to display duration immediately
+onMounted(() => {
+  if (audioRef.value) {
+    // Load metadata to get duration without starting playback
+    audioRef.value.load();
+  }
+});
 
 // Speed options
 const speedOptions = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
@@ -79,7 +87,7 @@ async function togglePlay() {
     } catch (err) {
       console.error('[AudioPlayer] Failed to play audio:', err);
       hideLoading();
-      window.showToast(t('audioPlaybackError'), 'error');
+      window.showToast(t('article.audioPlayer.audioPlaybackError'), 'error');
     }
   }
 }
@@ -324,14 +332,16 @@ const downloadFilename = computed(() => {
   <div class="bg-bg-secondary border border-border rounded-lg p-4 mb-4 sm:mb-6">
     <div class="flex items-center gap-3 mb-3">
       <PhMusicNotes :size="20" class="text-accent flex-shrink-0" />
-      <span class="text-sm font-medium text-text-primary">{{ t('podcastAudio') }}</span>
+      <span class="text-sm font-medium text-text-primary">{{
+        t('article.audioPlayer.podcastAudio')
+      }}</span>
     </div>
 
     <!-- Audio element (hidden) -->
     <audio
       ref="audioRef"
       :src="audioUrl"
-      preload="none"
+      preload="metadata"
       @play="onPlay"
       @pause="onPause"
       @playing="onPlaying"
@@ -352,7 +362,7 @@ const downloadFilename = computed(() => {
         <!-- Skip backward button -->
         <button
           class="flex items-center justify-center w-8 h-8 rounded-full bg-bg-tertiary hover:bg-bg-hover transition-colors flex-shrink-0"
-          :title="t('skipBackward')"
+          :title="t('article.audioPlayer.skipBackward')"
           @click="skipBackward"
         >
           <PhRewind :size="16" class="text-text-primary" />
@@ -361,7 +371,7 @@ const downloadFilename = computed(() => {
         <!-- Play/Pause button -->
         <button
           class="flex items-center justify-center w-10 h-10 rounded-full bg-accent hover:bg-accent/90 transition-colors flex-shrink-0 relative"
-          :title="isPlaying ? t('pause') : t('play')"
+          :title="isPlaying ? t('article.audioPlayer.pause') : t('article.audioPlayer.play')"
           @click="togglePlay"
         >
           <PhSpinner v-if="isLoading" :size="20" class="text-white animate-spin" />
@@ -372,7 +382,7 @@ const downloadFilename = computed(() => {
         <!-- Skip forward button -->
         <button
           class="flex items-center justify-center w-8 h-8 rounded-full bg-bg-tertiary hover:bg-bg-hover transition-colors flex-shrink-0"
-          :title="t('skipForward')"
+          :title="t('article.audioPlayer.skipForward')"
           @click="skipForward"
         >
           <PhFastForward :size="16" class="text-text-primary" />
@@ -408,7 +418,7 @@ const downloadFilename = computed(() => {
               v-if="isLoading"
               class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-[10px] text-text-secondary font-medium px-2 py-0.5 bg-bg-tertiary/95 rounded-full backdrop-blur-sm whitespace-nowrap z-10"
             >
-              {{ t('loading') }}...
+              {{ t('common.pagination.loading') }}...
             </span>
           </div>
           <span class="text-xs text-text-secondary min-w-[40px]">{{ formatTime(duration) }}</span>
@@ -424,7 +434,7 @@ const downloadFilename = computed(() => {
           class="text-xs text-accent hover:underline flex items-center gap-1"
           target="_blank"
         >
-          {{ t('downloadAudio') }}
+          {{ t('common.contextMenu.downloadAudio') }}
         </a>
 
         <!-- Controls -->
@@ -432,7 +442,7 @@ const downloadFilename = computed(() => {
           <!-- Playback speed control -->
           <button
             class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-bg-tertiary hover:bg-bg-tertiary/80 transition-colors text-xs font-medium text-text-primary min-w-[70px]"
-            :title="t('playbackSpeed')"
+            :title="t('article.audioPlayer.playbackSpeed')"
             @click="cycleSpeed"
           >
             <PhGauge :size="12" class="text-text-secondary" />
@@ -449,7 +459,7 @@ const downloadFilename = computed(() => {
               step="0.05"
               :value="volume"
               class="w-20 h-1.5 bg-bg-tertiary rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:hover:scale-125"
-              :title="t('volume')"
+              :title="t('article.audioPlayer.volume')"
               @input="onVolumeChange"
             />
             <span class="text-xs text-text-secondary w-[35px] text-right"

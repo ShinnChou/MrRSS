@@ -24,6 +24,7 @@ const emit = defineEmits<{
   'batch-move': [ids: number[]];
   'discover-all': [];
   'update:settings': [settings: SettingsData];
+  'select-feed': [feedId: number];
 }>();
 
 // Create a computed ref that returns the settings object
@@ -69,6 +70,10 @@ function handleBatchDelete(ids: number[]) {
 function handleBatchMove(ids: number[]) {
   emit('batch-move', ids);
 }
+
+function handleSelectFeed(feedId: number) {
+  emit('select-feed', feedId);
+}
 </script>
 
 <template>
@@ -85,6 +90,7 @@ function handleBatchMove(ids: number[]) {
       @delete-feed="handleDeleteFeed"
       @batch-delete="handleBatchDelete"
       @batch-move="handleBatchMove"
+      @select-feed="handleSelectFeed"
     />
 
     <DiscoverySettings @discover-all="handleDiscoverAll" />

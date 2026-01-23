@@ -31,6 +31,37 @@ let styleElement: HTMLStyleElement | null = null;
 
 const hasCustomCSS = computed(() => !!settings.value.custom_css_file);
 
+// Content styling based on settings
+const contentStyle = computed(() => {
+  const fontFamily = settings.value.content_font_family;
+  const fontSize = parseInt(settings.value.content_font_size as any) || 16;
+  const lineHeight = settings.value.content_line_height || '1.6';
+
+  let fontFamilyCss = '';
+  if (fontFamily === 'system') {
+    // Use system default stack - let CSS handle it
+    fontFamilyCss = '';
+  } else if (fontFamily === 'serif') {
+    fontFamilyCss = 'Georgia, "Times New Roman", Times, serif';
+  } else if (fontFamily === 'sans-serif') {
+    fontFamilyCss =
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+  } else if (fontFamily === 'monospace') {
+    fontFamilyCss = '"Courier New", Courier, monospace';
+  } else {
+    // Use the specific font name selected by user
+    fontFamilyCss = `"${fontFamily}"`;
+  }
+
+  const style = {
+    fontFamily: fontFamilyCss || undefined,
+    fontSize: `${fontSize}px`, // Always apply font size
+    lineHeight: lineHeight,
+  };
+
+  return style;
+});
+
 const injectCustomCSS = (css: string) => {
   // Remove existing style element if any
   if (styleElement && styleElement.parentNode) {
@@ -46,25 +77,19 @@ const injectCustomCSS = (css: string) => {
 
   // Inject to document head
   document.head.appendChild(styleElement);
-
-  console.log('Custom CSS injected to head, length:', css.length);
 };
 
 const removeCustomCSS = () => {
   if (styleElement && styleElement.parentNode) {
     styleElement.parentNode.removeChild(styleElement);
     styleElement = null;
-    console.log('Custom CSS removed');
   }
 };
 
 const loadCustomCSS = async () => {
-  console.log('Loading custom CSS, custom_css_file:', settings.value.custom_css_file);
-
   // First, refresh settings from backend to get latest custom_css_file value
   try {
     await fetchSettings();
-    console.log('Settings refreshed, custom_css_file:', settings.value.custom_css_file);
   } catch (error) {
     console.error('Failed to refresh settings:', error);
   }
@@ -126,26 +151,27 @@ onUnmounted(() => {
     <div
       class="prose prose-sm sm:prose-lg max-w-none text-text-primary prose-content"
       :class="{ 'custom-css-active': hasCustomCSS }"
+      :style="contentStyle"
       v-html="articleContent"
     ></div>
     <!-- Translation loading indicator -->
     <div v-if="isTranslatingContent" class="flex items-center gap-2 mt-4 text-text-secondary">
       <PhSpinnerGap :size="16" class="animate-spin" />
-      <span class="text-sm">{{ t('translatingContent') }}</span>
+      <span class="text-sm">{{ t('setting.content.translatingContent') }}</span>
     </div>
   </div>
 
   <!-- No content available with retry option -->
   <div v-else-if="!hasMediaContent" class="text-center text-text-secondary py-6 sm:py-8">
     <PhArticle :size="48" class="mb-2 sm:mb-3 opacity-50 mx-auto sm:w-16 sm:h-16" />
-    <p class="text-sm sm:text-base mb-4">{{ t('noContentAvailable') }}</p>
+    <p class="text-sm sm:text-base mb-4">{{ t('article.content.noContentAvailable') }}</p>
     <button
       v-if="!props.isLoadingContent"
       class="btn-secondary-compact flex items-center gap-1.5 mx-auto"
       @click="emit('retryLoad')"
     >
       <PhArrowClockwise :size="12" />
-      <span class="text-xs">{{ t('retrySummary') }}</span>
+      <span class="text-xs">{{ t('setting.content.retrySummary') }}</span>
     </button>
   </div>
 </template>

@@ -301,8 +301,10 @@ onUnmounted(() => {
           v-if="
             !article.translated_title || article.translated_title === article.title || compactMode
           "
-          class="flex-1 m-0 mb-1 sm:mb-1.5 text-sm sm:text-base font-semibold leading-snug text-text-primary article-title"
+          class="flex-1 m-0 text-base sm:text-base font-semibold leading-snug text-text-primary article-title"
           :class="{
+            'mb-0.5 sm:mb-1': !compactMode,
+            'mb-0': compactMode,
             'compact-title': compactMode,
             'read-title': article.is_read && compactMode,
           }"
@@ -326,12 +328,12 @@ onUnmounted(() => {
         <!-- Non-compact mode with translation: separate lines -->
         <div v-else class="flex-1">
           <h4
-            class="m-0 mb-0.5 sm:mb-1 text-sm sm:text-base font-semibold leading-snug text-text-primary article-title"
+            class="m-0 mb-0 sm:mb-0.5 text-base sm:text-base font-semibold leading-snug text-text-primary article-title"
           >
             {{ article.translated_title }}
           </h4>
           <div
-            class="text-[10px] sm:text-xs text-text-secondary italic mb-0.5 sm:mb-1 article-title"
+            class="text-[9px] sm:text-xs text-text-secondary italic mb-0.5 sm:mb-1 article-title"
           >
             {{ article.title }}
           </div>
@@ -340,7 +342,7 @@ onUnmounted(() => {
           v-if="article.is_hidden"
           :size="18"
           class="text-text-secondary flex-shrink-0 sm:w-5 sm:h-5"
-          :title="t('hideArticle')"
+          :title="t('article.action.hideArticle')"
         />
         <!-- Compact mode icons on the right -->
         <div
@@ -359,7 +361,7 @@ onUnmounted(() => {
             v-if="article.freshrss_item_id"
             src="/assets/plugin_icons/freshrss.svg"
             class="w-4 h-4 shrink-0"
-            :title="t('freshRSSSyncedFeed')"
+            :title="t('setting.freshrss.syncedFeed')"
             alt="FreshRSS"
           />
           <!-- RSSHub indicator -->
@@ -367,48 +369,61 @@ onUnmounted(() => {
             v-if="isRSSHubArticle"
             src="/assets/plugin_icons/rsshub.svg"
             class="w-4 h-4 shrink-0"
-            :title="t('rsshubFeed')"
+            :title="t('setting.rsshub.feed')"
             alt="RSSHub"
           />
         </div>
       </div>
 
+      <!-- Feed source name and time - shown in both normal and compact mode -->
       <div
-        v-if="!compactMode"
-        class="flex justify-between items-center text-[10px] sm:text-xs text-text-secondary mt-1.5 sm:mt-2"
+        class="flex justify-between items-center text-[11px] sm:text-xs text-text-secondary"
+        :class="{
+          'mt-0 sm:mt-1': !compactMode,
+          'mt-0': compactMode,
+        }"
       >
-        <span class="font-medium text-accent truncate flex-1 min-w-0 mr-2">
-          {{ article.feed_title }}
+        <span class="flex items-center gap-1.5 truncate flex-1 min-w-0 mr-2">
+          <span class="font-medium text-accent">{{ article.feed_title }}</span>
+          <template v-if="article.author && article.author !== article.feed_title">
+            <span
+              class="text-[11px] sm:text-[11px] text-text-secondary opacity-75 truncate max-w-[120px]"
+              >{{ article.author }}</span
+            >
+          </template>
         </span>
         <div class="flex items-center gap-1 sm:gap-2 shrink-0 min-h-[14px] sm:min-h-[18px]">
-          <PhClockCountdown
-            v-if="article.is_read_later"
-            :size="14"
-            class="text-blue-500 sm:w-[18px] sm:h-[18px]"
-            weight="fill"
-          />
-          <PhStar
-            v-if="article.is_favorite"
-            :size="14"
-            class="text-yellow-500 sm:w-[18px] sm:h-[18px]"
-            weight="fill"
-          />
-          <!-- FreshRSS indicator -->
-          <img
-            v-if="article.freshrss_item_id"
-            src="/assets/plugin_icons/freshrss.svg"
-            class="w-3.5 h-3.5 shrink-0 sm:w-4 sm:h-4"
-            :title="t('freshRSSSyncedFeed')"
-            alt="FreshRSS"
-          />
-          <!-- RSSHub indicator -->
-          <img
-            v-if="isRSSHubArticle"
-            src="/assets/plugin_icons/rsshub.svg"
-            class="w-3.5 h-3.5 shrink-0 sm:w-4 sm:h-4"
-            :title="t('rsshubFeed')"
-            alt="RSSHub"
-          />
+          <!-- Icons only shown in normal mode -->
+          <template v-if="!compactMode">
+            <PhClockCountdown
+              v-if="article.is_read_later"
+              :size="14"
+              class="text-blue-500 sm:w-[18px] sm:h-[18px]"
+              weight="fill"
+            />
+            <PhStar
+              v-if="article.is_favorite"
+              :size="14"
+              class="text-yellow-500 sm:w-[18px] sm:h-[18px]"
+              weight="fill"
+            />
+            <!-- FreshRSS indicator -->
+            <img
+              v-if="article.freshrss_item_id"
+              src="/assets/plugin_icons/freshrss.svg"
+              class="w-3.5 h-3.5 shrink-0 sm:w-4 sm:h-4"
+              :title="t('setting.freshrss.syncedFeed')"
+              alt="FreshRSS"
+            />
+            <!-- RSSHub indicator -->
+            <img
+              v-if="isRSSHubArticle"
+              src="/assets/plugin_icons/rsshub.svg"
+              class="w-3.5 h-3.5 shrink-0 sm:w-4 sm:h-4"
+              :title="t('setting.rsshub.feed')"
+              alt="RSSHub"
+            />
+          </template>
           <span class="whitespace-nowrap">{{ formatDateWithI18n(article.published_at) }}</span>
         </div>
       </div>
@@ -420,7 +435,7 @@ onUnmounted(() => {
 @reference "../../style.css";
 
 .article-card {
-  @apply p-2 sm:p-3 border-b border-border cursor-pointer transition-colors flex gap-2 sm:gap-3 relative border-l-2 sm:border-l-[3px] border-l-transparent;
+  @apply py-2 px-1.5 sm:p-3 border-b border-border cursor-pointer transition-colors flex gap-2 sm:gap-3 relative border-l-2 sm:border-l-[3px] border-l-transparent;
 }
 
 /* Compact mode: reduce padding */
@@ -518,5 +533,48 @@ onUnmounted(() => {
   @apply w-full h-full bg-bg-tertiary animate-pulse;
   /* Minimal styling for loading state */
   contain: layout style;
+}
+
+/* Responsive optimizations for medium screens */
+@media (max-width: 1400px) {
+  /* Smaller thumbnails */
+  .article-thumbnail,
+  .article-thumbnail-placeholder {
+    width: 56px !important;
+    height: 42px !important;
+  }
+
+  /* Smaller title font */
+  .article-card .article-title {
+    font-size: 0.938rem !important; /* 15px, increased from 14px */
+  }
+
+  /* Smaller metadata font */
+  .article-card .text-xs {
+    font-size: 0.688rem !important; /* 11px */
+  }
+
+  .article-card .text-\[11px\] {
+    font-size: 0.688rem !important; /* 11px */
+  }
+
+  /* Tighter spacing */
+  .article-card {
+    padding: 0.5rem 0.5rem !important; /* py-2 px-1.5 -> py-2 px-1.5 (8px 6px) */
+    gap: 0.5rem !important; /* gap-2 sm:gap-3 -> gap-2 */
+  }
+
+  /* Smaller icon sizes */
+  .article-card .text-sm {
+    font-size: 0.75rem !important; /* 12px */
+  }
+
+  .article-card .text-\[9px\] {
+    font-size: 0.563rem !important; /* 9px */
+  }
+
+  .article-card .text-\[11px\] {
+    font-size: 0.688rem !important; /* 11px */
+  }
 }
 </style>

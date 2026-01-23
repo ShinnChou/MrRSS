@@ -12,7 +12,7 @@
             "name": "GPL-3.0",
             "url": "https://www.gnu.org/licenses/gpl-3.0.en.html"
         },
-        "version": "1.3.16"
+        "version": "1.3.17"
     },
     "host": "localhost:1234",
     "basePath": "/api",
@@ -1024,6 +1024,12 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "Filter by category name",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
                         "minimum": 1,
                         "type": "integer",
                         "description": "Page number (default: 1)",
@@ -1157,6 +1163,91 @@
                         "description": "Article marked and sync triggered successfully",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/mark-relative": {
+            "post": {
+                "description": "Marks articles as read based on their published time relative to a reference article (above = newer, below = older)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "articles"
+                ],
+                "summary": "Mark articles relative to reference article",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Reference article ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "above",
+                            "below"
+                        ],
+                        "type": "string",
+                        "description": "Direction: 'above' for newer articles, 'below' for older articles",
+                        "name": "direction",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Optional: only mark articles from this feed",
+                        "name": "feed_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Optional: only mark articles from this category",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Number of articles marked as read",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Article not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
@@ -3693,6 +3784,49 @@
                 }
             }
         },
+        "/translation/test-custom": {
+            "post": {
+                "description": "Test a custom translation API configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "translation"
+                ],
+                "summary": "Test custom translation",
+                "parameters": [
+                    {
+                        "description": "Test request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/translation.TestCustomTranslationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Test result",
+                        "schema": {
+                            "$ref": "#/definitions/translation.TestCustomTranslationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/translations/clear": {
             "post": {
                 "description": "Clear all translated article titles from the database",
@@ -4529,7 +4663,7 @@
                     "type": "string"
                 },
                 "refresh_interval": {
-                    "description": "Custom refresh interval in minutes (0 = use global, -1 = intelligent, \u003e0 = custom minutes)",
+                    "description": "Custom refresh interval in minutes (0 = use global, -1 = intelligent, -2 = never, \u003e0 = custom minutes)",
                     "type": "integer"
                 },
                 "script_path": {
@@ -4748,6 +4882,79 @@
                     "additionalProperties": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "translation.CustomTranslatorConfig": {
+            "type": "object",
+            "properties": {
+                "bodyTemplate": {
+                    "description": "Request body template with placeholders",
+                    "type": "string"
+                },
+                "endpoint": {
+                    "description": "API endpoint URL",
+                    "type": "string"
+                },
+                "headers": {
+                    "description": "Custom HTTP headers",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "langCodeMapping": {
+                    "description": "Custom language code mapping",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "method": {
+                    "description": "HTTP method (GET/POST)",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Configuration name",
+                    "type": "string"
+                },
+                "responsePath": {
+                    "description": "JSONPath to extract translation from response",
+                    "type": "string"
+                },
+                "timeout": {
+                    "description": "Request timeout in seconds",
+                    "type": "integer"
+                }
+            }
+        },
+        "translation.TestCustomTranslationRequest": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "$ref": "#/definitions/translation.CustomTranslatorConfig"
+                },
+                "target_lang": {
+                    "type": "string",
+                    "example": "zh"
+                },
+                "text": {
+                    "type": "string",
+                    "example": "Hello, world!"
+                }
+            }
+        },
+        "translation.TestCustomTranslationResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },

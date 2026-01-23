@@ -20,8 +20,8 @@ withDefaults(defineProps<Props>(), {
 });
 
 // Use i18n translations if not provided
-const getConfirmText = (customText?: string) => customText || t('confirm');
-const getCancelText = (customText?: string) => customText || t('cancel');
+const getConfirmText = (customText?: string) => customText || t('common.confirm');
+const getCancelText = (customText?: string) => customText || t('common.cancel');
 
 const emit = defineEmits<{
   confirm: [];

@@ -150,9 +150,17 @@ const emitShowSettings = () => window.dispatchEvent(new CustomEvent('show-settin
   z-index: 10;
 }
 
-@media (max-width: 767px) {
+/* Smaller screens (laptops, tablets) */
+@media (max-width: 1400px) {
   .feed-drawer-wrapper:not(.pinned) {
     left: 48px;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 767px) {
+  .feed-drawer-wrapper:not(.pinned) {
+    left: 44px;
   }
 }
 

@@ -26,12 +26,6 @@ export function useSidebar() {
     savedCategories ? new Set(JSON.parse(savedCategories)) : new Set()
   );
 
-  // Load saved pinned categories from localStorage
-  const savedPinnedCategories = localStorage.getItem('pinnedCategories');
-  const pinnedCategories: Ref<Set<string>> = ref(
-    savedPinnedCategories ? new Set(JSON.parse(savedPinnedCategories)) : new Set()
-  );
-
   const searchQuery: Ref<string> = ref('');
 
   // Build category tree with search filtering and filter-specific filtering
@@ -92,14 +86,35 @@ export function useSidebar() {
     return { tree: t, uncategorized, categories };
   });
 
-  // Compute unread counts for categories
+  // Compute unread counts for categories based on current filter
   const categoryUnreadCounts = computed<Record<string, number>>(() => {
     const counts: Record<string, number> = {};
     if (!store.feeds || !store.unreadCounts.feedCounts) return counts;
 
+    // Determine which counts to use based on current filter
+    let countsSource: Record<number | string, number>;
+    switch (store.currentFilter) {
+      case 'favorites':
+        countsSource = store.filterCounts.favorites_unread;
+        break;
+      case 'readLater':
+        countsSource = store.filterCounts.read_later_unread;
+        break;
+      case 'unread':
+        countsSource = store.filterCounts.unread;
+        break;
+      case 'imageGallery':
+        countsSource = store.filterCounts.images_unread;
+        break;
+      default:
+        // For 'all' or empty filter, use regular unread counts
+        countsSource = store.unreadCounts.feedCounts;
+        break;
+    }
+
     store.feeds.forEach((feed: Feed) => {
       if (feed.category) {
-        const unreadCount = store.unreadCounts.feedCounts[feed.id] || 0;
+        const unreadCount = countsSource[feed.id] || 0;
         if (unreadCount > 0) {
           counts[feed.category] = (counts[feed.category] || 0) + unreadCount;
         }
@@ -109,10 +124,30 @@ export function useSidebar() {
     // Calculate uncategorized count
     const uncategorizedFeeds = store.feeds.filter((f) => !f.category);
     counts['uncategorized'] = uncategorizedFeeds.reduce((sum, feed) => {
-      return sum + (store.unreadCounts.feedCounts[feed.id] || 0);
+      return sum + (countsSource[feed.id] || 0);
     }, 0);
 
     return counts;
+  });
+
+  // Compute feed unread counts based on current filter (for displaying on individual feeds)
+  const feedUnreadCounts = computed<Record<number, number>>(() => {
+    if (!store.feeds) return {};
+
+    // Determine which counts to use based on current filter
+    switch (store.currentFilter) {
+      case 'favorites':
+        return store.filterCounts.favorites_unread;
+      case 'readLater':
+        return store.filterCounts.read_later_unread;
+      case 'unread':
+        return store.filterCounts.unread;
+      case 'imageGallery':
+        return store.filterCounts.images_unread;
+      default:
+        // For 'all' or empty filter, use regular unread counts
+        return store.unreadCounts.feedCounts;
+    }
   });
 
   // Auto-expand new categories only if no saved state exists
@@ -168,28 +203,14 @@ export function useSidebar() {
     return openCategories.value.has(path);
   }
 
-  function togglePinCategory(path: string): void {
-    if (pinnedCategories.value.has(path)) {
-      pinnedCategories.value.delete(path);
-    } else {
-      pinnedCategories.value.add(path);
-    }
-    // Save to localStorage
-    localStorage.setItem('pinnedCategories', JSON.stringify([...pinnedCategories.value]));
-  }
-
-  function isCategoryPinned(path: string): boolean {
-    return pinnedCategories.value.has(path);
-  }
-
   // Feed actions
   async function handleFeedAction(action: string, feed: Feed): Promise<void> {
     if (action === 'markAllRead') {
       await store.markAllAsRead(feed.id);
-      window.showToast(t('markedAllAsRead'), 'success');
+      window.showToast(t('article.action.markedAllAsRead'), 'success');
     } else if (action === 'refreshFeed') {
       await fetch(`/api/feeds/refresh?id=${feed.id}`, { method: 'POST' });
-      window.showToast(t('feedRefreshStarted'), 'success');
+      window.showToast(t('modal.feed.feedRefreshStarted'), 'success');
       // Start polling for progress as the backend is now fetching articles for this feed
       store.pollProgress();
     } else if (action === 'syncFeed') {
@@ -197,21 +218,21 @@ export function useSidebar() {
       await fetch(`/api/freshrss/sync-feed?stream_id=${feed.freshrss_stream_id}`, {
         method: 'POST',
       });
-      window.showToast(t('syncFeedStarted'), 'success');
+      window.showToast(t('modal.feed.syncFeedStarted'), 'success');
       // Start polling for progress
       store.pollProgress();
     } else if (action === 'delete') {
       const confirmed = await window.showConfirm({
-        title: t('unsubscribeTitle'),
-        message: t('unsubscribeMessage', { name: feed.title }),
-        confirmText: t('unsubscribe'),
-        cancelText: t('cancel'),
+        title: t('modal.feed.unsubscribeTitle'),
+        message: t('modal.feed.unsubscribeMessage', { name: feed.title }),
+        confirmText: t('common.action.unsubscribe'),
+        cancelText: t('common.action.cancel'),
         isDanger: true,
       });
       if (confirmed) {
         await fetch(`/api/feeds/delete?id=${feed.id}`, { method: 'POST' });
         store.fetchFeeds();
-        window.showToast(t('unsubscribedSuccess'), 'success');
+        window.showToast(t('modal.feed.unsubscribedSuccess'), 'success');
       }
     } else if (action === 'edit') {
       window.dispatchEvent(new CustomEvent('show-edit-feed', { detail: feed }));
@@ -234,14 +255,15 @@ export function useSidebar() {
             } else {
               // Invalid transformed URL
               window.showToast(
-                t('failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL',
+                t('common.errors.failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL',
                 'error'
               );
               return;
             }
           } else {
             // Transformation failed - try to get error message from response
-            let errorMessage = t('failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL';
+            let errorMessage =
+              t('common.errors.failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL';
             try {
               const errorText = await response.text();
               if (errorText) {
@@ -255,7 +277,7 @@ export function useSidebar() {
           }
         } catch (error) {
           window.showToast(
-            t('failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL',
+            t('common.errors.failedToTransformRSSHubURL') || 'Failed to transform RSSHub URL',
             'error'
           );
           return;
@@ -265,7 +287,7 @@ export function useSidebar() {
       if (urlToOpen.startsWith('http://') || urlToOpen.startsWith('https://')) {
         openInBrowser(urlToOpen);
       } else {
-        window.showToast(t('invalidURLScheme') || 'Invalid URL scheme', 'error');
+        window.showToast(t('common.errors.invalidURLScheme') || 'Invalid URL scheme', 'error');
       }
     } else if (action === 'discover') {
       window.dispatchEvent(new CustomEvent('show-discover-blogs', { detail: feed }));
@@ -287,25 +309,46 @@ export function useSidebar() {
 
     // For FreshRSS feeds, show "Sync Feed" instead of "Refresh Feed"
     if (feed.is_freshrss_source) {
-      items.push({ label: t('syncFeed'), action: 'syncFeed', icon: 'PhArrowsClockwise' });
+      items.push({
+        label: t('modal.feed.syncFeed'),
+        action: 'syncFeed',
+        icon: 'PhArrowsClockwise',
+      });
     } else {
-      items.push({ label: t('refreshFeed'), action: 'refreshFeed', icon: 'PhArrowsClockwise' });
+      items.push({
+        label: t('article.action.refreshFeed'),
+        action: 'refreshFeed',
+        icon: 'PhArrowsClockwise',
+      });
     }
 
-    items.push({ label: t('markAllAsReadFeed'), action: 'markAllRead', icon: 'PhCheckCircle' });
+    items.push({
+      label: t('article.action.markAllAsReadFeed'),
+      action: 'markAllRead',
+      icon: 'PhCheckCircle',
+    });
     items.push({ separator: true });
-    items.push({ label: t('openWebsite'), action: 'openWebsite', icon: 'PhGlobe' });
+    items.push({ label: t('common.action.openWebsite'), action: 'openWebsite', icon: 'PhGlobe' });
 
     // Only add discover for non-FreshRSS feeds
     if (!feed.is_freshrss_source) {
-      items.push({ label: t('discoverFeeds'), action: 'discover', icon: 'PhBinoculars' });
+      items.push({
+        label: t('modal.discovery.discoverFeeds'),
+        action: 'discover',
+        icon: 'PhBinoculars',
+      });
     }
 
     // Only add edit and delete options for non-FreshRSS feeds
     if (!feed.is_freshrss_source) {
       items.push({ separator: true });
-      items.push({ label: t('editSubscription'), action: 'edit', icon: 'PhPencil' });
-      items.push({ label: t('unsubscribe'), action: 'delete', icon: 'PhTrash', danger: true });
+      items.push({ label: t('modal.feed.editSubscription'), action: 'edit', icon: 'PhPencil' });
+      items.push({
+        label: t('common.action.unsubscribe'),
+        action: 'delete',
+        icon: 'PhTrash',
+        danger: true,
+      });
     }
 
     window.dispatchEvent(
@@ -330,20 +373,14 @@ export function useSidebar() {
         method: 'POST',
       });
       store.fetchUnreadCounts();
-      window.showToast(t('markedAllAsRead'), 'success');
-    } else if (action === 'togglePin') {
-      togglePinCategory(categoryName);
-      window.showToast(
-        isCategoryPinned(categoryName) ? t('categoryPinned') : t('categoryUnpinned'),
-        'success'
-      );
+      window.showToast(t('article.action.markedAllAsRead'), 'success');
     } else if (action === 'rename') {
       const newName = await window.showInput({
-        title: t('renameCategory'),
-        message: t('enterCategoryName'),
+        title: t('modal.feed.renameCategory'),
+        message: t('modal.feed.enterCategoryName'),
         defaultValue: categoryName,
-        confirmText: t('confirm'),
-        cancelText: t('cancel'),
+        confirmText: t('common.action.confirm'),
+        cancelText: t('common.action.cancel'),
       });
       if (newName && newName !== categoryName) {
         const feedsToUpdate = store.feeds.filter(
@@ -380,21 +417,17 @@ export function useSidebar() {
     e.preventDefault();
     e.stopPropagation();
 
-    const isPinned = isCategoryPinned(categoryName);
-
     const items: Array<{ label?: string; action?: string; icon?: string; separator?: boolean }> = [
-      { label: t('markAllAsReadFeed'), action: 'markAllRead', icon: 'ph-check-circle' },
+      {
+        label: t('article.action.markAllAsReadFeed'),
+        action: 'markAllRead',
+        icon: 'ph-check-circle',
+      },
     ];
 
     if (categoryName !== 'uncategorized') {
       items.push({ separator: true });
-      items.push({
-        label: isPinned ? t('unpinCategory') : t('pinCategory'),
-        action: 'togglePin',
-        icon: isPinned ? 'ph-push-pin-slash' : 'ph-push-pin',
-      });
-      items.push({ separator: true });
-      items.push({ label: t('renameCategory'), action: 'rename', icon: 'ph-pencil' });
+      items.push({ label: t('modal.feed.renameCategory'), action: 'rename', icon: 'ph-pencil' });
     }
 
     window.dispatchEvent(
@@ -413,13 +446,11 @@ export function useSidebar() {
   return {
     tree,
     categoryUnreadCounts,
+    feedUnreadCounts,
     openCategories,
-    pinnedCategories,
     searchQuery,
     toggleCategory,
     isCategoryOpen,
-    togglePinCategory,
-    isCategoryPinned,
     onFeedContextMenu,
     onCategoryContextMenu,
   };

@@ -7,6 +7,7 @@ import RuleEditorModal from '../../rules/RuleEditorModal.vue';
 import RuleItem from './RuleItem.vue';
 import type { Condition } from '@/composables/rules/useRuleOptions';
 import type { SettingsData } from '@/types/settings';
+import { ButtonControl, SettingGroup, SettingItem } from '@/components/settings';
 
 const store = useAppStore();
 const { t } = useI18n();
@@ -112,10 +113,10 @@ function editRule(rule: Rule): void {
 // Delete rule
 async function deleteRule(ruleId: number): Promise<void> {
   const confirmed = await window.showConfirm({
-    title: t('ruleDeleteConfirmTitle'),
-    message: t('ruleDeleteConfirmMessage'),
-    confirmText: t('delete'),
-    cancelText: t('cancel'),
+    title: t('modal.rule.deleteConfirmTitle'),
+    message: t('modal.rule.deleteConfirmMessage'),
+    confirmText: t('common.delete'),
+    cancelText: t('common.cancel'),
     isDanger: true,
   });
 
@@ -123,7 +124,7 @@ async function deleteRule(ruleId: number): Promise<void> {
 
   rules.value = rules.value.filter((r) => r.id !== ruleId);
   await saveRules();
-  window.showToast(t('ruleDeletedSuccess'), 'success');
+  window.showToast(t('modal.rule.deletedSuccess'), 'success');
 }
 
 // Toggle rule enabled state
@@ -153,7 +154,7 @@ async function handleSaveRule(rule: Rule): Promise<void> {
 
   await saveRules();
   showRuleEditor.value = false;
-  window.showToast(t('ruleSavedSuccess'), 'success');
+  window.showToast(t('modal.rule.savedSuccess'), 'success');
 
   // Apply rule to existing articles when adding a new rule
   if (isNew && rule.enabled) {
@@ -175,15 +176,15 @@ async function applyRule(rule: Rule): Promise<void> {
 
     if (res.ok) {
       const data = await res.json();
-      window.showToast(t('ruleAppliedSuccess', { count: data.affected }), 'success');
+      window.showToast(t('modal.rule.ruleAppliedSuccess', { count: data.affected }), 'success');
       store.fetchArticles();
       store.fetchUnreadCounts();
     } else {
-      window.showToast(t('errorSavingSettings'), 'error');
+      window.showToast(t('common.errors.savingSettings'), 'error');
     }
   } catch (e) {
     console.error('Error applying rule:', e);
-    window.showToast(t('errorSavingSettings'), 'error');
+    window.showToast(t('common.errors.savingSettings'), 'error');
   } finally {
     applyingRuleId.value = null;
   }
@@ -300,34 +301,27 @@ async function onDrop(targetRuleId: number, event: DragEvent) {
 
 <template>
   <div class="space-y-4 sm:space-y-6">
-    <div class="setting-group">
-      <label
-        class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
-      >
-        <PhLightning :size="14" class="sm:w-4 sm:h-4" />
-        {{ t('rules') }}
-      </label>
-
+    <SettingGroup :icon="PhLightning" :title="t('modal.rule.rules')">
       <!-- Header with description and add button -->
-      <div class="setting-item mb-2 sm:mb-3">
-        <div class="flex-1 flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
-          <PhLightning :size="20" class="text-text-secondary mt-0.5 shrink-0 sm:w-6 sm:h-6" />
-          <div class="flex-1 min-w-0">
-            <div class="font-medium mb-0 sm:mb-1 text-sm sm:text-base">{{ t('rules') }}</div>
-            <div class="text-xs text-text-secondary hidden sm:block">{{ t('rulesDesc') }}</div>
-          </div>
-        </div>
-        <button class="btn-secondary" @click="addRule">
-          <PhPlus :size="16" class="sm:w-5 sm:h-5" />
-          <span class="hidden sm:inline">{{ t('addRule') }}</span>
-        </button>
-      </div>
+      <SettingItem
+        :icon="PhLightning"
+        :title="t('modal.rule.rules')"
+        :description="t('modal.rule.rulesDesc')"
+        class="mb-2 sm:mb-3"
+      >
+        <ButtonControl
+          :label="t('setting.rule.addRule')"
+          :icon="PhPlus"
+          type="secondary"
+          @click="addRule"
+        />
+      </SettingItem>
 
       <!-- Empty state -->
       <div v-if="rules.length === 0" class="empty-state">
         <PhLightning :size="48" class="mx-auto mb-3 opacity-30" />
-        <p class="text-text-secondary text-sm sm:text-base">{{ t('noRules') }}</p>
-        <p class="text-text-secondary text-xs mt-1">{{ t('noRulesHint') }}</p>
+        <p class="text-text-secondary text-sm sm:text-base">{{ t('setting.rule.noRules') }}</p>
+        <p class="text-text-secondary text-xs mt-1">{{ t('setting.rule.noRulesHint') }}</p>
       </div>
 
       <!-- Rules List -->
@@ -353,7 +347,7 @@ async function onDrop(targetRuleId: number, event: DragEvent) {
           />
         </transition-group>
       </div>
-    </div>
+    </SettingGroup>
 
     <!-- Rule Editor Modal -->
     <RuleEditorModal
@@ -368,14 +362,6 @@ async function onDrop(targetRuleId: number, event: DragEvent) {
 
 <style scoped>
 @reference "../../../../style.css";
-
-.setting-item {
-  @apply flex items-center sm:items-start justify-between gap-2 sm:gap-4 p-2 sm:p-3 rounded-lg bg-bg-secondary border border-border;
-}
-
-.btn-secondary {
-  @apply bg-bg-tertiary border border-border text-text-primary px-3 sm:px-4 py-1.5 sm:py-2 rounded-md cursor-pointer flex items-center gap-1.5 sm:gap-2 font-medium hover:bg-bg-secondary transition-colors;
-}
 
 .empty-state {
   @apply text-center py-8 sm:py-12;

@@ -202,7 +202,7 @@ async function submit() {
           if (rsshubResult.success) {
             emit('added');
             resetForm();
-            window.showToast(t('feedAddedSuccess'), 'success');
+            window.showToast(t('modal.feed.feedAddedSuccess'), 'success');
             close();
             return;
           }
@@ -214,7 +214,7 @@ async function submit() {
       } catch (e) {
         console.error('RSSHub add failed:', e);
         window.showToast(
-          `${t('errorAddingFeed')}: ${e instanceof Error ? e.message : 'Unknown error'}`,
+          `${t('common.errors.addingFeed')}: ${e instanceof Error ? e.message : 'Unknown error'}`,
           'error'
         );
         isSubmitting.value = false;
@@ -233,10 +233,10 @@ async function submit() {
       if (props.mode === 'add') {
         emit('added');
         resetForm();
-        window.showToast(t('feedAddedSuccess'), 'success');
+        window.showToast(t('modal.feed.feedAddedSuccess'), 'success');
       } else {
         emit('updated');
-        window.showToast(t('feedUpdatedSuccess'), 'success');
+        window.showToast(t('modal.feed.feedUpdatedSuccess'), 'success');
       }
       close();
     } else {
@@ -245,7 +245,7 @@ async function submit() {
 
       // Check if it's a duplicate URL error (409 Conflict)
       if (res.status === 409 || errorText.includes('already exists')) {
-        window.showToast(t('duplicateFeedURL'), 'error');
+        window.showToast(t('modal.feed.duplicateFeedURL'), 'error');
         return;
       }
 
@@ -283,7 +283,7 @@ async function submit() {
     >
       <div class="p-3 sm:p-5 border-b border-border flex justify-between items-center shrink-0">
         <h3 class="text-base sm:text-lg font-semibold m-0">
-          {{ mode === 'add' ? t('addNewFeed') : t('editFeed') }}
+          {{ mode === 'add' ? t('modal.feed.addNewFeed') : t('modal.feed.editFeed') }}
         </h3>
         <span
           class="text-2xl cursor-pointer text-text-secondary hover:text-text-primary"
@@ -295,12 +295,12 @@ async function submit() {
         <div class="mb-3 sm:mb-4">
           <label
             class="block mb-1 sm:mb-1.5 font-semibold text-xs sm:text-sm text-text-secondary"
-            >{{ t('title') }}</label
+            >{{ t('common.form.title') }}</label
           >
           <input
             v-model="title"
             type="text"
-            :placeholder="mode === 'add' ? t('titlePlaceholder') : ''"
+            :placeholder="mode === 'add' ? t('modal.feed.titlePlaceholder') : ''"
             class="input-field"
           />
         </div>
@@ -313,32 +313,32 @@ async function submit() {
           <!-- Mode switching links -->
           <div class="mt-3 text-center">
             <div class="text-xs text-text-tertiary">
-              {{ mode === 'add' ? t('orTry') : t('switchTo') }}
+              {{ mode === 'add' ? t('common.text.orTry') : t('common.action.switchTo') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'script'"
               >
-                {{ t('customScript') }}
+                {{ t('setting.customization.script') }}
               </button>
-              {{ t('or') }}
+              {{ t('common.text.or') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'xpath'"
               >
-                {{ t('xpath') }}
+                {{ t('modal.feed.xpath') }}
               </button>
-              {{ t('or') }}
+              {{ t('common.text.or') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'email'"
               >
-                {{ t('emailNewsletter') }}
+                {{ t('modal.feed.email') }}
               </button>
               <template v-if="isRSSHubEnabled">
-                {{ t('or') }}
+                {{ t('common.text.or') }}
                 <button
                   type="button"
                   class="text-xs text-accent hover:underline mx-1 inline-flex items-center gap-1"
@@ -361,7 +361,7 @@ async function submit() {
               class="text-xs text-accent hover:underline transition-colors"
               @click="feedType = 'url'"
             >
-              ← {{ t('backToUrl') }}
+              ← {{ t('article.action.backToUrl') }}
             </button>
           </div>
 
@@ -378,32 +378,32 @@ async function submit() {
           <!-- Switch to other mode links -->
           <div class="mt-3 text-center">
             <div class="text-xs text-text-tertiary">
-              {{ mode === 'add' ? t('orTry') : t('switchTo') }}
+              {{ mode === 'add' ? t('common.text.orTry') : t('common.action.switchTo') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'url'"
               >
-                {{ t('rssUrl') }}
+                {{ t('modal.feed.rssUrl') }}
               </button>
-              {{ t('or') }}
+              {{ t('common.text.or') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'xpath'"
               >
-                {{ t('xpath') }}
+                {{ t('modal.feed.xpath') }}
               </button>
-              {{ t('or') }}
+              {{ t('common.text.or') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'email'"
               >
-                {{ t('emailNewsletter') }}
+                {{ t('modal.feed.email') }}
               </button>
               <template v-if="isRSSHubEnabled">
-                {{ t('or') }}
+                {{ t('common.text.or') }}
                 <button
                   type="button"
                   class="text-xs text-accent hover:underline mx-1 inline-flex items-center gap-1"
@@ -426,7 +426,7 @@ async function submit() {
               class="text-xs text-accent hover:underline transition-colors"
               @click="feedType = 'url'"
             >
-              ← {{ t('backToUrl') }}
+              ← {{ t('article.action.backToUrl') }}
             </button>
           </div>
 
@@ -463,32 +463,32 @@ async function submit() {
           <!-- Switch to other mode links -->
           <div class="mt-3 text-center">
             <div class="text-xs text-text-tertiary">
-              {{ mode === 'add' ? t('orTry') : t('switchTo') }}
+              {{ mode === 'add' ? t('common.text.orTry') : t('common.action.switchTo') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'url'"
               >
-                {{ t('rssUrl') }}
+                {{ t('modal.feed.rssUrl') }}
               </button>
-              {{ t('or') }}
+              {{ t('common.text.or') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'script'"
               >
-                {{ t('customScript') }}
+                {{ t('setting.customization.script') }}
               </button>
-              {{ t('or') }}
+              {{ t('common.text.or') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'email'"
               >
-                {{ t('emailNewsletter') }}
+                {{ t('modal.feed.email') }}
               </button>
               <template v-if="isRSSHubEnabled">
-                {{ t('or') }}
+                {{ t('common.text.or') }}
                 <button
                   type="button"
                   class="text-xs text-accent hover:underline mx-1 inline-flex items-center gap-1"
@@ -511,7 +511,7 @@ async function submit() {
               class="text-xs text-accent hover:underline transition-colors"
               @click="feedType = 'url'"
             >
-              ← {{ t('backToUrl') }}
+              ← {{ t('article.action.backToUrl') }}
             </button>
           </div>
 
@@ -535,32 +535,32 @@ async function submit() {
           <!-- Switch to other mode links -->
           <div class="mt-3 text-center">
             <div class="text-xs text-text-tertiary">
-              {{ mode === 'add' ? t('orTry') : t('switchTo') }}
+              {{ mode === 'add' ? t('common.text.orTry') : t('common.action.switchTo') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'url'"
               >
-                {{ t('rssUrl') }}
+                {{ t('modal.feed.rssUrl') }}
               </button>
-              {{ t('or') }}
+              {{ t('common.text.or') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'xpath'"
               >
-                {{ t('xpath') }}
+                {{ t('modal.feed.xpath') }}
               </button>
-              {{ t('or') }}
+              {{ t('common.text.or') }}
               <button
                 type="button"
                 class="text-xs text-accent hover:underline mx-1"
                 @click="feedType = 'script'"
               >
-                {{ t('customScript') }}
+                {{ t('setting.customization.script') }}
               </button>
               <template v-if="isRSSHubEnabled">
-                {{ t('or') }}
+                {{ t('common.text.or') }}
                 <button
                   type="button"
                   class="text-xs text-accent hover:underline mx-1 inline-flex items-center gap-1"
@@ -599,7 +599,11 @@ async function submit() {
             />
             <PhCaretDown v-else :size="12" class="transition-transform duration-200" />
             <span class="hover:underline">
-              {{ showAdvancedSettings ? t('hideAdvancedSettings') : t('showAdvancedSettings') }}
+              {{
+                showAdvancedSettings
+                  ? t('setting.reading.hideAdvancedSettings')
+                  : t('setting.reading.showAdvancedSettings')
+              }}
             </span>
           </button>
         </div>
@@ -643,11 +647,11 @@ async function submit() {
           {{
             isSubmitting
               ? mode === 'add'
-                ? t('adding')
-                : t('saving')
+                ? t('modal.feed.adding')
+                : t('common.pagination.saving')
               : mode === 'add'
-                ? t('addSubscription')
-                : t('saveChanges')
+                ? t('modal.feed.addSubscription')
+                : t('common.action.saveChanges')
           }}
         </button>
       </div>

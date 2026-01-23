@@ -50,7 +50,7 @@ const emit = defineEmits<{
     class="header-bar bg-bg-primary border-b border-border p-2 sm:p-4 flex items-center justify-between gap-2 sm:gap-4"
   >
     <!-- Left: Back button -->
-    <button class="btn-icon" :title="t('back')" @click="emit('close')">
+    <button class="btn-icon" :title="t('common.back')" @click="emit('close')">
       <PhArrowLeft :size="20" class="sm:w-6 sm:h-6" />
     </button>
 
@@ -65,7 +65,7 @@ const emit = defineEmits<{
     <div class="flex items-center gap-1 sm:gap-2">
       <button
         class="btn-icon"
-        :title="article.is_read ? t('markUnread') : t('markRead')"
+        :title="article.is_read ? t('article.action.markUnread') : t('article.action.markRead')"
         @click="emit('toggle-read')"
       >
         <PhEnvelopeOpen v-if="article.is_read" :size="20" class="sm:w-6 sm:h-6" />
@@ -73,7 +73,11 @@ const emit = defineEmits<{
       </button>
       <button
         class="btn-icon"
-        :title="article.is_favorite ? t('removeFromFavorite') : t('addToFavorite')"
+        :title="
+          article.is_favorite
+            ? t('article.action.removeFromFavorite')
+            : t('article.toolbar.addToFavorite')
+        "
         @click="emit('toggle-favorite')"
       >
         <PhStar
@@ -85,7 +89,11 @@ const emit = defineEmits<{
       </button>
       <button
         class="btn-icon"
-        :title="article.is_read_later ? t('removeFromReadLater') : t('addToReadLater')"
+        :title="
+          article.is_read_later
+            ? t('article.action.removeFromReadLater')
+            : t('article.toolbar.addToReadLater')
+        "
         @click="emit('toggle-read-later')"
       >
         <PhClockCountdown
@@ -97,20 +105,24 @@ const emit = defineEmits<{
       </button>
       <button
         class="btn-icon"
-        :title="showContent ? t('showOriginal') : t('showRendered')"
+        :title="showContent ? t('setting.reading.showOriginal') : t('setting.reading.showRendered')"
         @click="emit('toggle-content')"
       >
         <PhArticle v-if="showContent" :size="20" class="sm:w-6 sm:h-6" />
         <PhGlobe v-else :size="20" class="sm:w-6 sm:h-6" />
       </button>
-      <button class="btn-primary" :title="t('openOriginal')" @click="emit('open-original')">
+      <button
+        class="btn-primary"
+        :title="t('article.action.openOriginal')"
+        @click="emit('open-original')"
+      >
         <PhArrowSquareOut :size="20" class="sm:w-6 sm:h-6" />
-        <span class="hidden sm:inline">{{ t('openOriginal') }}</span>
+        <span class="hidden sm:inline">{{ t('article.action.openOriginal') }}</span>
       </button>
       <button
         v-if="settings.obsidian_enabled"
         class="btn-icon"
-        :title="t('exportToObsidian')"
+        :title="t('setting.plugins.obsidian.exportTo')"
         @click="emit('export-to-obsidian')"
       >
         <PhShareNetwork :size="20" class="sm:w-6 sm:h-6" />

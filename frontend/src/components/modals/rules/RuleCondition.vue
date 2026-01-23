@@ -106,9 +106,9 @@ function getMultiSelectDisplayText(): string {
   const remaining = totalCount - 1;
 
   if (locale.value === 'zh-CN') {
-    return `${firstItem} ${t('andNMore', { count: totalCount })}`;
+    return `${firstItem} ${t('common.text.andNMore', { count: totalCount })}`;
   }
-  return `${firstItem} ${t('andNMore', { count: remaining })}`;
+  return `${firstItem} ${t('common.text.andNMore', { count: remaining })}`;
 }
 
 function updateValue(value: string): void {
@@ -128,7 +128,7 @@ function updateOperator(operator: string): void {
       <!-- Negate button -->
       <button
         :class="['negate-btn', condition.negate ? 'active' : '']"
-        :title="t('notCondition')"
+        :title="t('modal.filter.notCondition')"
         @click="emit('toggleNegate')"
       >
         <PhProhibit :size="16" />
@@ -227,13 +227,13 @@ function updateOperator(operator: string): void {
         v-else
         type="text"
         :value="condition.value"
-        :placeholder="t('inputValue')"
+        :placeholder="t('common.inputValue')"
         class="input-field"
         @input="(e) => updateValue((e.target as HTMLInputElement).value)"
       />
 
       <!-- Delete button -->
-      <button class="delete-btn" :title="t('delete')" @click="emit('remove')">
+      <button class="delete-btn" :title="t('common.delete')" @click="emit('remove')">
         <PhX :size="18" />
       </button>
     </div>

@@ -11,14 +11,15 @@ import {
   PhSortAscending,
   PhCode,
   PhEyeSlash,
-  PhFileCode,
-  PhEnvelope,
   PhCheckCircle,
   PhXCircle,
   PhImage,
+  PhMagnifyingGlass,
+  PhX,
 } from '@phosphor-icons/vue';
 import type { Feed } from '@/types/models';
 import { formatRelativeTime } from '@/utils/date';
+import { SettingGroup, ButtonControl } from '@/components/settings';
 
 const store = useAppStore();
 const { t, locale } = useI18n();
@@ -29,9 +30,11 @@ const emit = defineEmits<{
   'delete-feed': [id: number];
   'batch-delete': [ids: number[]];
   'batch-move': [ids: number[]];
+  'select-feed': [feedId: number];
 }>();
 
 const selectedFeeds: Ref<number[]> = ref([]);
+const searchQuery = ref('');
 
 // Sorting state
 type SortField =
@@ -45,9 +48,27 @@ type SortDirection = 'asc' | 'desc';
 const sortField = ref<SortField>('name');
 const sortDirection = ref<SortDirection>('asc');
 
-const sortedFeeds = computed(() => {
+// Filtered and sorted feeds
+const filteredFeeds = computed(() => {
   if (!store.feeds) return [];
-  const feeds = [...store.feeds];
+  let feeds = [...store.feeds];
+
+  // Apply search filter
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.toLowerCase();
+    feeds = feeds.filter(
+      (feed) =>
+        feed.title.toLowerCase().includes(query) ||
+        feed.url.toLowerCase().includes(query) ||
+        (feed.category && feed.category.toLowerCase().includes(query))
+    );
+  }
+
+  return feeds;
+});
+
+const sortedFeeds = computed(() => {
+  const feeds = [...filteredFeeds.value];
 
   feeds.sort((a, b) => {
     let comparison = 0;
@@ -83,6 +104,10 @@ const sortedFeeds = computed(() => {
 
   return feeds;
 });
+
+// Feed count statistics
+const totalFeeds = computed(() => store.feeds?.length || 0);
+const selectedCount = computed(() => selectedFeeds.value.length);
 
 const isAllSelected = computed(() => {
   if (!store.feeds || store.feeds.length === 0) return false;
@@ -165,162 +190,212 @@ function isRSSHubFeed(feed: Feed): boolean {
   return feed.url.startsWith('rsshub://');
 }
 
-async function openScriptsFolder() {
-  try {
-    await fetch('/api/scripts/open', { method: 'POST' });
-    window.showToast(t('scriptsFolderOpened'), 'success');
-  } catch (e) {
-    console.error('Failed to open scripts folder:', e);
+async function handleFeedClick(feed: Feed, event: Event) {
+  // Don't select feed if clicking on checkbox, edit button, or delete button
+  const target = event.target as HTMLElement;
+  if (
+    target.tagName === 'INPUT' ||
+    target.tagName === 'BUTTON' ||
+    target.closest('button') ||
+    target.closest('input[type="checkbox"]')
+  ) {
+    return;
   }
+  // Reset to 'all' filter first to ensure proper navigation
+  await store.setFilter('all');
+  // Select the feed and emit event to close settings modal
+  store.setFeed(feed.id);
+  emit('select-feed', feed.id);
 }
 </script>
 
 <template>
-  <div class="setting-group">
-    <label
-      class="font-semibold mb-2 sm:mb-3 text-text-secondary uppercase text-xs tracking-wider flex items-center gap-2"
-    >
-      <PhRss :size="14" class="sm:w-4 sm:h-4" />
-      {{ t('manageFeeds') }}
-    </label>
-
-    <div class="flex flex-wrap gap-1.5 sm:gap-2 mb-2 text-xs sm:text-sm">
-      <button class="btn-secondary py-1.5 px-2.5 sm:px-3" @click="handleAddFeed">
-        <PhPlus :size="14" class="sm:w-4 sm:h-4" />
-        <span class="hidden sm:inline">{{ t('addFeed') }}</span
-        ><span class="sm:hidden">{{ t('addFeed').split(' ')[0] }}</span>
-      </button>
-      <button
-        class="btn-danger py-1.5 px-2.5 sm:px-3"
+  <SettingGroup :icon="PhRss" :title="t('modal.feed.manageFeeds')">
+    <div class="flex flex-wrap gap-1.5 sm:gap-2 mb-2">
+      <ButtonControl
+        :label="t('setting.feed.addFeed')"
+        :icon="PhPlus"
+        type="secondary"
+        class="py-1.5 px-2.5 sm:px-3"
+        @click="handleAddFeed"
+      />
+      <ButtonControl
+        :label="t('common.action.deleteSelected')"
+        :icon="PhTrash"
         :disabled="selectedFeeds.length === 0"
+        type="danger"
+        class="py-1.5 px-2.5 sm:px-3"
         @click="handleBatchDelete"
-      >
-        <PhTrash :size="14" class="sm:w-4 sm:h-4" />
-        <span class="hidden sm:inline">{{ t('deleteSelected') }}</span
-        ><span class="sm:hidden">{{ t('delete') }}</span>
-      </button>
-      <button
-        class="btn-secondary py-1.5 px-2.5 sm:px-3"
+      />
+      <ButtonControl
+        :label="t('common.action.moveSelected')"
+        :icon="PhFolder"
         :disabled="selectedFeeds.length === 0"
+        type="secondary"
+        class="py-1.5 px-2.5 sm:px-3"
         @click="handleBatchMove"
-      >
-        <PhFolder :size="14" class="sm:w-4 sm:h-4" />
-        <span class="hidden sm:inline">{{ t('moveSelected') }}</span
-        ><span class="sm:hidden">{{ t('move') }}</span>
-      </button>
+      />
     </div>
 
     <div class="border border-border rounded-lg bg-bg-secondary">
       <!-- Table Header -->
       <div
-        class="flex items-center justify-between p-1.5 sm:p-2 border-b border-border bg-bg-tertiary"
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-1.5 sm:p-2 border-b border-border bg-bg-tertiary"
       >
-        <label class="flex items-center gap-1.5 sm:gap-2 cursor-pointer select-none">
-          <input
-            type="checkbox"
-            :checked="isAllSelected"
-            class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded border-border text-accent focus:ring-2 focus:ring-accent cursor-pointer"
-            @change="toggleSelectAll"
-          />
-          <span class="hidden sm:inline text-xs sm:text-sm">{{ t('selectAll') }}</span>
-        </label>
-        <div class="flex items-center gap-1 flex-wrap">
-          <PhSortAscending :size="12" class="text-text-secondary" />
-          <button
-            :class="[
-              'px-1.5 py-0.5 text-xs rounded transition-colors',
-              sortField === 'name'
-                ? 'bg-accent text-white'
-                : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
-            ]"
-            @click="toggleSort('name')"
-          >
-            {{ t('sortByName') }}
-            <span v-if="sortField === 'name'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
-          </button>
-          <button
-            :class="[
-              'px-1.5 py-0.5 text-xs rounded transition-colors',
-              sortField === 'date'
-                ? 'bg-accent text-white'
-                : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
-            ]"
-            @click="toggleSort('date')"
-          >
-            {{ t('sortByDate') }}
-            <span v-if="sortField === 'date'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
-          </button>
-          <button
-            :class="[
-              'px-1.5 py-0.5 text-xs rounded transition-colors',
-              sortField === 'category'
-                ? 'bg-accent text-white'
-                : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
-            ]"
-            @click="toggleSort('category')"
-          >
-            {{ t('sortByCategory') }}
-            <span v-if="sortField === 'category'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
-          </button>
-          <button
-            :class="[
-              'px-1.5 py-0.5 text-xs rounded transition-colors',
-              sortField === 'latest_article'
-                ? 'bg-accent text-white'
-                : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
-            ]"
-            :title="t('sortByLatestArticle')"
-            @click="toggleSort('latest_article')"
-          >
-            {{ t('latest') }}
-            <span v-if="sortField === 'latest_article'">{{
-              sortDirection === 'asc' ? '↑' : '↓'
+        <div class="flex items-center gap-2 flex-wrap">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              :checked="isAllSelected"
+              class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded border-border text-accent focus:ring-2 focus:ring-accent cursor-pointer"
+              @change="toggleSelectAll"
+            />
+            <span class="hidden sm:inline text-xs sm:text-sm">{{
+              t('common.search.selectAll')
             }}</span>
-          </button>
-          <button
-            :class="[
-              'px-1.5 py-0.5 text-xs rounded transition-colors',
-              sortField === 'articles_per_month'
-                ? 'bg-accent text-white'
-                : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
-            ]"
-            :title="t('sortByArticlesPerMonth')"
-            @click="toggleSort('articles_per_month')"
-          >
-            {{ t('frequency') }}
-            <span v-if="sortField === 'articles_per_month'">{{
-              sortDirection === 'asc' ? '↑' : '↓'
-            }}</span>
-          </button>
-          <button
-            :class="[
-              'px-1.5 py-0.5 text-xs rounded transition-colors',
-              sortField === 'update_status'
-                ? 'bg-accent text-white'
-                : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
-            ]"
-            :title="t('sortByUpdateStatus')"
-            @click="toggleSort('update_status')"
-          >
-            {{ t('status') }}
-            <span v-if="sortField === 'update_status'">{{
-              sortDirection === 'asc' ? '↑' : '↓'
-            }}</span>
-          </button>
+            <span class="text-xs text-text-tertiary"
+              >({{
+                t('common.search.totalAndSelected', { total: totalFeeds, selected: selectedCount })
+              }})</span
+            >
+          </label>
+        </div>
+        <div class="flex items-center gap-1 flex-wrap justify-between sm:justify-end">
+          <div class="flex items-center gap-1 flex-wrap">
+            <PhSortAscending :size="16" class="text-text-secondary" />
+            <button
+              :class="[
+                'px-1.5 py-0.5 text-xs rounded transition-colors whitespace-nowrap',
+                sortField === 'name'
+                  ? 'bg-accent text-white'
+                  : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
+              ]"
+              @click="toggleSort('name')"
+            >
+              {{ t('sidebar.sort.byName') }}
+              <span v-if="sortField === 'name'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+            </button>
+            <button
+              :class="[
+                'px-1.5 py-0.5 text-xs rounded transition-colors whitespace-nowrap',
+                sortField === 'category'
+                  ? 'bg-accent text-white'
+                  : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
+              ]"
+              @click="toggleSort('category')"
+            >
+              {{ t('sidebar.sort.byCategory') }}
+              <span v-if="sortField === 'category'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+            </button>
+            <button
+              :class="[
+                'px-1.5 py-0.5 text-xs rounded transition-colors whitespace-nowrap',
+                sortField === 'latest_article'
+                  ? 'bg-accent text-white'
+                  : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
+              ]"
+              :title="t('sidebar.sort.byLatestArticle')"
+              @click="toggleSort('latest_article')"
+            >
+              {{ t('sidebar.sort.latest') }}
+              <span v-if="sortField === 'latest_article'">{{
+                sortDirection === 'asc' ? '↑' : '↓'
+              }}</span>
+            </button>
+            <button
+              :class="[
+                'px-1.5 py-0.5 text-xs rounded transition-colors whitespace-nowrap',
+                sortField === 'articles_per_month'
+                  ? 'bg-accent text-white'
+                  : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
+              ]"
+              :title="t('sidebar.sort.byArticlesPerMonth')"
+              @click="toggleSort('articles_per_month')"
+            >
+              {{ t('sidebar.sort.frequency') }}
+              <span v-if="sortField === 'articles_per_month'">{{
+                sortDirection === 'asc' ? '↑' : '↓'
+              }}</span>
+            </button>
+            <button
+              :class="[
+                'px-1.5 py-0.5 text-xs rounded transition-colors whitespace-nowrap',
+                sortField === 'update_status'
+                  ? 'bg-accent text-white'
+                  : 'bg-bg-secondary text-text-primary hover:bg-bg-primary',
+              ]"
+              :title="t('sidebar.sort.byUpdateStatus')"
+              @click="toggleSort('update_status')"
+            >
+              {{ t('common.form.status') }}
+              <span v-if="sortField === 'update_status'">{{
+                sortDirection === 'asc' ? '↑' : '↓'
+              }}</span>
+            </button>
+          </div>
+          <!-- Search Box -->
+          <div class="ml-2 relative w-28 sm:w-40 shrink-0">
+            <PhMagnifyingGlass
+              :size="14"
+              class="absolute left-2 top-1/2 -translate-y-1/2 text-text-secondary"
+            />
+            <input
+              v-model="searchQuery"
+              type="text"
+              :placeholder="t('common.search.searchFeeds')"
+              class="w-full pl-7 pr-7 py-1 text-xs sm:text-sm bg-bg-secondary border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+            />
+            <PhX
+              v-if="searchQuery"
+              :size="14"
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-text-secondary cursor-pointer hover:text-text-primary"
+              @click="searchQuery = ''"
+            />
+          </div>
         </div>
       </div>
 
       <!-- Scrollable Content -->
       <div class="overflow-y-auto max-h-64 sm:max-h-96 lg:max-h-[32rem] scroll-smooth">
+        <!-- Column Header (Desktop) -->
+        <div
+          class="hidden lg:grid grid-cols-[16px,16px,2fr,100px,110px,40px,44px,52px] gap-2 px-2 py-1.5 bg-bg-tertiary border-b border-border text-xs text-text-secondary font-medium"
+        >
+          <div></div>
+          <div></div>
+          <div>{{ t('common.form.title') }}</div>
+          <div>{{ t('common.form.category') }}</div>
+          <div class="text-center">{{ t('sidebar.sort.latest') }}</div>
+          <div class="text-center">{{ t('sidebar.sort.frequency') }}</div>
+          <div class="text-center">{{ t('common.form.status') }}</div>
+          <div></div>
+        </div>
+
+        <!-- Column Header (Medium screens) -->
+        <div
+          class="hidden sm:grid lg:hidden grid-cols-[16px,16px,1fr,90px,100px,40px,44px,52px] gap-2 px-2 py-1.5 bg-bg-tertiary border-b border-border text-xs text-text-secondary font-medium"
+        >
+          <div></div>
+          <div></div>
+          <div>{{ t('common.form.title') }}</div>
+          <div>{{ t('common.form.category') }}</div>
+          <div class="text-center">{{ t('sidebar.sort.latest') }}</div>
+          <div class="text-center">{{ t('sidebar.sort.frequency') }}</div>
+          <div class="text-center">{{ t('common.form.status') }}</div>
+          <div></div>
+        </div>
+
         <!-- Feed Rows -->
         <div
           v-for="feed in sortedFeeds"
           :key="feed.id"
           :class="[
-            'flex items-center p-1.5 sm:p-2 border-b border-border last:border-0 gap-1.5 sm:gap-2',
+            'grid grid-cols-[auto,auto,1fr,auto] sm:grid-cols-[16px,16px,1fr,90px,100px,40px,44px,52px] lg:grid-cols-[16px,16px,2fr,100px,110px,40px,44px,52px] gap-1.5 sm:gap-2 p-1.5 sm:p-2 border-b border-border last:border-0 items-center cursor-pointer',
             feed.is_freshrss_source ? 'bg-info/10' : 'bg-bg-primary hover:bg-bg-secondary',
           ]"
+          @click="handleFeedClick(feed, $event)"
         >
+          <!-- Checkbox -->
           <input
             v-model="selectedFeeds"
             type="checkbox"
@@ -331,6 +406,8 @@ async function openScriptsFolder() {
               'cursor-not-allowed opacity-50': feed.is_freshrss_source,
             }"
           />
+
+          <!-- Favicon -->
           <div class="w-4 h-4 flex items-center justify-center shrink-0">
             <img
               :src="getFavicon(feed.url)"
@@ -343,189 +420,166 @@ async function openScriptsFolder() {
               "
             />
           </div>
-          <div class="truncate flex-1 min-w-0">
-            <!-- Title Row with Statistics -->
+
+          <!-- Title Column -->
+          <div class="min-w-0">
             <div class="font-medium text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
               <span class="truncate">{{ feed.title }}</span>
-              <!-- FreshRSS icon indicator -->
+              <!-- Feed Type Indicators -->
               <img
                 v-if="feed.is_freshrss_source"
                 src="/assets/plugin_icons/freshrss.svg"
-                class="w-3.5 h-3.5 shrink-0 inline"
-                :title="t('freshRSSSyncedFeed')"
+                class="w-4 h-4 sm:w-4 sm:h-4 shrink-0 inline"
+                :title="t('setting.freshrss.syncedFeed')"
                 alt="FreshRSS"
               />
-              <!-- RSSHub icon indicator -->
               <img
                 v-if="isRSSHubFeed(feed)"
                 src="/assets/plugin_icons/rsshub.svg"
-                class="w-3.5 h-3.5 shrink-0 inline"
-                :title="t('rsshubFeed')"
+                class="w-4 h-4 sm:w-4 sm:h-4 shrink-0 inline"
+                :title="t('setting.rsshub.feed')"
                 alt="RSSHub"
               />
-              <!-- Image mode indicator -->
               <PhImage
                 v-if="feed.is_image_mode"
-                :size="12"
+                :size="14"
                 class="text-accent shrink-0 inline"
-                :title="t('imageMode')"
+                :title="t('setting.feed.imageMode')"
               />
               <PhEyeSlash
                 v-if="feed.hide_from_timeline"
-                :size="12"
+                :size="14"
                 class="text-text-secondary shrink-0"
-                :title="t('hideFromTimeline')"
+                :title="t('setting.reading.hideFromTimeline')"
               />
-              <!-- Statistics (visible on larger screens) -->
-              <div
-                class="hidden sm:inline-flex items-center gap-1.5 ml-auto text-xs text-text-secondary shrink-0"
-              >
-                <!-- Latest Article Time -->
-                <span
-                  v-if="feed.latest_article_time"
-                  class="inline-flex items-center gap-1"
-                  :title="t('latest')"
-                >
-                  {{ formatRelativeTime(feed.latest_article_time, locale, t) }}
-                </span>
-                <span v-else class="text-text-tertiary" :title="t('latest')">-</span>
-
-                <!-- Articles Per Month -->
-                <span class="inline-flex items-center gap-1" :title="t('frequency')">
-                  <span class="text-text-tertiary">•</span>
-                  <span
-                    v-if="feed.articles_per_month !== null && feed.articles_per_month !== undefined"
-                  >
-                    {{ feed.articles_per_month }} {{ t('articlesPerMonth') }}
-                  </span>
-                  <span v-else class="text-text-tertiary">0 {{ t('articlesPerMonth') }}</span>
-                </span>
-
-                <!-- Update Status -->
-                <span class="inline-flex items-center gap-1" :title="t('status')">
-                  <span class="text-text-tertiary">•</span>
-                  <PhCheckCircle
-                    v-if="feed.last_update_status === 'success'"
-                    :size="12"
-                    class="text-green-500"
-                    :title="t('updateSuccess')"
-                  />
-                  <PhXCircle
-                    v-else-if="feed.last_update_status === 'failed'"
-                    :size="12"
-                    class="text-red-500"
-                    :title="feed.last_error || t('updateFailed')"
-                  />
-                  <span v-else class="text-text-tertiary">?</span>
-                </span>
-              </div>
             </div>
-            <div class="text-xs text-text-secondary truncate hidden sm:block">
-              <span v-if="feed.category" class="inline-flex items-center gap-1">
-                <PhFolder :size="10" class="inline" />
-                {{ feed.category }}
-                <span class="mx-1">•</span>
-              </span>
+            <!-- Mobile-only URL display -->
+            <div class="text-xs text-text-secondary truncate sm:hidden">
               <span
                 v-if="isFreshRSSFeed(feed)"
-                class="inline-flex items-center gap-1 text-info"
-                :title="t('freshRSSSyncedFeed')"
+                class="text-info"
+                :title="t('setting.freshrss.syncedFeed')"
               >
                 {{ feed.url }}
               </span>
               <span
                 v-else-if="isRSSHubFeed(feed)"
-                class="inline-flex items-center gap-1 text-info"
-                :title="t('rsshubFeed')"
+                class="text-info"
+                :title="t('setting.rsshub.feed')"
               >
                 {{ feed.url }}
               </span>
               <span
                 v-else-if="isScriptFeed(feed)"
-                class="inline-flex items-center gap-1"
-                :title="t('customScript')"
+                class="flex items-center gap-1"
+                :title="t('setting.customization.script')"
               >
-                <PhCode :size="10" class="inline text-accent" />
-                <button
-                  class="text-accent hover:underline"
-                  :title="t('openScriptsFolder')"
-                  @click.stop="openScriptsFolder"
-                >
-                  {{ feed.script_path }}
-                </button>
+                <PhCode :size="12" class="inline text-accent" />
+                {{ feed.script_path }}
               </span>
-              <span
-                v-else-if="isXPathFeed(feed)"
-                class="inline-flex items-center gap-1"
-                :title="feed.type"
-              >
-                <PhFileCode :size="10" class="inline text-accent" />
-                <span class="text-accent">{{ feed.type }}</span>
-                <span class="mx-1">•</span>
-                {{ feed.url }}
+              <span v-else-if="isXPathFeed(feed)" class="text-accent" :title="feed.type">
+                [{{ feed.type }}] {{ feed.url }}
               </span>
               <span
                 v-else-if="isEmailFeed(feed)"
-                class="inline-flex items-center gap-1"
-                :title="t('emailNewsletter')"
+                class="text-accent"
+                :title="t('modal.feed.email')"
               >
-                <PhEnvelope :size="10" class="inline text-accent" />
-                <span class="text-accent">{{ t('emailNewsletter') }}</span>
-                <span v-if="feed.email_address" class="mx-1">•</span>
+                [{{ t('modal.feed.email') }}]
                 <span v-if="feed.email_address">{{ feed.email_address }}</span>
               </span>
               <span v-else>{{ feed.url }}</span>
             </div>
           </div>
+
+          <!-- Category Column (Desktop) -->
+          <div class="hidden sm:block min-w-0">
+            <div class="text-sm text-text-secondary truncate flex items-center gap-1">
+              <PhFolder v-if="feed.category" :size="14" class="inline shrink-0" />
+              <span class="truncate">{{ feed.category || '-' }}</span>
+            </div>
+          </div>
+
+          <!-- Latest Article Time (Desktop) -->
+          <div class="hidden sm:block min-w-0 text-sm text-text-secondary truncate text-center">
+            <span v-if="feed.latest_article_time" :title="t('sidebar.sort.latest')">
+              {{ formatRelativeTime(feed.latest_article_time, locale, t) }}
+            </span>
+            <span v-else class="text-text-tertiary">-</span>
+          </div>
+
+          <!-- Articles Per Month (Desktop) -->
+          <div class="hidden sm:block min-w-0 text-sm text-text-secondary truncate text-center">
+            <span :title="t('sidebar.sort.frequency')">
+              {{
+                feed.articles_per_month !== null && feed.articles_per_month !== undefined
+                  ? feed.articles_per_month
+                  : 0
+              }}
+            </span>
+          </div>
+
+          <!-- Update Status (Desktop) -->
+          <div class="hidden sm:flex min-w-0 items-center justify-center">
+            <PhCheckCircle
+              v-if="feed.last_update_status === 'success'"
+              :size="18"
+              class="text-green-500"
+              :title="t('setting.update.updateSuccess')"
+            />
+            <PhXCircle
+              v-else-if="feed.last_update_status === 'failed'"
+              :size="18"
+              class="text-red-500"
+              :title="feed.last_error || t('setting.update.updateFailed')"
+            />
+            <span v-else class="text-text-tertiary text-sm">?</span>
+          </div>
+
+          <!-- Actions -->
           <div class="flex gap-0.5 sm:gap-1 shrink-0">
             <button
               class="text-accent hover:bg-bg-tertiary p-1 rounded text-sm"
-              :title="feed.is_freshrss_source ? t('freshRSSFeedLocked') : t('edit')"
+              :title="feed.is_freshrss_source ? t('setting.freshrss.feedLocked') : t('common.edit')"
               :disabled="feed.is_freshrss_source"
               :class="{
                 'cursor-not-allowed opacity-50': feed.is_freshrss_source,
               }"
               @click="!feed.is_freshrss_source && handleEditFeed(feed)"
             >
-              <PhPencil :size="14" class="sm:w-4 sm:h-4" />
+              <PhPencil :size="16" class="sm:w-4 sm:h-4" />
             </button>
             <button
               class="text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded text-sm"
-              :title="feed.is_freshrss_source ? t('freshRSSFeedLocked') : t('delete')"
+              :title="
+                feed.is_freshrss_source ? t('setting.freshrss.feedLocked') : t('common.delete')
+              "
               :disabled="feed.is_freshrss_source"
               :class="{
                 'cursor-not-allowed opacity-50': feed.is_freshrss_source,
               }"
               @click="!feed.is_freshrss_source && handleDeleteFeed(feed.id)"
             >
-              <PhTrash :size="14" class="sm:w-4 sm:h-4" />
+              <PhTrash :size="16" class="sm:w-4 sm:h-4" />
             </button>
           </div>
         </div>
+
+        <!-- Empty State -->
+        <div
+          v-if="sortedFeeds.length === 0"
+          class="flex flex-col items-center justify-center py-8 text-text-secondary"
+        >
+          <PhRss :size="32" class="mb-2" />
+          <p class="text-sm">
+            {{ searchQuery ? t('common.search.noSearchResults') : t('modal.feed.noFeeds') }}
+          </p>
+        </div>
       </div>
     </div>
-  </div>
+  </SettingGroup>
 </template>
 
 <style scoped>
 @reference "../../../../style.css";
-
-.btn-primary {
-  @apply bg-accent text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md cursor-pointer flex items-center gap-1.5 sm:gap-2 font-semibold hover:bg-accent-hover transition-colors shadow-sm;
-}
-.btn-primary:disabled {
-  @apply opacity-50 cursor-not-allowed;
-}
-.btn-secondary {
-  @apply bg-transparent border border-border text-text-primary px-3 sm:px-4 py-1.5 sm:py-2 rounded-md cursor-pointer flex items-center gap-1.5 sm:gap-2 font-medium hover:bg-bg-tertiary transition-colors;
-}
-.btn-secondary:disabled {
-  @apply opacity-50 cursor-not-allowed;
-}
-.btn-danger {
-  @apply bg-transparent border border-red-300 text-red-600 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md cursor-pointer flex items-center gap-1.5 sm:gap-2 font-semibold hover:bg-red-50 dark:hover:bg-red-900/20 dark:border-red-400 dark:text-red-400 transition-colors;
-}
-.btn-danger:disabled {
-  @apply opacity-50 cursor-not-allowed;
-}
 </style>

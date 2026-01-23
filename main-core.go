@@ -49,7 +49,7 @@ import (
 )
 
 // @title           MrRSS API
-// @version         1.3.16
+// @version         1.3.17
 // @description     MrRSS is a modern, cross-platform desktop RSS reader with auto-translation, smart feed discovery, and AI-powered summarization.
 
 // @contact.name   API Support
@@ -187,6 +187,7 @@ func main() {
 	apiMux.HandleFunc("/api/articles/filter", func(w http.ResponseWriter, r *http.Request) { article.HandleFilteredArticles(h, w, r) })
 	apiMux.HandleFunc("/api/articles/read", func(w http.ResponseWriter, r *http.Request) { article.HandleMarkReadWithImmediateSync(h, w, r) })
 	apiMux.HandleFunc("/api/articles/favorite", func(w http.ResponseWriter, r *http.Request) { article.HandleToggleFavoriteWithImmediateSync(h, w, r) })
+	apiMux.HandleFunc("/api/articles/mark-relative", func(w http.ResponseWriter, r *http.Request) { article.HandleMarkRelativeToArticle(h, w, r) })
 	apiMux.HandleFunc("/api/articles/cleanup", func(w http.ResponseWriter, r *http.Request) { article.HandleCleanupArticles(h, w, r) })
 	apiMux.HandleFunc("/api/articles/cleanup-content", func(w http.ResponseWriter, r *http.Request) { article.HandleCleanupArticleContent(h, w, r) })
 	apiMux.HandleFunc("/api/articles/content-cache-info", func(w http.ResponseWriter, r *http.Request) { article.HandleGetArticleContentCacheInfo(h, w, r) })

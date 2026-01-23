@@ -7,6 +7,7 @@
 *.dll
 *.so
 *.dylib
+*.pyc
 MrRSS
 mrrss
 MrRSS.exe
@@ -80,3 +81,6 @@ frontend/cypress/downloads/
 .claude/
 .plan/
 tmpclaude-*-cwd
+
+# Tools
+i18n_usage_report.md

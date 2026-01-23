@@ -58,12 +58,12 @@ defineEmits<{
       @click="$emit('close')"
     >
       <PhArrowLeft :size="18" class="sm:w-5 sm:h-5" />
-      <span class="hidden xs:inline">{{ t('back') }}</span>
+      <span class="hidden xs:inline">{{ t('common.back') }}</span>
     </button>
     <div class="flex gap-1 sm:gap-2 ml-auto">
       <button
         class="action-btn"
-        :title="showContent ? t('viewOriginal') : t('viewContent')"
+        :title="showContent ? t('article.action.viewOriginal') : t('article.action.viewContent')"
         @click="$emit('toggleContentView')"
       >
         <PhGlobe v-if="showContent" :size="18" class="sm:w-5 sm:h-5" />
@@ -72,7 +72,11 @@ defineEmits<{
       <button
         v-if="showContent && settings.translation_enabled && !settings.translation_only_mode"
         class="action-btn"
-        :title="showTranslations ? t('hideTranslations') : t('showTranslations')"
+        :title="
+          showTranslations
+            ? t('setting.reading.hideTranslations')
+            : t('setting.reading.showTranslations')
+        "
         @click="$emit('toggleTranslations')"
       >
         <PhTranslate
@@ -83,7 +87,7 @@ defineEmits<{
       </button>
       <button
         class="action-btn"
-        :title="article.is_read ? t('markAsUnread') : t('markAsRead')"
+        :title="article.is_read ? t('article.action.markAsUnread') : t('article.action.markAsRead')"
         @click="$emit('toggleRead')"
       >
         <PhEnvelopeOpen v-if="article.is_read" :size="18" class="sm:w-5 sm:h-5" />
@@ -94,7 +98,11 @@ defineEmits<{
           'action-btn',
           article.is_favorite ? 'text-yellow-500 hover:text-yellow-600' : 'hover:text-yellow-500',
         ]"
-        :title="article.is_favorite ? t('removeFromFavorite') : t('addToFavorite')"
+        :title="
+          article.is_favorite
+            ? t('article.action.removeFromFavorite')
+            : t('article.toolbar.addToFavorite')
+        "
         @click="$emit('toggleFavorite')"
       >
         <PhStar
@@ -108,7 +116,11 @@ defineEmits<{
           'action-btn',
           article.is_read_later ? 'text-blue-500 hover:text-blue-600' : 'hover:text-blue-500',
         ]"
-        :title="article.is_read_later ? t('removeFromReadLater') : t('addToReadLater')"
+        :title="
+          article.is_read_later
+            ? t('article.action.removeFromReadLater')
+            : t('article.toolbar.addToReadLater')
+        "
         @click="$emit('toggleReadLater')"
       >
         <PhClockCountdown
@@ -117,13 +129,17 @@ defineEmits<{
           :weight="article.is_read_later ? 'fill' : 'regular'"
         />
       </button>
-      <button class="action-btn" :title="t('openInBrowser')" @click="$emit('openOriginal')">
+      <button
+        class="action-btn"
+        :title="t('article.action.openInBrowser')"
+        @click="$emit('openOriginal')"
+      >
         <PhArrowSquareOut :size="18" class="sm:w-5 sm:h-5" />
       </button>
       <button
         v-if="settings.obsidian_enabled"
         class="action-btn"
-        :title="t('exportToObsidian')"
+        :title="t('setting.plugins.obsidian.exportTo')"
         @click="$emit('exportToObsidian')"
       >
         <PhShareNetwork :size="18" class="sm:w-5 sm:h-5" />

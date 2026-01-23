@@ -21,7 +21,7 @@ function onLoad() {
 
 function onError() {
   isLoading.value = false;
-  window.showToast(t('videoLoadError'), 'error');
+  window.showToast(t('article.videoPlayer.videoLoadError'), 'error');
 }
 
 // Open video in new tab
@@ -52,14 +52,16 @@ onUnmounted(() => {
     <div class="flex items-center justify-between p-3 border-b border-border">
       <div class="flex items-center gap-2">
         <PhYoutubeLogo :size="20" class="text-red-600 flex-shrink-0" />
-        <span class="text-sm font-medium text-text-primary">{{ t('youtubeVideo') }}</span>
+        <span class="text-sm font-medium text-text-primary">{{
+          t('article.videoPlayer.youtubeVideo')
+        }}</span>
       </div>
       <button
         class="text-xs text-accent hover:underline"
-        :title="t('openInYouTube')"
+        :title="t('article.videoPlayer.openInYouTube')"
         @click="openInNewTab"
       >
-        {{ t('openInYouTube') }}
+        {{ t('article.videoPlayer.openInYouTube') }}
       </button>
     </div>
 
