@@ -27,7 +27,7 @@
     "@phosphor-icons/vue": "^2.2.1",
     "@phosphor-icons/web": "^2.1.2",
     "highlight.js": "^11.11.1",
-    "katex": "^0.16.27",
+    "katex": "^0.16.28",
     "pinia": "^3.0.4",
     "tailwindcss": "^3.4.17",
     "vue-i18n": "^11.2.8",
