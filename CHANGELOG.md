@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Refactored
 
-- Refactored all popup windows for better consistency and maintainability. (#582)
+- Refactored all popup windows and context menus for better consistency and maintainability. (#582)
 
 ### Added
 

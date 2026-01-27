@@ -7,11 +7,9 @@ import { useSidebar } from '@/composables/core/useSidebar';
 import { useSettings } from '@/composables/core/useSettings';
 import { useArticleFilter } from '@/composables/article/useArticleFilter';
 import { useSavedFilters } from '@/composables/article/useSavedFilters';
-import { useContextMenu } from '@/composables/ui/useContextMenu';
 import SidebarCategory from './SidebarCategory.vue';
 import SavedFilterItem from './SavedFilterItem.vue';
 import SavedFilterModal from '@/components/modals/filter/SavedFilterModal.vue';
-import ContextMenu from '@/components/common/ContextMenu.vue';
 import {
   PhMagnifyingGlass,
   PhX,
@@ -38,7 +36,6 @@ const emit = defineEmits<{
 const store = useAppStore();
 const { t } = useI18n();
 const { settings, fetchSettings } = useSettings();
-const { closeContextMenu: closeGlobalContextMenu } = useContextMenu();
 
 // Saved filters
 const {
@@ -122,7 +119,6 @@ const safeSavedFilters = computed(() => {
 const showSaveFilterModal = ref(false);
 const showEditFilterModal = ref(false);
 const editingFilter = ref<SavedFilter | null>(null);
-const contextMenuFilter = ref<{ x: number; y: number; filter: SavedFilter } | null>(null);
 const draggingFilterId = ref<number | null>(null);
 
 // Compact mode setting
@@ -141,9 +137,6 @@ onMounted(async () => {
 
   // Listen for compact mode changes
   window.addEventListener('compact-mode-changed', handleCompactModeChange);
-
-  // Listen for global context menu opening to close saved filter context menu
-  window.addEventListener('open-context-menu', handleGlobalContextMenuOpen);
 });
 
 // Handle compact mode changes
@@ -155,7 +148,6 @@ function handleCompactModeChange() {
 
 onUnmounted(() => {
   window.removeEventListener('compact-mode-changed', handleCompactModeChange);
-  window.removeEventListener('open-context-menu', handleGlobalContextMenuOpen);
 });
 
 // Edit mode for drag reordering
@@ -502,30 +494,41 @@ async function handleDeleteFilter(filter: SavedFilter) {
       window.showToast(t('sidebar.savedFilters.deleteFailed'), 'error');
     }
   }
-  closeContextMenu();
 }
 
+// Handle saved filter context menu using global context menu system
 function onFilterContextMenu(event: MouseEvent, filter: SavedFilter) {
   event.preventDefault();
-  // Close global context menu before opening saved filter context menu
-  closeGlobalContextMenu();
-  contextMenuFilter.value = { x: event.clientX, y: event.clientY, filter };
+  event.stopPropagation();
+
+  const menuItems = [
+    {
+      label: t('common.edit'),
+      action: 'edit',
+      icon: 'PhPencil',
+    },
+    {
+      label: t('common.delete'),
+      action: 'delete',
+      icon: 'PhTrash',
+      danger: true,
+    },
+  ];
+
+  window.dispatchEvent(
+    new CustomEvent('open-context-menu', {
+      detail: {
+        x: event.clientX,
+        y: event.clientY,
+        items: menuItems,
+        data: filter,
+        callback: handleFilterAction,
+      },
+    })
+  );
 }
 
-function closeContextMenu() {
-  contextMenuFilter.value = null;
-}
-
-// Handle global context menu opening - close saved filter context menu
-function handleGlobalContextMenuOpen() {
-  closeContextMenu();
-}
-
-async function handleContextMenuAction(action: string) {
-  if (!contextMenuFilter.value) return;
-
-  const { filter } = contextMenuFilter.value;
-
+async function handleFilterAction(action: string, filter: SavedFilter) {
   switch (action) {
     case 'edit':
       editingFilter.value = filter;
@@ -535,8 +538,6 @@ async function handleContextMenuAction(action: string) {
       await handleDeleteFilter(filter);
       break;
   }
-
-  closeContextMenu();
 }
 
 function openSaveModal() {
@@ -789,19 +790,6 @@ function handleFilterDragEnd() {
       </div>
     </div>
   </Transition>
-
-  <!-- Context Menu -->
-  <ContextMenu
-    v-if="contextMenuFilter"
-    :items="[
-      { label: t('common.edit'), action: 'edit', icon: 'PhPencil' },
-      { label: t('common.delete'), action: 'delete', icon: 'PhTrash', danger: true },
-    ]"
-    :x="contextMenuFilter.x"
-    :y="contextMenuFilter.y"
-    @close="closeContextMenu"
-    @action="handleContextMenuAction"
-  />
 
   <!-- Save Filter Modal (Teleported to body) -->
   <Teleport to="body">
