@@ -271,11 +271,12 @@ onUnmounted(() => {
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
   >
-    <!-- Image placeholder with lazy loading - hidden completely on error and in compact mode -->
+    <!-- Image placeholder with lazy loading - hidden completely on error -->
     <div
-      v-if="shouldShowImage && !imageFailed && !compactMode"
+      v-if="shouldShowImage && !imageFailed"
       ref="imageContainerRef"
       class="article-thumbnail-placeholder"
+      :class="{ 'compact-thumbnail': compactMode }"
     >
       <img
         v-if="imageInViewport && imageUrl"
@@ -518,6 +519,11 @@ onUnmounted(() => {
   transition: opacity 0.2s ease-in-out;
 }
 
+/* Compact mode: smaller thumbnails */
+.article-card.compact .article-thumbnail {
+  @apply w-12 h-9 sm:w-14 sm:h-[42px];
+}
+
 .article-thumbnail.image-loaded {
   opacity: 1;
 }
@@ -527,6 +533,11 @@ onUnmounted(() => {
   /* Prevent layout shift and optimize rendering */
   contain: layout style;
   flex-shrink: 0;
+}
+
+/* Compact mode: smaller thumbnails */
+.article-thumbnail-placeholder.compact-thumbnail {
+  @apply w-12 h-9 sm:w-14 sm:h-[42px];
 }
 
 .article-thumbnail-loading {
