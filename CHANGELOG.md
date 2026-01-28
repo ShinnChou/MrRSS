@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Marking a lot of articles as read at once now shows a confirmation dialog to prevent accidental actions. (#560)
 - Thumbnail images in article list will now display in compact mode if enabled. (#589)
+- Checking update will now detect firewall issues for Chinese mainland users. (#621)
 
 ### Fixed
 

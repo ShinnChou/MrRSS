@@ -181,6 +181,8 @@ const zh: TranslationMessages = {
       failedToTransformRSSHubURL: '转换 RSSHub URL 失败',
       fetchingFullArticle: '获取完整文章内容失败',
       invalidURLScheme: '无效的 URL 格式',
+      networkErrorCheckingUpdates:
+        '无法连接到 GitHub 服务器。如果您在中国大陆，请尝试使用代理或VPN。',
       pollingStatus: '轮询发现状态时出错',
       reorderingFeed: '重新排序订阅源失败',
       savingSettings: '保存设置时出错',

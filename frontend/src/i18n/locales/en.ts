@@ -184,6 +184,8 @@ const en: TranslationMessages = {
       failedToTransformRSSHubURL: 'Failed to transform RSSHub URL',
       fetchingFullArticle: 'Failed to fetch full article content',
       invalidURLScheme: 'Invalid URL scheme',
+      networkErrorCheckingUpdates:
+        'Unable to connect to GitHub servers. If you are in mainland China, please try using a proxy or VPN.',
       pollingStatus: 'Error polling discovery status',
       reorderingFeed: 'Failed to reorder feed',
       savingSettings: 'Error saving settings',
