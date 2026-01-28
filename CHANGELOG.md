@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed multiple minor styling issues. (#569, #584)
 - Fixed the style of image gallery view. (#571, #581)
 - Fixed multiple minor styling issues. (#579)
+- Fixed the issue where list width will change after opening the settings page. (#575)
 
 ## [1.3.17] - 2026-01-24
 

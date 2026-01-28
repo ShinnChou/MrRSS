@@ -36,6 +36,9 @@ export function useSettingsAutoSave(settings: Ref<SettingsData> | (() => Setting
     showHiddenArticles: settingsDefaults.show_hidden_articles,
   });
 
+  // Track previous compact mode setting to prevent unnecessary width resets
+  const prevCompactMode: Ref<boolean> = ref(settingsDefaults.compact_mode);
+
   /**
    * Initialize translation tracking
    */
@@ -49,6 +52,7 @@ export function useSettingsAutoSave(settings: Ref<SettingsData> | (() => Setting
       prevArticleDisplaySettings.value = {
         showHiddenArticles: settingsRef.value.show_hidden_articles,
       };
+      prevCompactMode.value = settingsRef.value.compact_mode;
       isInitialLoad = false;
     }, 100);
   });
@@ -159,14 +163,18 @@ export function useSettingsAutoSave(settings: Ref<SettingsData> | (() => Setting
         })
       );
 
-      // Notify about compact_mode change
-      window.dispatchEvent(
-        new CustomEvent('compact-mode-changed', {
-          detail: {
-            enabled: settingsRef.value.compact_mode,
-          },
-        })
-      );
+      // Notify about compact_mode change only if it actually changed
+      if (settingsRef.value.compact_mode !== prevCompactMode.value) {
+        window.dispatchEvent(
+          new CustomEvent('compact-mode-changed', {
+            detail: {
+              enabled: settingsRef.value.compact_mode,
+            },
+          })
+        );
+        // Update tracking
+        prevCompactMode.value = settingsRef.value.compact_mode;
+      }
     } catch (e) {
       console.error('Error auto-saving settings:', e);
     }
