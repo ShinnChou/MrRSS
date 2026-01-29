@@ -9,8 +9,18 @@ import (
 )
 
 // HandleTags handles GET and POST requests for tags.
-// GET: Returns all tags
-// POST: Creates a new tag
+// @Summary      List or create tags
+// @Description  GET: Retrieve all tags. POST: Create a new tag with name and color.
+// @Tags         tags
+// @Accept       json
+// @Produce      json
+// @Param        request  body      object  false  "Tag details (for POST)"
+// @Success      200  {array}   models.Tag  "List of tags (GET)"
+// @Success      201  {object}  models.Tag  "Created tag (POST)"
+// @Failure      400  {object}  map[string]string  "Bad request"
+// @Failure      500  {object}  map[string]string  "Internal server error"
+// @Router       /tags [get]
+// @Router       /tags [post]
 func HandleTags(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		// GET: Return all tags
@@ -65,6 +75,16 @@ func HandleTags(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleTagUpdate updates an existing tag.
+// @Summary      Update a tag
+// @Description  Update an existing tag's name, color, and position
+// @Tags         tags
+// @Accept       json
+// @Produce      json
+// @Param        request  body      object  true  "Tag update details (id, name, color, position)"
+// @Success      200  {object}  models.Tag  "Updated tag"
+// @Failure      400  {object}  map[string]string  "Bad request"
+// @Failure      500  {object}  map[string]string  "Internal server error"
+// @Router       /tags/update [post]
 func HandleTagUpdate(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -109,6 +129,16 @@ func HandleTagUpdate(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleTagDelete deletes a tag by ID.
+// @Summary      Delete a tag
+// @Description  Delete an existing tag by its ID
+// @Tags         tags
+// @Accept       json
+// @Produce      json
+// @Param        request  body      object  true  "Tag ID to delete"
+// @Success      200  {object}  map[string]string  "Deletion status"
+// @Failure      400  {object}  map[string]string  "Bad request"
+// @Failure      500  {object}  map[string]string  "Internal server error"
+// @Router       /tags/delete [post]
 func HandleTagDelete(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -134,6 +164,16 @@ func HandleTagDelete(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleTagReorder changes the position of a tag.
+// @Summary      Reorder a tag
+// @Description  Change the display position of a tag in the list
+// @Tags         tags
+// @Accept       json
+// @Produce      json
+// @Param        request  body      object  true  "Tag ID and new position"
+// @Success      200  {array}   models.Tag  "Updated list of all tags"
+// @Failure      400  {object}  map[string]string  "Bad request"
+// @Failure      500  {object}  map[string]string  "Internal server error"
+// @Router       /tags/reorder [post]
 func HandleTagReorder(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

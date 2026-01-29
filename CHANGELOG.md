@@ -5,44 +5,41 @@ All notable changes to MrRSS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.18] - 2026-01-29
 
 ### Refactored
 
-- Refactored all popup windows and context menus for better consistency and maintainability. (#582)
+- Refactored all popup windows and context menus for improved consistency and maintainability. (#582)
 
 ### Added
 
-- Supported AI article searching. (#248)
-- Added support for saving filters. (#223)
-- Supported tagging feeds for better organization. (#545)
-- Added more batch actions for feed list. (#593)
-- Supported card layout mode for article list. (#592)
+- Added AI-powered article search functionality. (#248)
+- Added support for saving custom filters. (#223)
+- Implemented feed tagging for better organization. (#545)
+- Added batch operations to the feed list for efficient management. (#593)
+- Added card layout view option for the article list. (#592)
 
 ### Changed
 
-- Marking a lot of articles as read at once now shows a confirmation dialog to prevent accidental actions. (#560)
-- Thumbnail images in article list will now display in compact mode if enabled. (#589)
-- Checking update will now detect firewall issues for Chinese mainland users. (#621)
+- Added confirmation dialog when bulk-marking articles as read to prevent accidental actions. (#560)
+- Thumbnail previews now display in compact mode when enabled. (#589)
+- Update checks detect firewall-related connectivity issues for users in mainland China. (#621)
 
 ### Fixed
 
-- Fixed the issue where default title was not set fetched when not provided. (#566)
-- Fixed multiple minor styling issues. (#569, #584)
-- Fixed the style of image gallery view. (#571, #581)
-- Fixed multiple minor styling issues. (#579)
-- Fixed the issue where list width will change after opening the settings page. (#575)
-- Fixed the issue where some headers may be stopped by Cloudflare. (#620)
-- Fixed the issue where some images in article content rendering mode cannot be displayed correctly due to wrong referer. (#597)
-- Fixed the issue where summary can not be closed. (#591)
-- Fixed the issue related to FreshRSS synchronization. (#598, #600)
-- Fixed the issue related to HTML character encoding in image gallery view. (#596)
-- Fixed the issue where filter by category is slow due to missing index. (#570)
-- Implement IMAP ID command support for enhanced client identification. (#602)
+- Fixed missing default title assignment when articles lack a title. (#566)
+- Fixed multiple minor styling inconsistencies. (#569, #584, #579)
+- Fixed styling issues in the image gallery view. (#571, #581)
+- Fixed layout shift in list width after navigating to the settings page. (#575)
+- Fixed HTTP headers being blocked by Cloudflare for some requests. (#620)
+- Fixed broken images in article content caused by incorrect referrer headers. (#597)
+- Fixed issue preventing the article summary from being closed. (#591)
+- Fixed synchronization errors with FreshRSS. (#598, #600)
+- Fixed HTML character encoding issues in the image gallery view. (#596)
+- Improved filter-by-category performance by adding a missing database index. (#570)
+- Implemented IMAP ID command support for enhanced client identification. (#602)
 
 ## [1.3.17] - 2026-01-24
-
-**Known Issues**: [wailsapp/wails/issues/4900](https://github.com/wailsapp/wails/issues/4900) reported that the UI on Windows may display unexpected borders due to a bug in Microsoft WebView2. This issue can only be resolved by Microsoft in future system updates.
 
 ### Refactored
 
