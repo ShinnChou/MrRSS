@@ -23,6 +23,9 @@ const emit = defineEmits<{
   'delete-feed': [id: number];
   'batch-delete': [ids: number[]];
   'batch-move': [ids: number[]];
+  'batch-add-tags': [ids: number[]];
+  'batch-set-image-mode': [ids: number[]];
+  'batch-unset-image-mode': [ids: number[]];
   'discover-all': [];
   'update:settings': [settings: SettingsData];
   'select-feed': [feedId: number];
@@ -75,6 +78,18 @@ function handleBatchMove(ids: number[]) {
   emit('batch-move', ids);
 }
 
+function handleBatchAddTags(ids: number[]) {
+  emit('batch-add-tags', ids);
+}
+
+function handleBatchSetImageMode(ids: number[]) {
+  emit('batch-set-image-mode', ids);
+}
+
+function handleBatchUnsetImageMode(ids: number[]) {
+  emit('batch-unset-image-mode', ids);
+}
+
 function handleSelectFeed(feedId: number) {
   emit('select-feed', feedId);
 }
@@ -98,6 +113,9 @@ function handleManageTags() {
       @delete-feed="handleDeleteFeed"
       @batch-delete="handleBatchDelete"
       @batch-move="handleBatchMove"
+      @batch-add-tags="handleBatchAddTags"
+      @batch-set-image-mode="handleBatchSetImageMode"
+      @batch-unset-image-mode="handleBatchUnsetImageMode"
       @select-feed="handleSelectFeed"
       @manage-tags="handleManageTags"
     />

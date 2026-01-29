@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added support for saving filters. (#223)
 - Supported tagging feeds for better organization. (#545)
+- Added more batch actions for feed list. (#593)
 
 ### Changed
 

@@ -13,6 +13,7 @@ import UpdateAvailableDialog from './components/modals/update/UpdateAvailableDia
 import ContextMenu from './components/common/ContextMenu.vue';
 import ConfirmDialog from './components/modals/common/ConfirmDialog.vue';
 import InputDialog from './components/modals/common/InputDialog.vue';
+import MultiSelectDialog from './components/modals/common/MultiSelectDialog.vue';
 import Toast from './components/common/Toast.vue';
 import { onMounted, ref, computed } from 'vue';
 import { useNotifications } from './composables/ui/useNotifications';
@@ -38,8 +39,14 @@ const isSidebarOpen = ref(true);
 const isImageGalleryMode = computed(() => store.currentFilter === 'imageGallery');
 
 // Use composables
-const { confirmDialog, inputDialog, toasts, removeToast, installGlobalHandlers } =
-  useNotifications();
+const {
+  confirmDialog,
+  inputDialog,
+  multiSelectDialog,
+  toasts,
+  removeToast,
+  installGlobalHandlers,
+} = useNotifications();
 
 const { contextMenu, openContextMenu, handleContextMenuAction } = useContextMenu();
 
@@ -343,6 +350,18 @@ function onFeedUpdated(): void {
       @confirm="inputDialog.onConfirm"
       @cancel="inputDialog.onCancel"
       @close="inputDialog = null"
+    />
+
+    <MultiSelectDialog
+      v-if="multiSelectDialog"
+      :title="multiSelectDialog.title"
+      :message="multiSelectDialog.message"
+      :options="multiSelectDialog.options"
+      :confirm-text="multiSelectDialog.confirmText"
+      :cancel-text="multiSelectDialog.cancelText"
+      @confirm="multiSelectDialog.onConfirm"
+      @cancel="multiSelectDialog.onCancel"
+      @close="multiSelectDialog = null"
     />
 
     <div class="toast-container">
