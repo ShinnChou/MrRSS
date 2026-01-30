@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n';
 import { PhInfo } from '@phosphor-icons/vue';
 import { InfoBox } from '@/components/settings';
 import ObsidianSettings from './ObsidianSettings.vue';
+import NotionSettings from './NotionSettings.vue';
 import FreshRSSSettings from './FreshRSSSettings.vue';
 import RSSHubSettings from './RSSHubSettings.vue';
 
@@ -39,6 +40,8 @@ function handleUpdateSettings(updatedSettings: SettingsData) {
     <InfoBox :icon="PhInfo" :content="t('common.warning.isInDevelopment')" />
 
     <ObsidianSettings :settings="settings" @update:settings="handleUpdateSettings" />
+
+    <NotionSettings :settings="settings" @update:settings="handleUpdateSettings" />
 
     <FreshRSSSettings :settings="settings" @update:settings="handleUpdateSettings" />
 

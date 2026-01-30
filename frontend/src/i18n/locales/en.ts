@@ -863,6 +863,26 @@ const en: TranslationMessages = {
       usernamePlaceholder: 'Enter your username',
     },
     plugins: {
+      notion: {
+        apiKey: 'API Key',
+        apiKeyDesc: 'Internal Integration Token from Notion',
+        apiKeyPlaceholder: 'xxx_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+        exported: 'Article successfully exported to Notion',
+        exportFailed: 'Failed to export to Notion',
+        exporting: 'Exporting to Notion',
+        exportTo: 'Export to Notion',
+        integration: 'Notion Integration',
+        integrationDescription: 'Export articles directly to Notion',
+        pageId: 'Note Page ID',
+        pageIdDesc: 'The ID of the Notion page where articles will be created as sub-pages',
+        pageIdPlaceholder: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+        setupInstructions: 'To set up Notion integration:',
+        step1: 'Go to notion.so/my-integrations and create a new integration',
+        step2: 'Copy the Internal Integration Token as your API Key',
+        step3:
+          'Open the note page in Notion and click "..." → "Connections" → Add your integration',
+        step4: 'Copy the page ID from the URL (the 32-character string after the page name)',
+      },
       obsidian: {
         exported: 'Article successfully exported to Obsidian',
         exportFailed: 'Failed to export to Obsidian',

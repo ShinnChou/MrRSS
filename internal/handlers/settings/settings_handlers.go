@@ -105,6 +105,9 @@ func HandleSettings(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 		networkBandwidthMbps := safeGetSetting(h, "network_bandwidth_mbps")
 		networkLatencyMs := safeGetSetting(h, "network_latency_ms")
 		networkSpeed := safeGetSetting(h, "network_speed")
+		notionApiKey := safeGetEncryptedSetting(h, "notion_api_key")
+		notionEnabled := safeGetSetting(h, "notion_enabled")
+		notionPageId := safeGetSetting(h, "notion_page_id")
 		obsidianEnabled := safeGetSetting(h, "obsidian_enabled")
 		obsidianVault := safeGetSetting(h, "obsidian_vault")
 		obsidianVaultPath := safeGetSetting(h, "obsidian_vault_path")
@@ -199,6 +202,9 @@ func HandleSettings(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 			"network_bandwidth_mbps":           networkBandwidthMbps,
 			"network_latency_ms":               networkLatencyMs,
 			"network_speed":                    networkSpeed,
+			"notion_api_key":                   notionApiKey,
+			"notion_enabled":                   notionEnabled,
+			"notion_page_id":                   notionPageId,
 			"obsidian_enabled":                 obsidianEnabled,
 			"obsidian_vault":                   obsidianVault,
 			"obsidian_vault_path":              obsidianVaultPath,
@@ -295,6 +301,9 @@ func HandleSettings(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 			NetworkBandwidthMbps          string `json:"network_bandwidth_mbps"`
 			NetworkLatencyMs              string `json:"network_latency_ms"`
 			NetworkSpeed                  string `json:"network_speed"`
+			NotionAPIKey                  string `json:"notion_api_key"`
+			NotionEnabled                 string `json:"notion_enabled"`
+			NotionPageId                  string `json:"notion_page_id"`
 			ObsidianEnabled               string `json:"obsidian_enabled"`
 			ObsidianVault                 string `json:"obsidian_vault"`
 			ObsidianVaultPath             string `json:"obsidian_vault_path"`
@@ -575,6 +584,20 @@ func HandleSettings(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 			h.DB.SetSetting("network_speed", req.NetworkSpeed)
 		}
 
+		if err := h.DB.SetEncryptedSetting("notion_api_key", req.NotionAPIKey); err != nil {
+			log.Printf("Failed to save notion_api_key: %v", err)
+			http.Error(w, "Failed to save notion_api_key", http.StatusInternalServerError)
+			return
+		}
+
+		if req.NotionEnabled != "" {
+			h.DB.SetSetting("notion_enabled", req.NotionEnabled)
+		}
+
+		if req.NotionPageId != "" {
+			h.DB.SetSetting("notion_page_id", req.NotionPageId)
+		}
+
 		if req.ObsidianEnabled != "" {
 			h.DB.SetSetting("obsidian_enabled", req.ObsidianEnabled)
 		}
@@ -779,6 +802,9 @@ func HandleSettings(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 		networkBandwidthMbps := safeGetSetting(h, "network_bandwidth_mbps")
 		networkLatencyMs := safeGetSetting(h, "network_latency_ms")
 		networkSpeed := safeGetSetting(h, "network_speed")
+		notionApiKey := safeGetEncryptedSetting(h, "notion_api_key")
+		notionEnabled := safeGetSetting(h, "notion_enabled")
+		notionPageId := safeGetSetting(h, "notion_page_id")
 		obsidianEnabled := safeGetSetting(h, "obsidian_enabled")
 		obsidianVault := safeGetSetting(h, "obsidian_vault")
 		obsidianVaultPath := safeGetSetting(h, "obsidian_vault_path")
@@ -873,6 +899,9 @@ func HandleSettings(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 			"network_bandwidth_mbps":           networkBandwidthMbps,
 			"network_latency_ms":               networkLatencyMs,
 			"network_speed":                    networkSpeed,
+			"notion_api_key":                   notionApiKey,
+			"notion_enabled":                   notionEnabled,
+			"notion_page_id":                   notionPageId,
 			"obsidian_enabled":                 obsidianEnabled,
 			"obsidian_vault":                   obsidianVault,
 			"obsidian_vault_path":              obsidianVaultPath,
