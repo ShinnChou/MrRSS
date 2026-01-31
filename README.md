@@ -17,7 +17,7 @@
 > [!TIP]
 > If you encounter any issues while using the application, please first check the [Q&A page](https://github.com/WCY-dt/MrRSS/discussions/217). If you cannot find a solution, feel free to report the issue in [Issues](https://github.com/WCY-dt/MrRSS/issues).
 
----
+![Screenshot](imgs/og1.png)
 
 ## ✨ Features
 
@@ -27,17 +27,19 @@
 - 📡 **Diverse Subscription Methods**: Supports URL, XPath, scripts, newsletters, and other feed types to meet different needs
 - 🏭 **Custom Scripts & Automation**: Built-in filters and scripting system supporting highly customizable automation workflows
 
-## 📸 Screenshots
-
-![Screenshot](imgs/og.png)
-
 ## 🚀 Quick Start
 
 ### Download and Install
 
 #### Option 1: Download Pre-built Installer (Recommended)
 
-Download the latest installer for your platform from the [Releases](https://github.com/WCY-dt/MrRSS/releases/latest) page:
+Download the latest installer for your platform from the [Releases](https://github.com/WCY-dt/MrRSS/releases/latest) page.
+
+<details>
+
+<summary>Click to view the list of available installers</summary>
+
+<div markdown="1">
 
 **Standard Installation:**
 
@@ -50,6 +52,10 @@ Download the latest installer for your platform from the [Releases](https://gith
 - **Windows:** `MrRSS-{version}-windows-{arch}-portable.zip`
 - **Linux:** `MrRSS-{version}-linux-{arch}-portable.tar.gz`
 - **macOS:** `MrRSS-{version}-darwin-{arch}-portable.zip`
+
+</div>
+
+</details>
 
 #### Option 2: Build from Source
 
@@ -130,6 +136,12 @@ sudo apt-get install libgtk-3-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev gcc pkg-
 
 ### Data Storage
 
+<details>
+
+<summary>Click to expand data storage details</summary>
+
+<div markdown="1">
+
 **Normal Mode** (default):
 
 - **Windows:** `%APPDATA%\MrRSS\` (e.g., `C:\Users\YourName\AppData\Roaming\MrRSS\`)
@@ -141,6 +153,10 @@ sudo apt-get install libgtk-3-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev gcc pkg-
 - All data stored in `data/` folder
 
 This ensures your data persists across application updates and reinstalls.
+
+</div>
+
+</details>
 
 ## 🛠️ Development Guide
 
@@ -230,6 +246,12 @@ Please refer to the [Server Mode API Documentation](docs/SERVER_MODE/swagger.jso
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
+<details>
+
+<summary>Click to expand the contributing guidelines</summary>
+
+<div markdown="1">
+
 Before contributing:
 
 1. Read the [Code of Conduct](CODE_OF_CONDUCT.md)
@@ -238,6 +260,10 @@ Before contributing:
 4. Make your changes and add tests
 5. Submit a pull request
 
+</div>
+
+</details>
+
 ## 🔒 Security
 
 If you discover a security vulnerability, please follow our [Security Policy](SECURITY.md).
@@ -245,8 +271,6 @@ If you discover a security vulnerability, please follow our [Security Policy](SE
 ## 📝 License
 
 This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details.
-
-This project uses icon files sourced from [DIYgod/RSSHub](https://github.com/DIYgod/RSSHub) and [FreshRSS/FreshRSS](https://github.com/FreshRSS/FreshRSS). These resources are licensed under the AGPL-3.0 License.
 
 ## 📮 Contact & Support
 

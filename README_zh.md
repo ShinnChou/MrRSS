@@ -17,7 +17,7 @@
 > [!TIP]
 > 如果您在使用中遇到了问题，可以先查阅 [Q&A 页面](https://github.com/WCY-dt/MrRSS/discussions/210)。如果没有找到解决方案，请随时在 [Issues](https://github.com/WCY-dt/MrRSS/issues) 中报告问题。
 
----
+![Screenshot](imgs/og1.png)
 
 ## ✨ 功能特性
 
@@ -27,17 +27,19 @@
 - 📡 **多样化订阅方式**: 支持 URL、XPath、脚本、Newsletter 等多种订阅源类型，满足不同需求
 - 🏭 **自定义脚本与自动化**: 内置过滤器与脚本系统，支持高度自定义的自动化流程
 
-## 📸 截图
-
-![Screenshot](imgs/og.png)
-
 ## 🚀 快速开始
 
 ### 下载与安装
 
 #### 选项 1: 下载预构建安装包（推荐）
 
-从 [Releases](https://github.com/WCY-dt/MrRSS/releases/latest) 页面下载适合您平台的最新安装包：
+从 [Releases](https://github.com/WCY-dt/MrRSS/releases/latest) 页面下载适合您平台的最新安装包。
+
+<details>
+
+<summary>点击查看可用的安装包列表</summary>
+
+<div markdown="1">
 
 **标准安装版：**
 
@@ -50,6 +52,10 @@
 - **Windows:** `MrRSS-{version}-windows-{arch}-portable.zip`
 - **Linux:** `MrRSS-{version}-linux-{arch}-portable.tar.gz`
 - **macOS:** `MrRSS-{version}-darwin-{arch}-portable.zip`
+
+</div>
+
+</details>
 
 #### 选项 2: 源码构建
 
@@ -130,6 +136,12 @@ sudo apt-get install libgtk-3-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev gcc pkg-
 
 ### 数据存储
 
+<details>
+
+<summary>点击展开数据存储说明</summary>
+
+<div markdown="1">
+
 **正常模式**（默认）：
 
 - **Windows:** `%APPDATA%\MrRSS\` (例如 `C:\Users\YourName\AppData\Roaming\MrRSS\`)
@@ -141,6 +153,10 @@ sudo apt-get install libgtk-3-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev gcc pkg-
 - 所有数据存储在 `data/` 文件夹中
 
 这确保了您的数据在应用更新和重新安装时得以保留。
+
+</div>
+
+</details>
 
 ## 🛠️ 开发指南
 
@@ -230,6 +246,12 @@ docker run -d -p 1234:1234 ghcr.io/wcy-dt/mrrss:latest-arm64
 
 我们欢迎贡献！详情请参阅我们的[贡献指南](CONTRIBUTING.md)。
 
+<details>
+
+<summary>点击展开贡献指南</summary>
+
+<div markdown="1">
+
 在贡献之前：
 
 1. 阅读[行为准则](CODE_OF_CONDUCT.md)
@@ -238,6 +260,10 @@ docker run -d -p 1234:1234 ghcr.io/wcy-dt/mrrss:latest-arm64
 4. 进行更改并添加测试
 5. 提交 Pull Request
 
+</div>
+
+</details>
+
 ## 🔒 安全
 
 如果您发现安全漏洞，请遵循我们的[安全策略](SECURITY.md)。
@@ -245,8 +271,6 @@ docker run -d -p 1234:1234 ghcr.io/wcy-dt/mrrss:latest-arm64
 ## 📝 许可证
 
 本项目采用 GPL-3.0 许可证 - 详情请参阅 [LICENSE](LICENSE) 文件。
-
-本项目使用了来源于 [DIYgod/RSSHub](https://github.com/DIYgod/RSSHub) 项目和 [FreshRSS/FreshRSS](https://github.com/FreshRSS/FreshRSS) 项目的图标文件。该部分资源遵循 AGPL-3.0 协议。
 
 ## 📮 联系与支持
 
