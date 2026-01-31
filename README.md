@@ -1,7 +1,6 @@
 <div align="center">
   <img src="imgs/logo.svg" alt="MrRSS Logo" width="120" height="120">
-  <h1>MrRSS</h1>
-  <p><strong>A modern, cross-platform and free AI RSS reader.</strong></p>
+  <h1>MrRSS - A modern and free AI RSS reader.</h1>
 
   [![Version](https://img.shields.io/badge/version-1.3.19-blue.svg)](https://github.com/WCY-dt/MrRSS/releases)
   [![License](https://img.shields.io/badge/license-GPLv3-green.svg)](LICENSE)
@@ -13,9 +12,6 @@
     <strong>English</strong> | <a href="README_zh.md">简体中文</a>
   </p>
 </div>
-
-> [!TIP]
-> If you encounter any issues while using the application, please first check the [Q&A page](https://github.com/WCY-dt/MrRSS/discussions/217). If you cannot find a solution, feel free to report the issue in [Issues](https://github.com/WCY-dt/MrRSS/issues).
 
 ![Screenshot](imgs/og1.png)
 

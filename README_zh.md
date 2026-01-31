@@ -1,7 +1,6 @@
 <div align="center">
   <img src="imgs/logo.svg" alt="MrRSS Logo" width="120" height="120">
-  <h1>MrRSS</h1>
-  <p><strong>一个现代化、跨平台且免费的 AI RSS 阅读器.</strong></p>
+  <h1>MrRSS - 一个现代化且免费的 AI RSS 阅读器.</h1>
 
   [![Version](https://img.shields.io/badge/version-1.3.19-blue.svg)](https://github.com/WCY-dt/MrRSS/releases)
   [![License](https://img.shields.io/badge/license-GPLv3-green.svg)](LICENSE)
@@ -13,9 +12,6 @@
     <a href="README.md">English</a> | <strong>简体中文</strong>
   </p>
 </div>
-
-> [!TIP]
-> 如果您在使用中遇到了问题，可以先查阅 [Q&A 页面](https://github.com/WCY-dt/MrRSS/discussions/210)。如果没有找到解决方案，请随时在 [Issues](https://github.com/WCY-dt/MrRSS/issues) 中报告问题。
 
 ![Screenshot](imgs/og1.png)
 
