@@ -82,7 +82,7 @@
 .prose {
   color: var(--text-primary);
   font-size: 1rem;
-  line-height: 1.75;
+  line-height: var(--content-line-height, 1.75);
   /* Prevent horizontal overflow from long content */
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -150,7 +150,7 @@
 .prose p {
   margin-top: 1.25em;
   margin-bottom: 1.25em;
-  line-height: 1.75;
+  line-height: var(--content-line-height, 1.75);
   /* Prevent overflow from long words/links */
   overflow-wrap: break-word;
   word-break: break-word;
@@ -390,7 +390,7 @@
 .prose li {
   margin-top: 0.375em;
   margin-bottom: 0.375em;
-  line-height: 1.75;
+  line-height: var(--content-line-height, 1.75);
   /* Prevent overflow from long content */
   overflow-wrap: break-word;
   word-break: break-word;
@@ -479,7 +479,7 @@
   padding-top: 0;
   border-top: none;
   opacity: 1;
-  line-height: 1.75;
+  line-height: var(--content-line-height, 1.75);
 }
 
 /* Translation-only mode: paragraph translations should match paragraph spacing */
@@ -518,7 +518,7 @@
 .prose .translation-text {
   display: block;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: var(--content-line-height, 1.6);
   margin-top: 0.2em;
   margin-bottom: 0;
   padding-top: 0.2em;
@@ -945,7 +945,7 @@
   margin-left: 1.625em;
   padding-left: 1.625em;
   color: var(--text-secondary);
-  line-height: 1.75;
+  line-height: var(--content-line-height, 1.75);
 }
 
 /* Strong and emphasis styling */

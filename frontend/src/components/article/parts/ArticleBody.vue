@@ -57,7 +57,8 @@ const contentStyle = computed(() => {
     fontFamily: fontFamilyCss || undefined,
     fontSize: `${fontSize}px`, // Always apply font size
     lineHeight: lineHeight,
-  };
+    '--content-line-height': lineHeight,
+  } as Record<string, string>;
 
   return style;
 });
@@ -121,7 +122,6 @@ const loadCustomCSS = async () => {
 };
 
 onMounted(() => {
-  console.log('ArticleBody mounted');
   loadCustomCSS();
 
   // Listen for custom CSS change events

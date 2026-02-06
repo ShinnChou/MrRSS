@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue';
+
 interface Props {
   modelValue: number;
   min?: number;
@@ -11,15 +13,28 @@ interface Props {
   width?: string;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
   'update:modelValue': [value: number];
 }>();
 
+// Local state for the input
+const inputValue = ref(props.modelValue);
+
+// Watch for prop changes
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    inputValue.value = newValue;
+  },
+  { immediate: true }
+);
+
 function handleInput(event: Event) {
   const target = event.target as HTMLInputElement;
-  const value = parseInt(target.value) || 0;
+  const value = parseFloat(target.value) || 0;
+  inputValue.value = value;
   emit('update:modelValue', value);
 }
 
@@ -46,13 +61,18 @@ const widthClass = (width?: string) => {
         { 'border-red-500': error, 'opacity-50 cursor-not-allowed': disabled },
       ]"
       type="number"
-      :value="modelValue"
+      :value="inputValue"
       :min="min"
       :max="max"
       :step="step"
       :placeholder="placeholder"
       :disabled="disabled"
-      @input="handleInput"
+      @input="
+        (e) => {
+          inputValue = parseFloat((e.target as HTMLInputElement).value) || 0;
+        }
+      "
+      @change="handleInput"
     />
     <span v-if="suffix" class="text-xs sm:text-sm text-text-secondary">
       {{ suffix }}
