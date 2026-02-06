@@ -2,13 +2,14 @@ package article
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"sort"
+	"strings"
 	"time"
 
 	"MrRSS/internal/handlers/core"
+	"MrRSS/internal/handlers/response"
 	"MrRSS/internal/models"
 	"MrRSS/internal/rsshub"
 )
@@ -54,17 +55,13 @@ func GetFeedType(feed *models.Feed) string {
 // @Success      200  {object}  map[string]interface{}  "Progress information"
 // @Router       /progress [get]
 func HandleProgress(h *core.Handler, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	progress := h.Fetcher.GetProgressWithStats()
 
 	// Log for debugging
 	log.Printf("[HandleProgress] Returning progress: is_running=%v, pool=%d, queue=%d",
 		progress.IsRunning, progress.PoolTaskCount, progress.QueueTaskCount)
 
-	if err := json.NewEncoder(w).Encode(progress); err != nil {
-		log.Printf("[HandleProgress] ERROR encoding progress: %v", err)
-		http.Error(w, fmt.Sprintf("Failed to encode progress: %v", err), http.StatusInternalServerError)
-	}
+	response.JSON(w, progress)
 }
 
 // TaskDetailsResponse contains detailed task information
@@ -127,15 +124,12 @@ func HandleTaskDetails(h *core.Handler, w http.ResponseWriter, r *http.Request) 
 		}
 	}
 
-	response := TaskDetailsResponse{
+	resp := TaskDetailsResponse{
 		PoolTasks:  poolTasks,
 		QueueTasks: queueTasks,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		http.Error(w, fmt.Sprintf("Failed to encode task details: %v", err), http.StatusInternalServerError)
-	}
+	response.JSON(w, resp)
 }
 
 // HandleFilteredArticles returns articles filtered by advanced conditions from the database.
@@ -151,13 +145,13 @@ func HandleTaskDetails(h *core.Handler, w http.ResponseWriter, r *http.Request) 
 // @Router       /articles/filter [post]
 func HandleFilteredArticles(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		response.Error(w, nil, http.StatusMethodNotAllowed)
 		return
 	}
 
 	var req FilterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		response.Error(w, err, http.StatusBadRequest)
 		return
 	}
 
@@ -180,14 +174,14 @@ func HandleFilteredArticles(h *core.Handler, w http.ResponseWriter, r *http.Requ
 	// For very large datasets, consider implementing database-level filtering
 	articles, err := h.DB.GetArticles("", 0, "", showHidden, 50000, 0)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		response.Error(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	// Get feeds for category lookup
 	feeds, err := h.DB.GetFeeds()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		response.Error(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -196,11 +190,15 @@ func HandleFilteredArticles(h *core.Handler, w http.ResponseWriter, r *http.Requ
 	feedTypes := make(map[int64]string)
 	feedIsImageMode := make(map[int64]bool)
 	feedTags := make(map[int64][]string)
+	feedArticlesPerMonth := make(map[int64]float64)
+	feedLastUpdateStatus := make(map[int64]string)
 
 	for _, feed := range feeds {
 		feedCategories[feed.ID] = feed.Category
 		feedTypes[feed.ID] = GetFeedType(&feed)
 		feedIsImageMode[feed.ID] = feed.IsImageMode
+		feedArticlesPerMonth[feed.ID] = feed.ArticlesPerMonth
+		feedLastUpdateStatus[feed.ID] = feed.LastUpdateStatus
 
 		// Build tag names list for this feed
 		tags, _ := h.DB.GetFeedTags(feed.ID)
@@ -211,11 +209,62 @@ func HandleFilteredArticles(h *core.Handler, w http.ResponseWriter, r *http.Requ
 		feedTags[feed.ID] = tagNames
 	}
 
+	// Check if any filter condition requires article content
+	needsArticleContent := false
+	for _, condition := range req.Conditions {
+		if condition.Field == "article_content" {
+			needsArticleContent = true
+			break
+		}
+	}
+
+	// Build article content map if needed
+	articleContents := make(map[int64]string)
+	if needsArticleContent {
+		// Collect article IDs
+		articleIDs := make([]int64, len(articles))
+		for i, article := range articles {
+			articleIDs[i] = article.ID
+		}
+
+		// Build placeholders for SQL query
+		placeholders := make([]string, len(articleIDs))
+		args := make([]interface{}, len(articleIDs))
+		for i, id := range articleIDs {
+			placeholders[i] = "?"
+			args[i] = id
+		}
+
+		// Query all article contents at once
+		query := `SELECT article_id, content FROM article_contents WHERE article_id IN (` + strings.Join(placeholders, ",") + `)`
+		rows, err := h.DB.Query(query, args...)
+		if err == nil {
+			defer rows.Close()
+			for rows.Next() {
+				var articleID int64
+				var content string
+				if err := rows.Scan(&articleID, &content); err == nil {
+					articleContents[articleID] = content
+				}
+			}
+		}
+	}
+
 	// Apply filter conditions
 	if len(req.Conditions) > 0 {
 		var filteredArticles []models.Article
 		for _, article := range articles {
-			if evaluateArticleConditions(article, req.Conditions, feedCategories, feedTypes, feedIsImageMode, feedTags) {
+			if evaluateArticleConditions(
+				article,
+				req.Conditions,
+				feedCategories,
+				feedTypes,
+				feedIsImageMode,
+				feedTags,
+				feedArticlesPerMonth,
+				feedLastUpdateStatus,
+				articleContents,
+			) {
 				filteredArticles = append(filteredArticles, article)
 			}
 		}
@@ -241,7 +290,7 @@ func HandleFilteredArticles(h *core.Handler, w http.ResponseWriter, r *http.Requ
 
 	hasMore := end < total
 
-	response := FilterResponse{
+	resp := FilterResponse{
 		Articles: paginatedArticles,
 		Total:    total,
 		Page:     page,
@@ -249,5 +298,5 @@ func HandleFilteredArticles(h *core.Handler, w http.ResponseWriter, r *http.Requ
 		HasMore:  hasMore,
 	}
 
-	json.NewEncoder(w).Encode(response)
+	response.JSON(w, resp)
 }

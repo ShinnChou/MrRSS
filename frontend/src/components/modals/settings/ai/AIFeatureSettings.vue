@@ -7,15 +7,15 @@ import {
   PhTrash,
   PhBroom,
   PhMagnifyingGlass,
-  PhInfo,
 } from '@phosphor-icons/vue';
 import {
-  InfoBox,
+  TipBox,
   SettingGroup,
   SettingWithToggle,
   NestedSettingsContainer,
   SubSettingItem,
 } from '@/components/settings';
+import AIProfileSelector from './AIProfileSelector.vue';
 import '@/components/settings/styles.css';
 import type { SettingsData } from '@/types/settings';
 
@@ -25,11 +25,18 @@ interface Props {
   settings: SettingsData;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
   'update:settings': [settings: SettingsData];
 }>();
+
+function updateSetting(key: keyof SettingsData, value: any) {
+  emit('update:settings', {
+    ...props.settings,
+    [key]: value,
+  });
+}
 
 const isDeleting = ref(false);
 
@@ -67,25 +74,49 @@ async function clearAllChatSessions() {
 <template>
   <SettingGroup :icon="PhRobot" :title="t('setting.ai.aiFeatures')">
     <!-- AI Search -->
-    <InfoBox :icon="PhInfo" :content="t('setting.ai.isBeta')" />
+    <TipBox type="info" :title="t('setting.ai.isBeta')" />
     <SettingWithToggle
       :icon="PhMagnifyingGlass"
       :title="t('setting.ai.aiSearchEnabled')"
       :description="t('setting.ai.aiSearchEnabledDesc')"
-      :model-value="settings.ai_search_enabled"
-      @update:model-value="emit('update:settings', { ...settings, ai_search_enabled: $event })"
+      :model-value="props.settings.ai_search_enabled"
+      @update:model-value="updateSetting('ai_search_enabled', $event)"
     />
+
+    <NestedSettingsContainer v-if="props.settings.ai_search_enabled">
+      <SubSettingItem
+        :icon="PhRobot"
+        :title="t('setting.ai.selectProfile')"
+        :description="t('setting.ai.selectProfileForSearch')"
+      >
+        <AIProfileSelector
+          :model-value="props.settings.ai_search_profile_id"
+          @update:model-value="updateSetting('ai_search_profile_id', $event)"
+        />
+      </SubSettingItem>
+    </NestedSettingsContainer>
 
     <!-- AI Chat -->
     <SettingWithToggle
       :icon="PhChatCircleText"
       :title="t('setting.ai.aiChatEnabled')"
       :description="t('setting.ai.aiChatEnabledDesc')"
-      :model-value="settings.ai_chat_enabled"
-      @update:model-value="emit('update:settings', { ...settings, ai_chat_enabled: $event })"
+      :model-value="props.settings.ai_chat_enabled"
+      @update:model-value="updateSetting('ai_chat_enabled', $event)"
     />
 
-    <NestedSettingsContainer v-if="settings.ai_chat_enabled">
+    <NestedSettingsContainer v-if="props.settings.ai_chat_enabled">
+      <SubSettingItem
+        :icon="PhRobot"
+        :title="t('setting.ai.selectProfile')"
+        :description="t('setting.ai.selectProfileForChat')"
+      >
+        <AIProfileSelector
+          :model-value="props.settings.ai_chat_profile_id"
+          @update:model-value="updateSetting('ai_chat_profile_id', $event)"
+        />
+      </SubSettingItem>
+
       <SubSettingItem
         :icon="PhTrash"
         :title="t('setting.ai.clearAllChats')"

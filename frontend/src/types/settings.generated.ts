@@ -7,11 +7,15 @@
 export interface SettingsData {
   ai_api_key: string;
   ai_chat_enabled: boolean;
+  ai_chat_profile_id: string;
   ai_custom_headers: string;
   ai_endpoint: string;
   ai_model: string;
   ai_search_enabled: boolean;
+  ai_search_profile_id: string;
+  ai_summary_profile_id: string;
   ai_summary_prompt: string;
+  ai_translation_profile_id: string;
   ai_translation_prompt: string;
   ai_usage_limit: string;
   ai_usage_tokens: string;
@@ -63,6 +67,9 @@ export interface SettingsData {
   network_bandwidth_mbps: string;
   network_latency_ms: string;
   network_speed: string;
+  notion_api_key: string;
+  notion_enabled: boolean;
+  notion_page_id: string;
   obsidian_enabled: boolean;
   obsidian_vault: string;
   obsidian_vault_path: string;

@@ -6,7 +6,6 @@ import {
   PhTextT,
   PhPackage,
   PhRobot,
-  PhInfo,
   PhTrash,
   PhBroom,
 } from '@phosphor-icons/vue';
@@ -16,8 +15,8 @@ import {
   NestedSettingsContainer,
   SubSettingItem,
   TextAreaControl,
-  InfoBox,
 } from '@/components/settings';
+import AIProfileSelector from '@/components/modals/settings/ai/AIProfileSelector.vue';
 import '@/components/settings/styles.css';
 import type { SettingsData } from '@/types/settings';
 
@@ -101,7 +100,17 @@ const isClearingCache = ref(false);
 
       <!-- AI Summary Prompt -->
       <template v-if="settings.summary_provider === 'ai'">
-        <InfoBox :icon="PhInfo" :content="t('common.aiSettingsConfiguredInAITab')" />
+        <!-- AI Profile Selection -->
+        <SubSettingItem
+          :icon="PhRobot"
+          :title="t('setting.ai.selectProfile')"
+          :description="t('setting.ai.selectProfileForSummary')"
+        >
+          <AIProfileSelector
+            :model-value="settings.ai_summary_profile_id"
+            @update:model-value="updateSetting('ai_summary_profile_id', $event)"
+          />
+        </SubSettingItem>
 
         <div class="sub-setting-item-col">
           <div class="flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">
@@ -118,7 +127,7 @@ const isClearingCache = ref(false);
           <TextAreaControl
             :model-value="settings.ai_summary_prompt"
             :placeholder="t('setting.content.aiSummaryPromptPlaceholder')"
-            rows="3"
+            :rows="3"
             @update:model-value="updateSetting('ai_summary_prompt', $event)"
           />
         </div>

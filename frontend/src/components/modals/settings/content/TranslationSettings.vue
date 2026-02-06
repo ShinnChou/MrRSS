@@ -9,7 +9,6 @@ import {
   PhPackage,
   PhSliders,
   PhCode,
-  PhInfo,
   PhTrash,
   PhBroom,
   PhTimer,
@@ -22,10 +21,10 @@ import {
   NestedSettingsContainer,
   SubSettingItem,
   TextAreaControl,
-  InfoBox,
   ToggleControl,
   KeyValueList,
 } from '@/components/settings';
+import AIProfileSelector from '@/components/modals/settings/ai/AIProfileSelector.vue';
 import '@/components/settings/styles.css';
 import type { SettingsData } from '@/types/settings';
 
@@ -281,7 +280,17 @@ const getErrorClass = (condition: boolean) => (condition ? 'border-red-500' : ''
 
       <!-- AI Translation Prompt -->
       <template v-if="settings.translation_provider === 'ai'">
-        <InfoBox :icon="PhInfo" :content="t('common.aiSettingsConfiguredInAITab')" />
+        <!-- AI Profile Selection -->
+        <SubSettingItem
+          :icon="PhRobot"
+          :title="t('setting.ai.selectProfile')"
+          :description="t('setting.ai.selectProfileForTranslation')"
+        >
+          <AIProfileSelector
+            :model-value="settings.ai_translation_profile_id"
+            @update:model-value="updateSetting('ai_translation_profile_id', $event)"
+          />
+        </SubSettingItem>
 
         <div class="sub-setting-item-col">
           <div class="flex items-center sm:items-start gap-2 sm:gap-3 min-w-0">

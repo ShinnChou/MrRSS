@@ -91,7 +91,7 @@ function close() {
     </template>
 
     <!-- Content -->
-    <div class="p-4 sm:p-6">
+    <div class="px-4 sm:px-6 pt-6 sm:pt-8 pb-20 sm:pb-24">
       <!-- Empty state -->
       <div v-if="conditions.length === 0" class="text-center text-text-secondary py-8">
         <PhFunnel :size="48" class="mx-auto mb-3 opacity-50" />

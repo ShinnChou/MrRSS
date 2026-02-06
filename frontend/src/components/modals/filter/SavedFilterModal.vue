@@ -140,7 +140,7 @@ function save() {
     </template>
 
     <!-- Content -->
-    <div class="p-4 sm:p-6">
+    <div class="px-4 sm:px-6 pt-6 sm:pt-8 pb-20 sm:pb-24">
       <!-- Filter Name Input -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-text-primary mb-2">

@@ -214,7 +214,7 @@ async function handleClose(checkUnsaved = false): Promise<void> {
     </template>
 
     <!-- Content -->
-    <div class="p-4 sm:p-6 space-y-6">
+    <div class="px-4 sm:px-6 pt-6 sm:pt-8 pb-20 sm:pb-24 space-y-6">
       <!-- Rule Name -->
       <div class="space-y-2">
         <label class="block text-sm font-medium">{{ t('modal.rule.name') }}</label>

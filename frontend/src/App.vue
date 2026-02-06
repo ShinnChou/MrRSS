@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import Sidebar from './components/sidebar/Sidebar.vue';
 import ArticleList from './components/article/ArticleList.vue';
 import ArticleDetail from './components/article/ArticleDetail.vue';
-import ImageGalleryView from './components/article/ImageGalleryView.vue';
+import ImageGalleryView from './components/article/imageGallery/index.vue';
 import AddFeedModal from './components/modals/feed/AddFeedModal.vue';
 import EditFeedModal from './components/modals/feed/EditFeedModal.vue';
 import SettingsModal from './components/modals/SettingsModal.vue';

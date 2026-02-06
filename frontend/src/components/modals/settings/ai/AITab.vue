@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { PhInfo } from '@phosphor-icons/vue';
 import { computed } from 'vue';
 import type { SettingsData } from '@/types/settings';
 import { useSettingsAutoSave } from '@/composables/core/useSettingsAutoSave';
-import { InfoBox } from '@/components/settings';
-import AISettings from './AISettings.vue';
-import AITestSettings from './AITestSettings.vue';
+import { TipBox } from '@/components/settings';
+import AIProfileList from './AIProfileList.vue';
 import AIUsageSettings from './AIUsageSettings.vue';
 import AIFeatureSettings from './AIFeatureSettings.vue';
 
@@ -36,9 +34,8 @@ function handleUpdateSettings(updatedSettings: SettingsData) {
 
 <template>
   <div class="space-y-4 sm:space-y-6">
-    <InfoBox :icon="PhInfo" :content="t('setting.ai.isDanger')" />
-    <AISettings :settings="settings" @update:settings="handleUpdateSettings" />
-    <AITestSettings :settings="settings" @update:settings="handleUpdateSettings" />
+    <TipBox type="info" :title="t('setting.ai.isDanger')" />
+    <AIProfileList />
     <AIUsageSettings :settings="settings" @update:settings="handleUpdateSettings" />
     <AIFeatureSettings :settings="settings" @update:settings="handleUpdateSettings" />
   </div>

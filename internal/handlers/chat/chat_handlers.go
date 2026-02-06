@@ -11,7 +11,8 @@ import (
 
 	"MrRSS/internal/ai"
 	"MrRSS/internal/handlers/core"
-	"MrRSS/internal/utils"
+	"MrRSS/internal/handlers/response"
+	"MrRSS/internal/utils/textutil"
 )
 
 // ChatMessage represents a message in the chat conversation
@@ -49,32 +50,33 @@ type ChatResponse struct {
 // @Router       /chat [post]
 func HandleAIChat(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		response.Error(w, nil, http.StatusMethodNotAllowed)
 		return
 	}
 
 	var req ChatRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		response.Error(w, err, http.StatusBadRequest)
 		return
 	}
 
 	if len(req.Messages) == 0 {
-		http.Error(w, "Missing messages", http.StatusBadRequest)
+		response.Error(w, nil, http.StatusBadRequest)
 		return
 	}
 
 	// Check if AI chat is enabled
 	chatEnabled, _ := h.DB.GetSetting("ai_chat_enabled")
 	if chatEnabled != "true" {
-		http.Error(w, "AI chat is disabled", http.StatusForbidden)
+		response.Error(w, nil, http.StatusForbidden)
 		return
 	}
 
 	// Check if AI usage limit is reached
 	if h.AITracker.IsLimitReached() {
 		log.Printf("AI usage limit reached for chat")
-		json.NewEncoder(w).Encode(map[string]string{
+		w.WriteHeader(http.StatusTooManyRequests)
+		response.JSON(w, map[string]string{
 			"error": "AI usage limit reached",
 		})
 		return
@@ -83,16 +85,32 @@ func HandleAIChat(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	// Apply rate limiting for AI requests
 	h.AITracker.WaitForRateLimit()
 
-	// Get AI settings
-	apiKey, _ := h.DB.GetEncryptedSetting("ai_api_key")
-	endpoint, _ := h.DB.GetSetting("ai_endpoint")
-	model, _ := h.DB.GetSetting("ai_model")
-
-	if endpoint == "" {
-		endpoint = "https://api.openai.com/v1/chat/completions"
+	// Get AI settings - try ProfileProvider first
+	var apiKey, endpoint, model string
+	if h.AIProfileProvider != nil {
+		cfg, err := h.AIProfileProvider.GetConfigForFeature(ai.FeatureChat)
+		if err == nil && cfg != nil && (cfg.APIKey != "" || cfg.Endpoint != "") {
+			apiKey = cfg.APIKey
+			endpoint = cfg.Endpoint
+			model = cfg.Model
+			log.Printf("Using AI profile for chat (endpoint: %s, model: %s)", endpoint, model)
+		}
 	}
-	if model == "" {
-		model = "gpt-4o-mini"
+
+	// Fallback to global settings if no profile configured
+	if endpoint == "" {
+		endpoint, _ = h.DB.GetSetting("ai_endpoint")
+		model, _ = h.DB.GetSetting("ai_model")
+		apiKey, _ = h.DB.GetEncryptedSetting("ai_api_key")
+
+		// Set defaults if still empty
+		if endpoint == "" {
+			endpoint = "https://api.openai.com/v1/chat/completions"
+		}
+		if model == "" {
+			model = "gpt-4o-mini"
+		}
+		log.Printf("Using global AI settings for chat (endpoint: %s, model: %s)", endpoint, model)
 	}
 
 	// Optimize context to reduce token usage
@@ -129,19 +147,17 @@ func HandleAIChat(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	result, err := client.RequestWithMessages(messagesMap)
 	if err != nil {
 		log.Printf("AI chat request failed: %v", err)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "No response from AI"})
+		response.Error(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	// Extract thinking content and remove tags
-	response := result.Content
-	thinking := ai.ExtractThinking(response)
-	response = ai.RemoveThinkingTags(response)
+	respContent := result.Content
+	thinking := ai.ExtractThinking(respContent)
+	respContent = ai.RemoveThinkingTags(respContent)
 
 	// Convert markdown response to HTML
-	htmlResponse := utils.ConvertMarkdownToHTML(response)
+	htmlResponse := textutil.ConvertMarkdownToHTML(respContent)
 
 	// Log thinking if present (for debugging)
 	if thinking != "" {
@@ -149,7 +165,7 @@ func HandleAIChat(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Track AI usage (estimate tokens from input and output)
-	estimatedTokens := estimateChatTokens(optimizedMessages, response)
+	estimatedTokens := estimateChatTokens(optimizedMessages, respContent)
 	if err := h.AITracker.AddUsage(int64(estimatedTokens)); err != nil {
 		log.Printf("Warning: failed to track AI usage: %v", err)
 	}
@@ -157,8 +173,7 @@ func HandleAIChat(h *core.Handler, w http.ResponseWriter, r *http.Request) {
 	// Track statistics
 	_ = h.DB.IncrementStat("ai_chat")
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(ChatResponse{Response: response, HTML: htmlResponse})
+	response.JSON(w, ChatResponse{Response: respContent, HTML: htmlResponse})
 }
 
 // optimizeChatContext reduces the chat context to save tokens while preserving important information

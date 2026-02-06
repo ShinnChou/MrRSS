@@ -20,11 +20,15 @@ var defaultsJSON []byte
 type Defaults struct {
 	AIAPIKey                      string `json:"ai_api_key"`
 	AIChatEnabled                 bool   `json:"ai_chat_enabled"`
+	AIChatProfileId               string `json:"ai_chat_profile_id"`
 	AICustomHeaders               string `json:"ai_custom_headers"`
 	AIEndpoint                    string `json:"ai_endpoint"`
 	AIModel                       string `json:"ai_model"`
 	AISearchEnabled               bool   `json:"ai_search_enabled"`
+	AISearchProfileId             string `json:"ai_search_profile_id"`
+	AISummaryProfileId            string `json:"ai_summary_profile_id"`
 	AISummaryPrompt               string `json:"ai_summary_prompt"`
+	AITranslationProfileId        string `json:"ai_translation_profile_id"`
 	AITranslationPrompt           string `json:"ai_translation_prompt"`
 	AIUsageLimit                  string `json:"ai_usage_limit"`
 	AIUsageTokens                 string `json:"ai_usage_tokens"`
@@ -76,6 +80,9 @@ type Defaults struct {
 	NetworkBandwidthMbps          string `json:"network_bandwidth_mbps"`
 	NetworkLatencyMs              string `json:"network_latency_ms"`
 	NetworkSpeed                  string `json:"network_speed"`
+	NotionAPIKey                  string `json:"notion_api_key"`
+	NotionEnabled                 bool   `json:"notion_enabled"`
+	NotionPageId                  string `json:"notion_page_id"`
 	ObsidianEnabled               bool   `json:"obsidian_enabled"`
 	ObsidianVault                 string `json:"obsidian_vault"`
 	ObsidianVaultPath             string `json:"obsidian_vault_path"`
@@ -133,6 +140,8 @@ func GetString(key string) string {
 		return defaults.AIAPIKey
 	case "ai_chat_enabled":
 		return strconv.FormatBool(defaults.AIChatEnabled)
+	case "ai_chat_profile_id":
+		return defaults.AIChatProfileId
 	case "ai_custom_headers":
 		return defaults.AICustomHeaders
 	case "ai_endpoint":
@@ -141,8 +150,14 @@ func GetString(key string) string {
 		return defaults.AIModel
 	case "ai_search_enabled":
 		return strconv.FormatBool(defaults.AISearchEnabled)
+	case "ai_search_profile_id":
+		return defaults.AISearchProfileId
+	case "ai_summary_profile_id":
+		return defaults.AISummaryProfileId
 	case "ai_summary_prompt":
 		return defaults.AISummaryPrompt
+	case "ai_translation_profile_id":
+		return defaults.AITranslationProfileId
 	case "ai_translation_prompt":
 		return defaults.AITranslationPrompt
 	case "ai_usage_limit":
@@ -245,6 +260,12 @@ func GetString(key string) string {
 		return defaults.NetworkLatencyMs
 	case "network_speed":
 		return defaults.NetworkSpeed
+	case "notion_api_key":
+		return defaults.NotionAPIKey
+	case "notion_enabled":
+		return strconv.FormatBool(defaults.NotionEnabled)
+	case "notion_page_id":
+		return defaults.NotionPageId
 	case "obsidian_enabled":
 		return strconv.FormatBool(defaults.ObsidianEnabled)
 	case "obsidian_vault":

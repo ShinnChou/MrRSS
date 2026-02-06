@@ -431,6 +431,27 @@
       "encrypted": false,
       "frontend_key": "obsidianVaultPath"
     },
+    "notion_enabled": {
+      "type": "bool",
+      "default": false,
+      "category": "integrations",
+      "encrypted": false,
+      "frontend_key": "notionEnabled"
+    },
+    "notion_api_key": {
+      "type": "string",
+      "default": "",
+      "category": "integrations",
+      "encrypted": true,
+      "frontend_key": "notionApiKey"
+    },
+    "notion_page_id": {
+      "type": "string",
+      "default": "",
+      "category": "integrations",
+      "encrypted": false,
+      "frontend_key": "notionPageId"
+    },
     "window_x": {
       "type": "string",
       "default": "0",
@@ -654,6 +675,34 @@
       "category": "reading",
       "encrypted": false,
       "frontend_key": "contentLineHeight"
+    },
+    "ai_translation_profile_id": {
+      "type": "string",
+      "default": "",
+      "category": "ai",
+      "encrypted": false,
+      "frontend_key": "aiTranslationProfileId"
+    },
+    "ai_summary_profile_id": {
+      "type": "string",
+      "default": "",
+      "category": "ai",
+      "encrypted": false,
+      "frontend_key": "aiSummaryProfileId"
+    },
+    "ai_chat_profile_id": {
+      "type": "string",
+      "default": "",
+      "category": "ai",
+      "encrypted": false,
+      "frontend_key": "aiChatProfileId"
+    },
+    "ai_search_profile_id": {
+      "type": "string",
+      "default": "",
+      "category": "ai",
+      "encrypted": false,
+      "frontend_key": "aiSearchProfileId"
     }
   }
 }

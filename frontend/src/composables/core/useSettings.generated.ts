@@ -15,11 +15,15 @@ export function generateInitialSettings(): SettingsData {
   return {
     ai_api_key: settingsDefaults.ai_api_key,
     ai_chat_enabled: settingsDefaults.ai_chat_enabled,
+    ai_chat_profile_id: settingsDefaults.ai_chat_profile_id,
     ai_custom_headers: settingsDefaults.ai_custom_headers,
     ai_endpoint: settingsDefaults.ai_endpoint,
     ai_model: settingsDefaults.ai_model,
     ai_search_enabled: settingsDefaults.ai_search_enabled,
+    ai_search_profile_id: settingsDefaults.ai_search_profile_id,
+    ai_summary_profile_id: settingsDefaults.ai_summary_profile_id,
     ai_summary_prompt: settingsDefaults.ai_summary_prompt,
+    ai_translation_profile_id: settingsDefaults.ai_translation_profile_id,
     ai_translation_prompt: settingsDefaults.ai_translation_prompt,
     ai_usage_limit: settingsDefaults.ai_usage_limit,
     ai_usage_tokens: settingsDefaults.ai_usage_tokens,
@@ -71,6 +75,9 @@ export function generateInitialSettings(): SettingsData {
     network_bandwidth_mbps: settingsDefaults.network_bandwidth_mbps,
     network_latency_ms: settingsDefaults.network_latency_ms,
     network_speed: settingsDefaults.network_speed,
+    notion_api_key: settingsDefaults.notion_api_key,
+    notion_enabled: settingsDefaults.notion_enabled,
+    notion_page_id: settingsDefaults.notion_page_id,
     obsidian_enabled: settingsDefaults.obsidian_enabled,
     obsidian_vault: settingsDefaults.obsidian_vault,
     obsidian_vault_path: settingsDefaults.obsidian_vault_path,
@@ -117,11 +124,16 @@ export function parseSettingsData(data: Record<string, string>): SettingsData {
   return {
     ai_api_key: data.ai_api_key || settingsDefaults.ai_api_key,
     ai_chat_enabled: data.ai_chat_enabled === 'true',
+    ai_chat_profile_id: data.ai_chat_profile_id || settingsDefaults.ai_chat_profile_id,
     ai_custom_headers: data.ai_custom_headers || settingsDefaults.ai_custom_headers,
     ai_endpoint: data.ai_endpoint || settingsDefaults.ai_endpoint,
     ai_model: data.ai_model || settingsDefaults.ai_model,
     ai_search_enabled: data.ai_search_enabled === 'true',
+    ai_search_profile_id: data.ai_search_profile_id || settingsDefaults.ai_search_profile_id,
+    ai_summary_profile_id: data.ai_summary_profile_id || settingsDefaults.ai_summary_profile_id,
     ai_summary_prompt: data.ai_summary_prompt || settingsDefaults.ai_summary_prompt,
+    ai_translation_profile_id:
+      data.ai_translation_profile_id || settingsDefaults.ai_translation_profile_id,
     ai_translation_prompt: data.ai_translation_prompt || settingsDefaults.ai_translation_prompt,
     ai_usage_limit: data.ai_usage_limit || settingsDefaults.ai_usage_limit,
     ai_usage_tokens: data.ai_usage_tokens || settingsDefaults.ai_usage_tokens,
@@ -188,6 +200,9 @@ export function parseSettingsData(data: Record<string, string>): SettingsData {
     network_bandwidth_mbps: data.network_bandwidth_mbps || settingsDefaults.network_bandwidth_mbps,
     network_latency_ms: data.network_latency_ms || settingsDefaults.network_latency_ms,
     network_speed: data.network_speed || settingsDefaults.network_speed,
+    notion_api_key: data.notion_api_key || settingsDefaults.notion_api_key,
+    notion_enabled: data.notion_enabled === 'true',
+    notion_page_id: data.notion_page_id || settingsDefaults.notion_page_id,
     obsidian_enabled: data.obsidian_enabled === 'true',
     obsidian_vault: data.obsidian_vault || settingsDefaults.obsidian_vault,
     obsidian_vault_path: data.obsidian_vault_path || settingsDefaults.obsidian_vault_path,
@@ -237,13 +252,20 @@ export function buildAutoSavePayload(settingsRef: Ref<SettingsData>): Record<str
     ai_chat_enabled: (
       settingsRef.value.ai_chat_enabled ?? settingsDefaults.ai_chat_enabled
     ).toString(),
+    ai_chat_profile_id: settingsRef.value.ai_chat_profile_id ?? settingsDefaults.ai_chat_profile_id,
     ai_custom_headers: settingsRef.value.ai_custom_headers ?? settingsDefaults.ai_custom_headers,
     ai_endpoint: settingsRef.value.ai_endpoint ?? settingsDefaults.ai_endpoint,
     ai_model: settingsRef.value.ai_model ?? settingsDefaults.ai_model,
     ai_search_enabled: (
       settingsRef.value.ai_search_enabled ?? settingsDefaults.ai_search_enabled
     ).toString(),
+    ai_search_profile_id:
+      settingsRef.value.ai_search_profile_id ?? settingsDefaults.ai_search_profile_id,
+    ai_summary_profile_id:
+      settingsRef.value.ai_summary_profile_id ?? settingsDefaults.ai_summary_profile_id,
     ai_summary_prompt: settingsRef.value.ai_summary_prompt ?? settingsDefaults.ai_summary_prompt,
+    ai_translation_profile_id:
+      settingsRef.value.ai_translation_profile_id ?? settingsDefaults.ai_translation_profile_id,
     ai_translation_prompt:
       settingsRef.value.ai_translation_prompt ?? settingsDefaults.ai_translation_prompt,
     ai_usage_limit: settingsRef.value.ai_usage_limit ?? settingsDefaults.ai_usage_limit,
@@ -345,6 +367,11 @@ export function buildAutoSavePayload(settingsRef: Ref<SettingsData>): Record<str
       settingsRef.value.network_bandwidth_mbps ?? settingsDefaults.network_bandwidth_mbps,
     network_latency_ms: settingsRef.value.network_latency_ms ?? settingsDefaults.network_latency_ms,
     network_speed: settingsRef.value.network_speed ?? settingsDefaults.network_speed,
+    notion_api_key: settingsRef.value.notion_api_key ?? settingsDefaults.notion_api_key,
+    notion_enabled: (
+      settingsRef.value.notion_enabled ?? settingsDefaults.notion_enabled
+    ).toString(),
+    notion_page_id: settingsRef.value.notion_page_id ?? settingsDefaults.notion_page_id,
     obsidian_enabled: (
       settingsRef.value.obsidian_enabled ?? settingsDefaults.obsidian_enabled
     ).toString(),
