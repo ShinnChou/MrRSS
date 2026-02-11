@@ -261,10 +261,7 @@ defineExpose({
         "
         @click="toggleFeedList"
       >
-        <PhSidebar
-          :size="24"
-          :weight="isFeedListExpanded ? 'fill' : 'regular'"
-        />
+        <PhSidebar :size="24" :weight="isFeedListExpanded ? 'fill' : 'regular'" />
       </button>
 
       <button
