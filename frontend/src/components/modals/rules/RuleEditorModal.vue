@@ -217,7 +217,9 @@ async function handleClose(checkUnsaved = false): Promise<void> {
     <div class="px-4 sm:px-6 pt-6 sm:pt-8 pb-20 sm:pb-24 space-y-6">
       <!-- Rule Name -->
       <div class="space-y-2">
-        <label class="block text-sm font-medium">{{ t('modal.rule.name') }}</label>
+        <label class="block text-sm font-medium text-text-primary">{{
+          t('modal.rule.name')
+        }}</label>
         <input
           v-model="ruleName"
           type="text"
@@ -229,7 +231,7 @@ async function handleClose(checkUnsaved = false): Promise<void> {
       <!-- Conditions Section -->
       <div class="space-y-3">
         <div class="flex items-center justify-between">
-          <label class="flex items-center gap-2 text-sm font-medium">
+          <label class="flex items-center gap-2 text-sm font-medium text-text-primary">
             <PhFunnel :size="16" />
             {{ t('modal.rule.condition') }}
           </label>
@@ -287,7 +289,7 @@ async function handleClose(checkUnsaved = false): Promise<void> {
       <!-- Actions Section -->
       <div class="space-y-3">
         <div class="flex items-center justify-between">
-          <label class="flex items-center gap-2 text-sm font-medium">
+          <label class="flex items-center gap-2 text-sm font-medium text-text-primary">
             <PhListChecks :size="16" />
             {{ t('modal.rule.actions') }}
           </label>

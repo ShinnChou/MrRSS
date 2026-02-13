@@ -97,7 +97,7 @@ const saveButtonText = computed(() => {
     <div class="p-4 sm:p-6 space-y-4">
       <!-- Name -->
       <div>
-        <label class="block mb-1.5 text-sm font-medium text-text-secondary">
+        <label class="block mb-1.5 text-sm font-medium text-text-primary">
           {{ t('modal.tag.name') }}
         </label>
         <input
@@ -111,7 +111,7 @@ const saveButtonText = computed(() => {
 
       <!-- Color -->
       <div>
-        <label class="block mb-1.5 text-sm font-medium text-text-secondary">
+        <label class="block mb-1.5 text-sm font-medium text-text-primary">
           {{ t('modal.tag.color') }}
         </label>
         <div class="flex gap-2 flex-wrap">

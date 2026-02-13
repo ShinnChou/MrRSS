@@ -5,6 +5,20 @@ All notable changes to MrRSS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.20] - 2026-02-13
+
+### Changed
+
+- Disabled closing the pop-up window by clicking on the background to prevent accidental closures.
+
+### Fixed
+
+- Fixed multiple minor styling inconsistencies. (#402, #407, #428, #646, #648, #649, #651, #665, #666, #668) (@RUBisco0211)
+- Fixed an issue where the rule addition/editing modal could not be closed. (#647)
+- Fixed an issue where some input fields would revert to their previous values after being cleared. (#689)
+- Fixed an issue where the "Read Later" feature did not function correctly in the card layout. (#662)
+- Fixed an issue where the image gallery could not adjust the number of columns based on the window width. (#652)
+
 ## [1.3.19] - 2026-02-07
 
 **NOTE:** After the update, AI-related settings may require reconfiguration due to conflicts introduced by new features.

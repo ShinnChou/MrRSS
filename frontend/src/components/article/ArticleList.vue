@@ -679,13 +679,12 @@ async function cardModalToggleFavorite(): Promise<void> {
 async function cardModalToggleReadLater(): Promise<void> {
   if (!cardModalArticle.value) return;
   const article = cardModalArticle.value;
-  const newReadLaterState = !article.is_read_later;
 
   try {
-    await fetch(`/api/articles/read-later?id=${article.id}&read_later=${newReadLaterState}`, {
+    await fetch(`/api/articles/toggle-read-later?id=${article.id}`, {
       method: 'POST',
     });
-    article.is_read_later = newReadLaterState;
+    article.is_read_later = !article.is_read_later;
     await store.fetchFilterCounts();
   } catch (e) {
     console.error('Error toggling read later:', e);

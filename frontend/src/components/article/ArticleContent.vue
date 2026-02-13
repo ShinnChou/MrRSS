@@ -5,7 +5,6 @@ import { PhSpinnerGap, PhArticleNyTimes } from '@phosphor-icons/vue';
 import type { Article } from '@/types/models';
 import ArticleTitle from './parts/ArticleTitle.vue';
 import ArticleSummary from './parts/ArticleSummary.vue';
-import ArticleLoading from './parts/ArticleLoading.vue';
 import ArticleBody from './parts/ArticleBody.vue';
 import AudioPlayer from './parts/AudioPlayer.vue';
 import VideoPlayer from './parts/VideoPlayer.vue';
@@ -874,7 +873,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="flex-1 overflow-y-auto bg-bg-primary p-3 sm:p-6 scroll-smooth"
+    class="flex-1 overflow-y-scroll bg-bg-primary p-3 sm:p-6 scroll-smooth"
     @click="handleContainerClick"
   >
     <div
@@ -919,10 +918,7 @@ onBeforeUnmount(() => {
         @generate-summary="generateSummary(props.article, true)"
       />
 
-      <ArticleLoading v-if="isLoadingContent" />
-
       <ArticleBody
-        v-else
         :article-content="displayContent"
         :is-translating-content="isTranslatingContent"
         :has-media-content="!!(article.audio_url || article.video_url)"

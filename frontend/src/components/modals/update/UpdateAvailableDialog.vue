@@ -44,7 +44,7 @@ function handleUpdate() {
 // Computed button text
 const updateButtonText = computed(() => {
   if (props.downloadingUpdate) {
-    return `${t('common.action.downloading')} ${props.downloadProgress}%`;
+    return t('common.action.downloading');
   } else if (props.installingUpdate) {
     return t('setting.update.installingUpdate');
   } else {
@@ -92,16 +92,6 @@ const updateButtonText = computed(() => {
           {{ t('setting.about.viewOnGitHub') }}
         </a>
       </p>
-
-      <!-- Progress bar -->
-      <div v-if="props.downloadingUpdate" class="mt-4">
-        <div class="w-full bg-bg-tertiary rounded-full h-2 overflow-hidden">
-          <div
-            class="bg-accent h-full transition-all duration-300"
-            :style="{ width: props.downloadProgress + '%' }"
-          ></div>
-        </div>
-      </div>
     </div>
 
     <!-- Footer -->
@@ -113,15 +103,6 @@ const updateButtonText = computed(() => {
           disabled: props.downloadingUpdate || props.installingUpdate,
           onClick: handleClose,
         }"
-        :primary-button="
-          props.updateInfo.download_url
-            ? {
-                label: updateButtonText,
-                disabled: props.downloadingUpdate || props.installingUpdate,
-                onClick: handleUpdate,
-              }
-            : undefined
-        "
       >
         <template v-if="props.updateInfo.download_url" #right>
           <button

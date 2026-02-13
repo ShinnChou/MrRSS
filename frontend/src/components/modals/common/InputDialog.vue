@@ -71,7 +71,7 @@ function handleKeyDown(e: KeyboardEvent) {
 </script>
 
 <template>
-  <BaseModal :title="title" size="md" :closable="false" @close="handleClose">
+  <BaseModal :title="title" size="md" :closable="false" :z-index="150" @close="handleClose">
     <!-- Body -->
     <div class="p-3 sm:p-5">
       <p v-if="message" class="m-0 mb-2 sm:mb-3 text-text-primary text-sm sm:text-base">
