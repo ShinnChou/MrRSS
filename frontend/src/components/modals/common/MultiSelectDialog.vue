@@ -71,7 +71,7 @@ function handleClose() {
 </script>
 
 <template>
-  <BaseModal :title="title" size="md" :closable="false" @close="handleClose">
+  <BaseModal :title="title" size="md" :closable="false" :z-index="150" @close="handleClose">
     <!-- Body -->
     <div class="p-3 sm:p-5">
       <p v-if="message" class="m-0 mb-3 text-text-primary text-sm sm:text-base">

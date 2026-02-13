@@ -47,7 +47,7 @@ function handleClose() {
 </script>
 
 <template>
-  <BaseModal :title="title" :closable="false" size="md" @close="handleClose">
+  <BaseModal :title="title" :closable="false" size="md" :z-index="150" @close="handleClose">
     <!-- Body -->
     <div class="p-3 sm:p-5">
       <p class="m-0 text-text-primary text-sm sm:text-base">{{ message }}</p>

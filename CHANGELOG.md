@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Disabled closing the pop-up window by clicking on the background to prevent accidental closures.
+
 ### Fixed
 
-- Fixed multiple minor styling inconsistencies. (#649, #665, #666, #668) (@RUBisco0211)
+- Fixed multiple minor styling inconsistencies. (#648, #649, #665, #666, #668) (@RUBisco0211)
+- Fixed the issue where rule adding / editing modal cannot be closed. (#647)
 
 ## [1.3.19] - 2026-02-07
 
