@@ -108,7 +108,11 @@ export function buildTocItems(
   return { items, generatedIds };
 }
 
-export function shouldShowTocText(itemIndex: number, activeIndex: number, items: TocItem[]): boolean {
+export function shouldShowTocText(
+  itemIndex: number,
+  activeIndex: number,
+  items: TocItem[]
+): boolean {
   const item = items[itemIndex];
   if (!item || item.isFallback) return false;
   if (activeIndex < 0 || activeIndex >= items.length) return false;
@@ -122,7 +126,11 @@ export function shouldShowTocText(itemIndex: number, activeIndex: number, items:
   return false;
 }
 
-export function calcArticleProgress(scrollTop: number, scrollHeight: number, clientHeight: number): number {
+export function calcArticleProgress(
+  scrollTop: number,
+  scrollHeight: number,
+  clientHeight: number
+): number {
   const maxScrollTop = Math.max(0, scrollHeight - clientHeight);
   if (maxScrollTop <= 0) return 100;
   const progress = Math.max(0, Math.min(1, scrollTop / maxScrollTop));

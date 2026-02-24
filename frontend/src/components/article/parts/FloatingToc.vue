@@ -162,7 +162,7 @@ function updateActiveSection(): void {
     sectionProgress.value = 0;
     articleProgress.value = container
       ? calcTocProgress(container.scrollTop, container.scrollHeight, container.clientHeight, [])
-        .articleProgress
+          .articleProgress
       : 0;
     lastAutoScrolledIndex = -1;
     return;
@@ -348,43 +348,60 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div v-if="enabled && isDesktop && tocItems.length > 0"
+  <div
+    v-if="enabled && isDesktop && tocItems.length > 0"
     class="pointer-events-none fixed right-[8px] z-40 flex w-[max(15%,125px)] flex-col items-end justify-center [container-type:inline-size]"
-    :style="containerStyle">
+    :style="containerStyle"
+  >
     <div class="mb-2 w-full text-right text-[10px] font-medium text-text-secondary opacity-75">
       {{ articleProgress }}%
     </div>
 
     <div class="group/toclist pointer-events-auto relative w-full max-h-[80%]">
       <div
-        class="pointer-events-none absolute -inset-y-1.5 -left-2 -right-1 rounded-lg border border-border bg-bg-secondary shadow-lg shadow-black/15 opacity-0 scale-[0.98] transition-all duration-200 group-hover/toclist:opacity-100 group-hover/toclist:scale-100 dark:shadow-black/40">
-      </div>
+        class="pointer-events-none absolute -inset-y-1.5 -left-2 -right-1 rounded-lg border border-border bg-bg-secondary shadow-lg shadow-black/15 opacity-0 scale-[0.98] transition-all duration-200 group-hover/toclist:opacity-100 group-hover/toclist:scale-100 dark:shadow-black/40"
+      ></div>
 
-      <ul ref="tocListEl"
-        class="toc-list-scroll relative z-[1] flex w-full max-h-full flex-col items-start gap-1 overflow-y-scroll [scrollbar-gutter:stable_both-edges]">
-        <li v-for="(item, index) in tocItems" :key="item.id" class="w-full" :data-level="item.level"
-          :data-toc-index="index">
+      <ul
+        ref="tocListEl"
+        class="toc-list-scroll relative z-[1] flex w-full max-h-full flex-col items-start gap-1 overflow-y-scroll [scrollbar-gutter:stable_both-edges]"
+      >
+        <li
+          v-for="(item, index) in tocItems"
+          :key="item.id"
+          class="w-full"
+          :data-level="item.level"
+          :data-toc-index="index"
+        >
           <button
             class="group/item flex w-full cursor-pointer items-center justify-start gap-1 rounded py-0.5 transition-colors"
-            :style="{ '--toc-level': String(item.level) }" @click="scrollToHeading(item)">
-            <span :class="[
-              'toc-text flex-1 min-w-0 truncate text-left text-xs opacity-0 transition-all duration-200 [margin-left:calc((var(--toc-level,1)-1)*12px)]',
-              index === activeIndex ? 'text-text-primary' : 'text-text-secondary',
-              shouldShowText(index)
-                ? 'toc-text-visible opacity-[0.85] max-w-full'
-                : 'max-w-0',
-              'group-hover/toclist:opacity-[0.85] group-hover/toclist:max-w-full group-hover/item:text-text-primary group-hover/item:opacity-100',
-            ]" :data-level="item.level" :title="item.text">
+            :style="{ '--toc-level': String(item.level) }"
+            @click="scrollToHeading(item)"
+          >
+            <span
+              :class="[
+                'toc-text flex-1 min-w-0 truncate text-left text-xs opacity-0 transition-all duration-200 [margin-left:calc((var(--toc-level,1)-1)*12px)]',
+                index === activeIndex ? 'text-text-primary' : 'text-text-secondary',
+                shouldShowText(index) ? 'toc-text-visible opacity-[0.85] max-w-full' : 'max-w-0',
+                'group-hover/toclist:opacity-[0.85] group-hover/toclist:max-w-full group-hover/item:text-text-primary group-hover/item:opacity-100',
+              ]"
+              :data-level="item.level"
+              :title="item.text"
+            >
               {{ item.text }}
             </span>
             <span class="ml-auto flex w-[34px] shrink-0 justify-end">
-              <span :class="[
-                'relative overflow-hidden bg-text-secondary transition-colors duration-150 group-hover/item:bg-text-primary',
-                index === activeIndex ? 'h-[3px] opacity-100' : 'h-[2px] opacity-70',
-              ]" :style="{ width: `${item.markerWidth}px` }">
+              <span
+                :class="[
+                  'relative overflow-hidden bg-text-secondary transition-colors duration-150 group-hover/item:bg-text-primary',
+                  index === activeIndex ? 'h-[3px] opacity-100' : 'h-[2px] opacity-70',
+                ]"
+                :style="{ width: `${item.markerWidth}px` }"
+              >
                 <span
                   class="absolute left-0 top-0 h-full bg-accent transition-all duration-150 group-hover/item:bg-text-primary"
-                  :style="{ width: `${getMarkerFillPercent(index)}%` }"></span>
+                  :style="{ width: `${getMarkerFillPercent(index)}%` }"
+                ></span>
               </span>
             </span>
           </button>
@@ -394,7 +411,9 @@ onBeforeUnmount(() => {
 
     <button
       class="pointer-events-auto mt-3 flex h-7 w-7 items-center justify-center self-end rounded bg-transparent text-text-secondary transition-colors hover:bg-[color-mix(in_srgb,var(--bg-tertiary)_70%,transparent)] hover:text-text-primary"
-      :title="t('common.back')" @click="scrollToTop">
+      :title="t('common.back')"
+      @click="scrollToTop"
+    >
       <PhArrowLineUp :size="14" />
     </button>
   </div>
