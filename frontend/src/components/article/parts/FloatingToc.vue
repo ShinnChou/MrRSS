@@ -26,9 +26,9 @@ const sectionProgress = ref(0);
 const articleProgress = ref(0);
 const isDesktop = ref(false);
 
-let mediaQuery: MediaQueryList | null = null;
-let containerObserver: MutationObserver | null = null;
-let pendingProseObserver: MutationObserver | null = null;
+let mediaQuery: ReturnType<typeof window.matchMedia> | null = null;
+let containerObserver: InstanceType<typeof window.MutationObserver> | null = null;
+let pendingProseObserver: InstanceType<typeof window.MutationObserver> | null = null;
 let scrollContainerEl: HTMLElement | null = null;
 let rebuildRaf: number | null = null;
 let scrollRaf: number | null = null;
@@ -40,9 +40,9 @@ function shouldShowText(itemIndex: number): boolean {
 
 function queueRebuild(): void {
   if (rebuildRaf !== null) {
-    cancelAnimationFrame(rebuildRaf);
+    window.cancelAnimationFrame(rebuildRaf);
   }
-  rebuildRaf = requestAnimationFrame(() => {
+  rebuildRaf = window.requestAnimationFrame(() => {
     rebuildRaf = null;
     buildToc();
   });
@@ -50,7 +50,7 @@ function queueRebuild(): void {
 
 function queueScrollSync(): void {
   if (scrollRaf !== null) return;
-  scrollRaf = requestAnimationFrame(() => {
+  scrollRaf = window.requestAnimationFrame(() => {
     scrollRaf = null;
     updateActiveSection();
   });
@@ -196,8 +196,9 @@ function scrollToTop(): void {
   });
 }
 
-function handleMediaChange(event: MediaQueryListEvent): void {
-  isDesktop.value = event.matches;
+function handleMediaChange(event: Event): void {
+  const mediaEvent = event as Event & { matches?: boolean };
+  isDesktop.value = Boolean(mediaEvent.matches);
   queueRebuild();
 }
 
@@ -225,7 +226,7 @@ function connectContainerObserver(): void {
   const proseContainer = container.querySelector('.prose-content');
   if (!proseContainer) {
     // The article body may render asynchronously. Watch container until prose appears.
-    pendingProseObserver = new MutationObserver(() => {
+    pendingProseObserver = new window.MutationObserver(() => {
       const readyProse = container.querySelector('.prose-content');
       if (!readyProse) return;
 
@@ -242,7 +243,7 @@ function connectContainerObserver(): void {
     return;
   }
 
-  containerObserver = new MutationObserver(() => queueRebuild());
+  containerObserver = new window.MutationObserver(() => queueRebuild());
   containerObserver.observe(proseContainer, {
     childList: true,
     subtree: true,
@@ -294,10 +295,10 @@ onBeforeUnmount(() => {
   pendingProseObserver?.disconnect();
 
   if (rebuildRaf !== null) {
-    cancelAnimationFrame(rebuildRaf);
+    window.cancelAnimationFrame(rebuildRaf);
   }
   if (scrollRaf !== null) {
-    cancelAnimationFrame(scrollRaf);
+    window.cancelAnimationFrame(scrollRaf);
   }
 });
 </script>
