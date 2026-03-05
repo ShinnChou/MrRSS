@@ -664,7 +664,7 @@
     },
     "rsshub_endpoint": {
       "type": "string",
-      "default": "https://rsshub.app",
+      "default": "https://rss.spriple.org",
       "category": "integrations",
       "encrypted": false,
       "frontend_key": "rsshubEndpoint"

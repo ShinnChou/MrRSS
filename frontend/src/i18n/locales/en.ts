@@ -1017,7 +1017,7 @@ const en: TranslationMessages = {
       endpointDesc: 'Your RSSHub server address',
       feed: 'RSSHub Feed',
       notSuggestOfficial:
-        'rsshub.app is not recommended due to usage limits for third-party apps, please deploy your own instance.',
+        'Visit https://docs.rsshub.app/guide/instances for available public instances or deploy your own instance.',
       optional: 'Optional',
       testConnection: 'Test Connection',
       testConnectionDesc: 'Verify RSSHub endpoint and credentials',

@@ -997,7 +997,8 @@ const zh: TranslationMessages = {
       endpoint: 'RSSHub 端点',
       endpointDesc: '您的 RSSHub 服务器地址',
       feed: 'RSSHub 订阅源',
-      notSuggestOfficial: '由于第三方应用的使用限制，不建议使用 rsshub.app，请部署您自己的实例。',
+      notSuggestOfficial:
+        '请访问 https://docs.rsshub.app/guide/instances 查看可用的公共实例或部署您自己的实例。',
       optional: '可选',
       testConnection: '测试连接',
       testConnectionDesc: '验证 RSSHub 端点和凭据',
