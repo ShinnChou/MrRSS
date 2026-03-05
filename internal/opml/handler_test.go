@@ -45,6 +45,51 @@ func TestParse(t *testing.T) {
 	}
 }
 
+// TestParseMinifluxFormat tests Miniflux OPML export format
+// Miniflux uses feedURL attribute instead of xmlUrl
+func TestParseMinifluxFormat(t *testing.T) {
+	xmlData := `
+	<?xml version="1.0" encoding="UTF-8"?>
+	<opml version="2.0">
+		<head>
+			<title>Miniflux Subscriptions</title>
+		</head>
+		<body>
+			<outline text="Tech" title="Tech">
+				<outline type="rss" text="Hacker News" title="Hacker News" feedURL="https://news.ycombinator.com/rss" htmlUrl="https://news.ycombinator.com/"/>
+			</outline>
+			<outline type="rss" text="Go Blog" title="Go Blog" feedURL="https://blog.golang.org/feed.atom"/>
+		</body>
+	</opml>`
+
+	r := strings.NewReader(xmlData)
+	feeds, err := Parse(r)
+	if err != nil {
+		t.Fatalf("Parse failed: %v", err)
+	}
+
+	if len(feeds) != 2 {
+		t.Errorf("Expected 2 feeds, got %d", len(feeds))
+	}
+
+	if feeds[0].Title != "Hacker News" {
+		t.Errorf("Expected first feed title 'Hacker News', got '%s'", feeds[0].Title)
+	}
+	if feeds[0].URL != "https://news.ycombinator.com/rss" {
+		t.Errorf("Expected first feed URL 'https://news.ycombinator.com/rss', got '%s'", feeds[0].URL)
+	}
+	if feeds[0].Category != "Tech" {
+		t.Errorf("Expected first feed category 'Tech', got '%s'", feeds[0].Category)
+	}
+
+	if feeds[1].Title != "Go Blog" {
+		t.Errorf("Expected second feed title 'Go Blog', got '%s'", feeds[1].Title)
+	}
+	if feeds[1].URL != "https://blog.golang.org/feed.atom" {
+		t.Errorf("Expected second feed URL 'https://blog.golang.org/feed.atom', got '%s'", feeds[1].URL)
+	}
+}
+
 func TestGenerate(t *testing.T) {
 	feeds := []models.Feed{
 		{Title: "Feed 1", URL: "http://feed1.com/rss", Category: "Cat1"},

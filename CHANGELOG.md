@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Supported floating TOC feature for articles. (@MidnightCrowing)
+- Supported Miniflux format OPML import. (#768)
+
 ## [1.3.21] - 2026-02-27
 
 ### Added
